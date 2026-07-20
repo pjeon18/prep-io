@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Avatar } from "../components/Avatar";
 import { Badge } from "../components/Badge";
-import { TopNav } from "../components/TopNav";
+import { AppShell } from "../components/AppShell";
 import { IconX } from "../components/icons";
 import { HOSTS, SECTIONS, SESSIONS } from "../data/seedData";
 import { usePrepStore } from "../store/usePrepStore";
@@ -24,9 +24,8 @@ export default function Follows() {
   );
 
   return (
-    <div className="min-h-dvh pb-28">
-      <TopNav />
-      <main className="mx-auto max-w-md px-5">
+    <AppShell>
+      <main className="mx-auto max-w-md px-5 lg:mx-0 lg:max-w-[760px] lg:px-8">
         <h1 className="mt-9 font-display text-[32px]" style={{ fontWeight: 500 }}>
           Follows
         </h1>
@@ -125,6 +124,6 @@ export default function Follows() {
           </>
         )}
       </main>
-    </div>
+    </AppShell>
   );
 }

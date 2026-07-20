@@ -2,9 +2,8 @@ import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Avatar } from "../components/Avatar";
 import { Badge } from "../components/Badge";
-import { BottomNav } from "../components/BottomNav";
 import { Thumb } from "../components/Thumb";
-import { TopNav } from "../components/TopNav";
+import { AppShell } from "../components/AppShell";
 import { IconEye, IconTicket } from "../components/icons";
 import { CLIPS, COMPANIES, HOSTS, SECTIONS, SESSIONS } from "../data/seedData";
 import type { SectionId } from "../lib/types";
@@ -70,9 +69,8 @@ export default function Explore() {
     .join(", ");
 
   return (
-    <div className="min-h-dvh pb-28">
-      <TopNav />
-      <main className="mx-auto max-w-md px-5">
+    <AppShell>
+      <main className="mx-auto max-w-md px-5 lg:mx-0 lg:max-w-[1440px] lg:px-8">
         <h1 className="mt-9 font-display text-[32px]" style={{ fontWeight: 500 }}>
           Explore
         </h1>
@@ -139,6 +137,7 @@ export default function Explore() {
                 <div className="text-[12.5px]" style={{ color: "var(--prep-text-3)" }}>
                   because you're targeting {whyLabel}
                 </div>
+                <div className="lg:mt-4 lg:grid lg:grid-cols-3 lg:gap-5 lg:[&>button]:mt-0 xl:grid-cols-4">
                 {liveForYou.map((sesh) => {
                   const host = HOSTS.find((h) => h.id === sesh.hostId)!;
                   return (
@@ -156,6 +155,7 @@ export default function Explore() {
                     </button>
                   );
                 })}
+                </div>
               </>
             )}
 
@@ -213,7 +213,7 @@ export default function Explore() {
                 <h2 className="mt-10 font-display text-[22px]" style={{ fontWeight: 500 }}>
                   From the library
                 </h2>
-                <div className="mt-3 grid grid-cols-2 gap-3">
+                <div className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-4">
                   {recordingsForYou.map((sesh) => {
                     const host = HOSTS.find((h) => h.id === sesh.hostId)!;
                     return (
@@ -254,7 +254,6 @@ export default function Explore() {
           </>
         )}
       </main>
-      <BottomNav />
-    </div>
+    </AppShell>
   );
 }

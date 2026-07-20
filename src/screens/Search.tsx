@@ -2,10 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Avatar } from "../components/Avatar";
 import { Badge } from "../components/Badge";
-import { BottomNav } from "../components/BottomNav";
 import { LivePill } from "../components/LiveStage";
 import { Thumb } from "../components/Thumb";
-import { TopNav } from "../components/TopNav";
+import { AppShell } from "../components/AppShell";
 import { IconBuilding, IconSearch, IconTicket } from "../components/icons";
 import { COMPANIES, HOSTS } from "../data/seedData";
 import { search } from "../lib/search";
@@ -40,9 +39,8 @@ export default function Search() {
   const h2 = "mt-8 font-display text-[22px]";
 
   return (
-    <div className="min-h-dvh pb-28">
-      <TopNav />
-      <main className="mx-auto max-w-md px-5">
+    <AppShell>
+      <main className="mx-auto max-w-md px-5 lg:mx-0 lg:max-w-[760px] lg:px-8">
         <div className="relative mt-6">
           <IconSearch
             size={17}
@@ -203,7 +201,6 @@ export default function Search() {
           </>
         )}
       </main>
-      <BottomNav />
-    </div>
+    </AppShell>
   );
 }

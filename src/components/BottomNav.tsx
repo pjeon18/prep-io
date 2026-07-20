@@ -16,9 +16,9 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-30 border-t"
+      className="fixed inset-x-0 bottom-0 z-30 border-t lg:hidden"
       style={{
-        background: "rgba(250, 248, 244, 0.95)",
+        background: "rgba(255, 255, 255, 0.95)",
         borderColor: "var(--prep-line)",
         backdropFilter: "blur(10px)",
         paddingBottom: "env(safe-area-inset-bottom)",

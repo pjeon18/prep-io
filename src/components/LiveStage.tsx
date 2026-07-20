@@ -51,11 +51,11 @@ export function LivePill({ label = "LIVE" }: { label?: string }) {
   return (
     <span
       className="inline-flex items-center gap-1.5 rounded-pill px-2.5 py-[3px] text-[11px] font-semibold tracking-[0.08em]"
-      style={{ background: "var(--prep-live)", color: "#fdfbf7" }}
+      style={{ background: "var(--prep-live)", color: "#ffffff" }}
     >
       <motion.span
         className="h-1.5 w-1.5 rounded-full"
-        style={{ background: "#fdfbf7" }}
+        style={{ background: "#ffffff" }}
         animate={{ opacity: [1, 0.35, 1] }}
         transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
       />

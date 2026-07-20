@@ -121,3 +121,15 @@ Verified in-browser on mobile viewport, `tsc -b` + `npm run build` clean:
 - **Principle audit still holds**: live rooms never gated, counts still
   sim-driven, promotion still consent-only, no DMs, discovery reads no
   payment flags (boost pinning exists only inside the host's queue view).
+
+## D15 additions (2026-07-20): desktop shell + plain white/black
+
+- Palette: plain `#FFFFFF` background, `#000000` text, neutral grays; theater
+  rooms neutral near-black `#0F0F0F`. Crimson LIVE + green verified unchanged.
+- Desktop (lg+), verified at 1440×900: sidebar (nav, Subscriptions with live
+  dots, The floor with live dots, Premium/Settings pinned), centered search
+  bar, Home as a 3–4 column thumbnail grid with an events row, recordings in
+  the watch layout (player left, chapters right), live rooms in the Twitch
+  split (stage left, 360px chat rail right with its own composer).
+- Mobile (375×812) re-verified: single column, bottom tabs, no sidebar.
+- `tsc -b` + `npm run build` clean.

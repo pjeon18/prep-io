@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Badge } from "../components/Badge";
-import { BottomNav } from "../components/BottomNav";
-import { TopNav } from "../components/TopNav";
+import { AppShell } from "../components/AppShell";
 import { IconLink } from "../components/icons";
 import { usePrepStore } from "../store/usePrepStore";
 
@@ -16,9 +15,8 @@ export default function Settings() {
   const row = "card mt-3 flex items-center justify-between gap-4 p-5";
 
   return (
-    <div className="min-h-dvh pb-28">
-      <TopNav />
-      <main className="mx-auto max-w-md px-5">
+    <AppShell>
+      <main className="mx-auto max-w-md px-5 lg:mx-0 lg:max-w-[760px] lg:px-8">
         <h1 className="mt-9 font-display text-[32px]" style={{ fontWeight: 500 }}>
           Settings
         </h1>
@@ -108,7 +106,6 @@ export default function Settings() {
           Reset the prototype
         </button>
       </main>
-      <BottomNav />
-    </div>
+    </AppShell>
   );
 }

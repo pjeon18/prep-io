@@ -2,9 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Avatar } from "../components/Avatar";
 import { Badge } from "../components/Badge";
-import { BottomNav } from "../components/BottomNav";
 import { Thumb } from "../components/Thumb";
-import { TopNav } from "../components/TopNav";
+import { AppShell } from "../components/AppShell";
 import {
   IconClock,
   IconGear,
@@ -58,9 +57,8 @@ export default function Library() {
   const subbedHosts = HOSTS.filter((h) => follows.hosts.includes(h.id));
 
   return (
-    <div className="min-h-dvh pb-28">
-      <TopNav />
-      <main className="mx-auto max-w-md px-5">
+    <AppShell>
+      <main className="mx-auto max-w-md px-5 lg:mx-0 lg:max-w-[760px] lg:px-8">
         <div className="mt-9 flex items-center justify-between">
           <h1 className="font-display text-[32px]" style={{ fontWeight: 500 }}>
             Library
@@ -304,8 +302,7 @@ export default function Library() {
           </>
         )}
       </main>
-      <BottomNav />
-    </div>
+    </AppShell>
   );
 }
 

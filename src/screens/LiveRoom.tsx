@@ -90,7 +90,9 @@ export default function LiveRoom() {
 
   return (
     <div className="theater">
-      <div className="mx-auto flex h-dvh max-w-md flex-col">
+      {/* desktop: the Twitch split — stage left, chat right */}
+      <div className="mx-auto flex h-dvh max-w-md flex-col lg:max-w-[1360px] lg:flex-row">
+        <div className="flex min-h-0 flex-col lg:min-w-0 lg:flex-1 lg:overflow-y-auto lg:pb-8">
         {/* header */}
         <header className="flex items-center gap-2 px-3 py-3">
           <button
@@ -129,7 +131,7 @@ export default function LiveRoom() {
             <div
               className="relative flex aspect-video flex-col items-center justify-center overflow-hidden rounded-card"
               style={{
-                background: `radial-gradient(110% 130% at 50% 0%, hsl(${host.hue} 18% 18%) 0%, #131210 70%)`,
+                background: `radial-gradient(110% 130% at 50% 0%, hsl(${host.hue} 18% 18%) 0%, #141414 70%)`,
               }}
             >
               <Avatar hue={host.hue} initials={host.initials} size={64} />
@@ -141,7 +143,7 @@ export default function LiveRoom() {
               </div>
               <span
                 className="absolute left-2.5 top-2.5 inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10.5px] font-medium"
-                style={{ background: "rgba(15,13,10,0.7)", color: "var(--prep-text-2)" }}
+                style={{ background: "rgba(0,0,0,0.7)", color: "var(--prep-text-2)" }}
               >
                 <IconVideo size={11} /> camera mocked
               </span>
@@ -260,15 +262,26 @@ export default function LiveRoom() {
           </div>
         )}
 
-        {/* chat */}
-        <ChatLog />
+        </div>
 
-        {/* composer + hand */}
-        <Composer
-          onRaise={() => setHandSheet(true)}
-          handState={youOnStage ? "stage" : yourHand ? "queued" : "none"}
-          onNeedPoints={() => setPointsSheet(true)}
-        />
+        {/* chat column: inline on mobile, right rail on desktop */}
+        <div
+          className="flex min-h-0 flex-1 flex-col lg:h-dvh lg:w-[360px] lg:flex-none lg:border-l"
+          style={{ borderColor: "var(--prep-line)" }}
+        >
+          <div
+            className="overline hidden border-b px-5 pb-3 pt-4 lg:block"
+            style={{ borderColor: "var(--prep-line)" }}
+          >
+            Chat
+          </div>
+          <ChatLog />
+          <Composer
+            onRaise={() => setHandSheet(true)}
+            handState={youOnStage ? "stage" : yourHand ? "queued" : "none"}
+            onNeedPoints={() => setPointsSheet(true)}
+          />
+        </div>
 
         {/* raise-hand sheet — the consent moment, made explicit */}
         <Sheet open={handSheet} onClose={() => setHandSheet(false)}>
@@ -456,7 +469,7 @@ function Composer({
         {handState === "stage" && (
           <span
             className="rounded-pill px-3.5 py-2.5 text-[12px] font-semibold tracking-[0.08em]"
-            style={{ background: "var(--prep-live)", color: "#fdfbf7" }}
+            style={{ background: "var(--prep-live)", color: "#ffffff" }}
           >
             ON AIR
           </span>
@@ -530,7 +543,7 @@ function HotSeatMoment() {
         >
           <motion.div
             className="absolute inset-0"
-            style={{ background: "rgba(15, 13, 10, 0.9)" }}
+            style={{ background: "rgba(0, 0, 0, 0.9)" }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -543,11 +556,11 @@ function HotSeatMoment() {
           >
             <div
               className="font-display italic"
-              style={{ fontSize: 44, fontWeight: 500, color: "#f3f0e9", letterSpacing: "-0.01em" }}
+              style={{ fontSize: 44, fontWeight: 500, color: "#ffffff", letterSpacing: "-0.01em" }}
             >
               You're up.
             </div>
-            <div className="mt-3 text-[15px]" style={{ color: "#b5b0a4" }}>
+            <div className="mt-3 text-[15px]" style={{ color: "#b3b3b3" }}>
               The room is yours for a minute.
             </div>
           </motion.div>

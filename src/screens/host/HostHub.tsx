@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Badge } from "../../components/Badge";
-import { TopNav } from "../../components/TopNav";
+import { AppShell } from "../../components/AppShell";
 import { IconMic, IconPlay, IconShieldCheck } from "../../components/icons";
 import { usePrepStore } from "../../store/usePrepStore";
 
@@ -15,9 +15,8 @@ export default function HostHub() {
     verification.state === "verified-role" || verification.state === "verified-school";
 
   return (
-    <div className="min-h-dvh pb-20">
-      <TopNav />
-      <main className="mx-auto max-w-md px-5">
+    <AppShell>
+      <main className="mx-auto max-w-md px-5 lg:mx-0 lg:max-w-[760px] lg:px-8">
         <h1 className="mt-9 font-display text-[32px] leading-tight" style={{ fontWeight: 500 }}>
           Host on Prep.io
         </h1>
@@ -127,6 +126,6 @@ export default function HostHub() {
           </>
         )}
       </main>
-    </div>
+    </AppShell>
   );
 }

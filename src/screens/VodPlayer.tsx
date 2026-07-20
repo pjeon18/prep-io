@@ -3,9 +3,8 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Avatar } from "../components/Avatar";
 import { Badge } from "../components/Badge";
-import { BottomNav } from "../components/BottomNav";
 import { Sheet } from "../components/Sheet";
-import { TopNav } from "../components/TopNav";
+import { AppShell } from "../components/AppShell";
 import { Waveform } from "../components/LiveStage";
 import { IconLock } from "../components/iconsExtra";
 import {
@@ -73,9 +72,8 @@ export default function VodPlayer() {
   const liked = likes.sessions.includes(sesh.id);
 
   return (
-    <div className="min-h-dvh pb-28">
-      <TopNav />
-      <main className="mx-auto max-w-md px-5">
+    <AppShell>
+      <main className="mx-auto max-w-md px-5 lg:mx-0 lg:max-w-[1200px] lg:px-8">
         <div className="mt-5 flex items-center gap-2">
           <button
             aria-label="Back"
@@ -92,6 +90,10 @@ export default function VodPlayer() {
             </span>
           )}
         </div>
+
+        {/* desktop: the watch layout — player left, chapters right */}
+        <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_400px] lg:items-start lg:gap-10">
+        <div>
 
         {/* player — the one dark surface on a light page */}
         <motion.div
@@ -210,7 +212,9 @@ export default function VodPlayer() {
           </div>
         )}
 
-        <h2 className="mt-9 font-display text-[23px]" style={{ fontWeight: 500 }}>
+        </div>
+        <div>
+        <h2 className="mt-9 font-display text-[23px] lg:mt-2" style={{ fontWeight: 500 }}>
           Questions answered
         </h2>
         <div className="mt-1 text-[13.5px]" style={{ color: "var(--prep-text-3)" }}>
@@ -251,6 +255,8 @@ export default function VodPlayer() {
             </div>
           )}
         </div>
+        </div>
+        </div>
       </main>
 
       <Sheet open={plSheet} onClose={() => setPlSheet(false)}>
@@ -283,7 +289,6 @@ export default function VodPlayer() {
           </div>
         )}
       </Sheet>
-      <BottomNav />
-    </div>
+    </AppShell>
   );
 }

@@ -2,10 +2,9 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Avatar } from "../components/Avatar";
 import { Badge } from "../components/Badge";
-import { BottomNav } from "../components/BottomNav";
 import { LivePill } from "../components/LiveStage";
 import { Thumb } from "../components/Thumb";
-import { TopNav } from "../components/TopNav";
+import { AppShell } from "../components/AppShell";
 import { IconArrowLeft, IconBell, IconCheck, IconEye } from "../components/icons";
 import { CLIPS, COMPANIES, HOSTS, SECTIONS, SESSIONS } from "../data/seedData";
 import { fmtCount, usePrepStore } from "../store/usePrepStore";
@@ -60,9 +59,8 @@ export default function HostProfile() {
   ];
 
   return (
-    <div className="min-h-dvh pb-28">
-      <TopNav />
-      <main className="mx-auto max-w-md px-5">
+    <AppShell>
+      <main className="mx-auto max-w-md px-5 lg:mx-0 lg:max-w-[1100px] lg:px-8">
         <button
           aria-label="Back"
           className="-ml-2 mt-5 flex h-10 w-10 items-center justify-center rounded-full"
@@ -190,6 +188,7 @@ export default function HostProfile() {
                 No recordings yet.
               </div>
             )}
+            <div className="lg:mt-5 lg:grid lg:grid-cols-3 lg:gap-5 lg:[&>button]:mt-0">
             {vods.map((sesh) => (
               <button key={sesh.id} className="mt-5 w-full text-left" onClick={() => nav(`/vod/${sesh.id}`)}>
                 <Thumb
@@ -206,6 +205,7 @@ export default function HostProfile() {
                 </div>
               </button>
             ))}
+            </div>
           </>
         )}
 
@@ -217,7 +217,7 @@ export default function HostProfile() {
                 No shorts yet.
               </div>
             ) : (
-              <div className="mt-5 grid grid-cols-3 gap-2.5">
+              <div className="mt-5 grid grid-cols-3 gap-2.5 lg:grid-cols-6">
                 {clips.map((clip) => (
                   <button key={clip.id} className="text-left" onClick={() => nav(`/shorts/${clip.id}`)}>
                     <Thumb hue={clip.hue} initials={host.initials} duration={clip.durationLabel} height={150} />
@@ -282,7 +282,6 @@ export default function HostProfile() {
           </>
         )}
       </main>
-      <BottomNav />
-    </div>
+    </AppShell>
   );
 }

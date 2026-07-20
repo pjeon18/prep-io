@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { BottomNav } from "../components/BottomNav";
-import { TopNav } from "../components/TopNav";
+import { AppShell } from "../components/AppShell";
 import { IconCheck, IconDownload, IconList, IconPlay, IconStar } from "../components/icons";
 import { usePrepStore } from "../store/usePrepStore";
 
@@ -37,9 +36,8 @@ export default function Premium() {
   ];
 
   return (
-    <div className="min-h-dvh pb-28">
-      <TopNav />
-      <main className="mx-auto max-w-md px-5">
+    <AppShell>
+      <main className="mx-auto max-w-md px-5 lg:mx-0 lg:max-w-[760px] lg:px-8">
         <div className="overline mt-10">Prep.io Premium</div>
         <h1 className="mt-2 font-display text-[36px] leading-[1.12]" style={{ fontWeight: 500 }}>
           Keep everything you learn.
@@ -87,7 +85,6 @@ export default function Premium() {
           </>
         )}
       </main>
-      <BottomNav />
-    </div>
+    </AppShell>
   );
 }

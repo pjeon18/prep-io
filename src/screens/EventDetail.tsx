@@ -1,8 +1,7 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Avatar } from "../components/Avatar";
 import { Badge } from "../components/Badge";
-import { BottomNav } from "../components/BottomNav";
-import { TopNav } from "../components/TopNav";
+import { AppShell } from "../components/AppShell";
 import { IconArrowLeft, IconCheck, IconTicket, IconUsers, IconVideo } from "../components/icons";
 import { HOSTS, SECTIONS, SESSIONS } from "../data/seedData";
 import { usePrepStore } from "../store/usePrepStore";
@@ -40,9 +39,8 @@ export default function EventDetail() {
   const isCommit = sesh.ticket.commit && sesh.ticket.price === null;
 
   return (
-    <div className="min-h-dvh pb-28">
-      <TopNav />
-      <main className="mx-auto max-w-md px-5">
+    <AppShell>
+      <main className="mx-auto max-w-md px-5 lg:mx-0 lg:max-w-[760px] lg:px-8">
         <button
           aria-label="Back"
           className="-ml-2 mt-5 flex h-10 w-10 items-center justify-center rounded-full"
@@ -176,7 +174,6 @@ export default function EventDetail() {
           </button>
         )}
       </main>
-      <BottomNav />
-    </div>
+    </AppShell>
   );
 }

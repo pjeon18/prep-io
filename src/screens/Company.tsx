@@ -2,9 +2,8 @@ import { useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Avatar } from "../components/Avatar";
 import { Badge } from "../components/Badge";
-import { BottomNav } from "../components/BottomNav";
 import { Thumb } from "../components/Thumb";
-import { TopNav } from "../components/TopNav";
+import { AppShell } from "../components/AppShell";
 import { IconArrowLeft, IconEye, IconTicket } from "../components/icons";
 import { COMPANIES, SECTIONS } from "../data/seedData";
 import { companyHosts, companySessions } from "../lib/search";
@@ -44,9 +43,8 @@ export default function Company() {
   const targeted = goals.companyIds.includes(company.id);
 
   return (
-    <div className="min-h-dvh pb-28">
-      <TopNav />
-      <main className="mx-auto max-w-md px-5">
+    <AppShell>
+      <main className="mx-auto max-w-md px-5 lg:mx-0 lg:max-w-[760px] lg:px-8">
         <button
           aria-label="Back"
           className="-ml-2 mt-5 flex h-10 w-10 items-center justify-center rounded-full"
@@ -197,7 +195,6 @@ export default function Company() {
           </>
         )}
       </main>
-      <BottomNav />
-    </div>
+    </AppShell>
   );
 }

@@ -16,14 +16,14 @@
 /* ------------------------------------------------------------------ */
 
 :root {
-  --prep-bg: #faf8f4;          /* warm paper */
+  --prep-bg: #ffffff;          /* plain white */
   --prep-surface: #ffffff;     /* cards */
-  --prep-surface-2: #f1eee7;   /* wells, inputs, hover */
-  --prep-line: #e5e1d7;        /* hairlines */
+  --prep-surface-2: #f4f4f4;   /* wells, inputs, hover */
+  --prep-line: #e6e6e6;        /* hairlines */
 
-  --prep-text: #191712;        /* ink */
-  --prep-text-2: #55524a;      /* secondary */
-  --prep-text-3: #8d897e;      /* captions, overlines */
+  --prep-text: #000000;        /* plain black */
+  --prep-text-2: #4d4d4d;      /* secondary */
+  --prep-text-3: #8c8c8c;      /* captions, overlines */
 
   --prep-live: #b0402d;        /* broadcast crimson — LIVE, on-air, end */
   --prep-live-tint: rgba(176, 64, 45, 0.08);
@@ -34,26 +34,26 @@
   --prep-danger: #b0402d;      /* same family as live — ending things */
 
   /* action tokens let the theater invert buttons cleanly */
-  --prep-action-bg: #191712;
-  --prep-action-fg: #faf8f4;
+  --prep-action-bg: #000000;
+  --prep-action-fg: #ffffff;
 
   --radius-card: 14px;
   --radius-tile: 10px;
   --radius-pill: 99px;
 
-  --shadow-card: 0 1px 2px rgba(25, 23, 18, 0.04);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 /* The theater: live rooms only. Lights down, same discipline. */
 .theater {
-  --prep-bg: #171512;
-  --prep-surface: #1f1d19;
-  --prep-surface-2: #29261f;
-  --prep-line: #37332a;
+  --prep-bg: #0f0f0f;
+  --prep-surface: #1a1a1a;
+  --prep-surface-2: #262626;
+  --prep-line: #333333;
 
-  --prep-text: #f3f0e9;
-  --prep-text-2: #b5b0a4;
-  --prep-text-3: #7d7869;
+  --prep-text: #ffffff;
+  --prep-text-2: #b3b3b3;
+  --prep-text-3: #7a7a7a;
 
   --prep-live: #d3573f;
   --prep-live-tint: rgba(211, 87, 63, 0.13);
@@ -63,8 +63,8 @@
 
   --prep-danger: #d3573f;
 
-  --prep-action-bg: #f3f0e9;
-  --prep-action-fg: #171512;
+  --prep-action-bg: #ffffff;
+  --prep-action-fg: #0f0f0f;
 
   --shadow-card: none;
 

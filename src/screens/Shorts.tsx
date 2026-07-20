@@ -64,7 +64,7 @@ export default function Shorts() {
         <div
           className="relative mt-3 flex flex-1 flex-col items-center justify-center overflow-hidden rounded-card"
           style={{
-            background: `linear-gradient(160deg, hsl(${clip.hue} 18% 18%), #131210 75%)`,
+            background: `linear-gradient(160deg, hsl(${clip.hue} 18% 18%), #141414 75%)`,
           }}
         >
           <Avatar hue={clip.hue} initials={host.initials} size={92} />
@@ -76,7 +76,7 @@ export default function Shorts() {
           </div>
           <span
             className="absolute bottom-3 right-3 rounded px-1.5 py-0.5 text-[11px] font-medium tabular-nums"
-            style={{ background: "rgba(15,13,10,0.7)", color: "#f3f0e9" }}
+            style={{ background: "rgba(0,0,0,0.7)", color: "#ffffff" }}
           >
             {clip.durationLabel}
           </span>

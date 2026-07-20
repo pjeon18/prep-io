@@ -1,7 +1,6 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { BottomNav } from "../components/BottomNav";
 import { Thumb } from "../components/Thumb";
-import { TopNav } from "../components/TopNav";
+import { AppShell } from "../components/AppShell";
 import { IconArrowLeft, IconX } from "../components/icons";
 import { CLIPS, HOSTS, SESSIONS } from "../data/seedData";
 import { usePrepStore } from "../store/usePrepStore";
@@ -70,9 +69,8 @@ export default function PlaylistDetail() {
   }[];
 
   return (
-    <div className="min-h-dvh pb-28">
-      <TopNav />
-      <main className="mx-auto max-w-md px-5">
+    <AppShell>
+      <main className="mx-auto max-w-md px-5 lg:mx-0 lg:max-w-[760px] lg:px-8">
         <button
           aria-label="Back"
           className="-ml-2 mt-5 flex h-10 w-10 items-center justify-center rounded-full"
@@ -130,7 +128,6 @@ export default function PlaylistDetail() {
           Delete playlist
         </button>
       </main>
-      <BottomNav />
-    </div>
+    </AppShell>
   );
 }

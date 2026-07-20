@@ -58,10 +58,13 @@ React 18 + TypeScript + Vite + Tailwind + Zustand + Framer Motion.
 
 ## Design direction (PINNED — revise deliberately in `src/styles/tokens.css`)
 
-**"Financial editorial"** (CONCEPT.md D8, replaced campus-at-night 2026-07-20):
-warm paper `#FAF8F4` + ink `#191712` shell for every browse surface; the
+**"Financial editorial"** (CONCEPT.md D8, palette revised by D15 2026-07-20):
+plain white `#FFFFFF` + black `#000000` shell for every browse surface; the
 live rooms (viewer, host, breakout) are the one dark place — the `.theater`
-CSS scope flips the same tokens to warm near-black `#171512`. Exactly three
+CSS scope flips the same tokens to neutral near-black `#0F0F0F`. Desktop
+(lg+) uses the YouTube/Twitch chrome via `components/AppShell.tsx`
+(sidebar + centered search + grids; Twitch stage/chat split in rooms);
+mobile keeps the bottom-tab shell. Exactly three
 color roles, all semantic: **ink** = primary actions (black buttons),
 **crimson `#B0402D`** = LIVE/on-air/end only, **green `#1C5C41` reserved for
 VERIFIED** — nothing else gets color. Type: Newsreader (editorial serif

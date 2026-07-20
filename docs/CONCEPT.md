@@ -161,6 +161,17 @@ shorts/clips, tabbed channel pages, LinkedIn sync (stubbed), bottom tab nav
 language from D8 carries the new vocabulary: 16:9 mock thumbnails, shelves,
 denser cards.
 
+**D15 — Desktop shell + plain white/black.** (2026-07-20, Paul.) The palette
+drops the warm paper for plain white background and black text (neutral
+grays for hierarchy; crimson LIVE and racing-green verified unchanged;
+theater rooms go neutral near-black). Desktop (lg+) gets the
+YouTube/Twitch chrome: fixed left sidebar (nav, subscriptions with live
+dots, the floor's booths), a centered top search bar, thumbnail grids
+(Home 3–4 columns), the watch layout on recordings (player left, chapters
+right), and the Twitch split in live rooms (stage left, chat rail right).
+Mobile keeps the bottom-tab shell. The serif display and semantic color
+discipline carry over — the shell is conventional, the voice stays ours.
+
 ## 6. Open questions
 
 Tracked in PRD §14; raise new ones here first, promote when decided.

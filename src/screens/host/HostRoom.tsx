@@ -50,7 +50,7 @@ export default function HostRoom() {
 
   return (
     <div className="theater">
-      <div className="mx-auto flex h-dvh max-w-md flex-col">
+      <div className="mx-auto flex h-dvh max-w-md flex-col lg:max-w-[860px]">
         {/* header */}
         <header className="flex items-center gap-3 px-4 py-3.5">
           <div className="min-w-0 flex-1">

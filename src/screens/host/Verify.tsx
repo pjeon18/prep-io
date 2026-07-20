@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "../../components/Badge";
-import { TopNav } from "../../components/TopNav";
+import { AppShell } from "../../components/AppShell";
 import { IconArrowLeft, IconBook, IconCheck, IconShieldCheck } from "../../components/icons";
 import { springs } from "../../lib/motion";
 import { usePrepStore } from "../../store/usePrepStore";
@@ -54,9 +54,8 @@ export default function Verify() {
   ];
 
   return (
-    <div className="min-h-dvh pb-20">
-      <TopNav />
-      <main className="mx-auto max-w-md px-5">
+    <AppShell>
+      <main className="mx-auto max-w-md px-5 lg:mx-0 lg:max-w-[760px] lg:px-8">
         <div className="mt-5 flex items-center gap-1">
           <button
             aria-label="Back"
@@ -160,6 +159,6 @@ export default function Verify() {
           </>
         )}
       </main>
-    </div>
+    </AppShell>
   );
 }

@@ -30,7 +30,7 @@ export function Thumb({
       className="relative w-full shrink-0 overflow-hidden rounded-tile"
       style={{
         height,
-        background: `linear-gradient(150deg, hsl(${hue} 16% 16%), #171512 70%)`,
+        background: `linear-gradient(150deg, hsl(${hue} 16% 16%), #141414 70%)`,
       }}
     >
       <div className="absolute inset-0 flex items-center justify-center">
@@ -49,7 +49,7 @@ export function Thumb({
       {duration && (
         <span
           className="absolute bottom-1.5 right-1.5 rounded px-1.5 py-0.5 text-[11px] font-medium tabular-nums"
-          style={{ background: "rgba(15,13,10,0.8)", color: "#f3f0e9" }}
+          style={{ background: "rgba(0,0,0,0.8)", color: "#ffffff" }}
         >
           {duration}
         </span>
@@ -57,7 +57,7 @@ export function Thumb({
       {locked && (
         <div
           className="absolute inset-0 flex items-center justify-center gap-1.5 text-[12px] font-medium"
-          style={{ background: "rgba(15,13,10,0.62)", color: "#f3f0e9" }}
+          style={{ background: "rgba(0,0,0,0.62)", color: "#ffffff" }}
         >
           <IconLock size={13} /> Premium
         </div>
@@ -65,7 +65,7 @@ export function Thumb({
       {!live && !locked && (
         <div
           className="absolute bottom-1.5 left-1.5 flex h-6 w-6 items-center justify-center rounded-full"
-          style={{ background: "rgba(15,13,10,0.65)", color: "#f3f0e9" }}
+          style={{ background: "rgba(0,0,0,0.65)", color: "#ffffff" }}
         >
           <IconPlay size={12} />
         </div>

@@ -3,9 +3,8 @@ import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Avatar } from "../components/Avatar";
 import { Badge } from "../components/Badge";
-import { BottomNav } from "../components/BottomNav";
 import { Thumb } from "../components/Thumb";
-import { TopNav } from "../components/TopNav";
+import { AppShell } from "../components/AppShell";
 import { IconEye, IconTicket } from "../components/icons";
 import { CLIPS, HOSTS, SECTIONS, SESSIONS } from "../data/seedData";
 import { fadeUp, springs, stagger } from "../lib/motion";
@@ -35,14 +34,13 @@ export default function Fair() {
   const h2 = "mt-11 font-display text-[26px]";
 
   return (
-    <div className="min-h-dvh pb-28">
-      <TopNav />
-      <main className="mx-auto max-w-md px-5">
+    <AppShell>
+      <main className="mx-auto max-w-md px-5 lg:mx-0 lg:max-w-[1440px] lg:px-8">
         {/* ---- Live now ---- */}
         <h2 className="mt-8 font-display text-[26px]" style={{ fontWeight: 500 }}>
           Live now
         </h2>
-        <div className="mt-4 flex flex-col gap-4">
+        <div className="mt-4 flex flex-col gap-4 lg:grid lg:grid-cols-3 lg:gap-x-5 lg:gap-y-9 xl:grid-cols-4">
           {liveSessions.map((sesh, i) => {
             const host = HOSTS.find((h) => h.id === sesh.hostId)!;
             const count = floorCounts[sesh.id];
@@ -86,6 +84,7 @@ export default function Fair() {
         <div className="mt-1 text-[13px]" style={{ color: "var(--prep-text-3)" }}>
           Small rooms, real seats — first come, first served
         </div>
+        <div className="lg:mt-3 lg:grid lg:grid-cols-2 lg:gap-3 lg:[&>button]:mt-0 xl:grid-cols-3">
         {events.map((sesh) => {
           const host = HOSTS.find((h) => h.id === sesh.hostId)!;
           const left = sesh.ticket!.capacity - sesh.ticket!.seedTaken;
@@ -111,6 +110,7 @@ export default function Fair() {
             </button>
           );
         })}
+        </div>
 
         {/* ---- Calendar rail: co-equal with live-now (D2) ---- */}
         <h2 className={h2} style={{ fontWeight: 500 }}>
@@ -162,7 +162,7 @@ export default function Fair() {
         <h2 className={h2} style={{ fontWeight: 500 }}>
           The floor
         </h2>
-        <div className="mt-4 grid grid-cols-2 gap-3">
+        <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
           {SECTIONS.map((section, i) => {
             const live = SESSIONS.filter(
               (x) => x.sectionId === section.id && x.kind === "live",
@@ -206,7 +206,6 @@ export default function Fair() {
           })}
         </div>
       </main>
-      <BottomNav />
-    </div>
+    </AppShell>
   );
 }

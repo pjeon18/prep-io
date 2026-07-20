@@ -23,12 +23,12 @@ export function TopNav() {
     <header
       className="sticky top-0 z-30 border-b"
       style={{
-        background: "rgba(250, 248, 244, 0.94)",
+        background: "rgba(255, 255, 255, 0.94)",
         borderColor: "var(--prep-line)",
         backdropFilter: "blur(8px)",
       }}
     >
-      <div className="mx-auto flex h-[60px] max-w-md items-center justify-between px-5">
+      <div className="mx-auto flex h-[60px] max-w-md items-center justify-between px-5 lg:max-w-none lg:px-6">
         <Link to="/fair" aria-label="Prep.io home" className="flex items-center gap-2">
           <Wordmark />
           {premium && (
@@ -40,10 +40,19 @@ export function TopNav() {
             </span>
           )}
         </Link>
+        {/* desktop: the search bar sits center, YouTube-style */}
+        <button
+          className="mx-8 hidden h-10 max-w-[480px] flex-1 items-center gap-3 rounded-pill border px-4 text-left text-[14px] lg:flex"
+          style={{ borderColor: "var(--prep-line)", color: "var(--prep-text-3)" }}
+          onClick={() => nav("/search")}
+        >
+          <IconSearch size={16} />
+          Search companies, people, streams
+        </button>
         <div className="flex items-center gap-0.5">
           <button
             aria-label="Search"
-            className="flex h-10 w-10 items-center justify-center rounded-full"
+            className="flex h-10 w-10 items-center justify-center rounded-full lg:hidden"
             style={{ color: "var(--prep-text-2)" }}
             onClick={() => nav("/search")}
           >

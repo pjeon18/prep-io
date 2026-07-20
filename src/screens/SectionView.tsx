@@ -4,7 +4,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { Avatar } from "../components/Avatar";
 import { Badge } from "../components/Badge";
 import { LivePill } from "../components/LiveStage";
-import { TopNav } from "../components/TopNav";
+import { AppShell } from "../components/AppShell";
 import { IconArrowLeft, IconBell, IconEye, IconPlay } from "../components/icons";
 import { HOSTS, SECTIONS, SESSIONS } from "../data/seedData";
 import { fadeUp, springs, stagger } from "../lib/motion";
@@ -43,9 +43,8 @@ export default function SectionView() {
   const following = follows.sections.includes(section.id);
 
   return (
-    <div className="min-h-dvh pb-20">
-      <TopNav />
-      <main className="mx-auto max-w-md px-5">
+    <AppShell>
+      <main className="mx-auto max-w-md px-5 lg:mx-0 lg:max-w-[760px] lg:px-8">
         <div className="mt-6 flex items-start gap-1">
           <button
             aria-label="Back to the fair"
@@ -193,6 +192,6 @@ export default function SectionView() {
           </>
         )}
       </main>
-    </div>
+    </AppShell>
   );
 }
