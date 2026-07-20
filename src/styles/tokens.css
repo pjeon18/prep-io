@@ -1,0 +1,120 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------ */
+/* Prep.io design tokens — "campus at night"                           */
+/* Deep navy surfaces, chalk-warm text, ONE confident amber for the    */
+/* live/primary element. Green is reserved for VERIFIED — nothing else */
+/* may use it. Revise deliberately here, never ad hoc in components.   */
+/* ------------------------------------------------------------------ */
+
+:root {
+  --prep-bg: #0e1626;          /* page night sky */
+  --prep-surface: #141e33;     /* cards, booths */
+  --prep-surface-2: #1c2942;   /* raised layer: sheets, inputs, hover */
+  --prep-line: #2a3a5c;        /* hairlines, borders */
+
+  --prep-text: #f2eee6;        /* chalk-warm primary */
+  --prep-text-2: #c9c3b4;      /* secondary */
+  --prep-text-3: #8e8a7e;      /* tertiary / captions */
+
+  --prep-amber: #ffb547;       /* THE accent: live, primary action */
+  --prep-amber-soft: #e8a53f;  /* pressed / hover amber */
+  --prep-amber-tint: rgba(255, 181, 71, 0.14); /* amber wash */
+
+  --prep-verified: #43dd9a;    /* verified ONLY */
+  --prep-verified-tint: rgba(67, 221, 154, 0.12);
+
+  --prep-danger: #ff6b5e;      /* end/leave/report */
+
+  --radius-card: 16px;
+  --radius-tile: 14px;
+  --radius-pill: 99px;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--prep-bg);
+  color: var(--prep-text);
+  font-family: Inter, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: Poppins, system-ui, sans-serif;
+}
+
+/* ---------------- base component classes ---------------- */
+
+.card {
+  background: var(--prep-surface);
+  border: 1px solid var(--prep-line);
+  border-radius: var(--radius-card);
+}
+
+.btn {
+  @apply inline-flex items-center justify-center gap-2 font-display font-semibold select-none;
+  border-radius: var(--radius-pill);
+  padding: 12px 22px;
+  font-size: 15px;
+  transition: transform 120ms ease, background-color 120ms ease, opacity 120ms ease;
+}
+.btn:active { transform: scale(0.97); }
+
+.btn-primary {
+  background: var(--prep-amber);
+  color: #201302;
+}
+.btn-primary:hover { background: var(--prep-amber-soft); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--prep-text);
+  border: 1px solid var(--prep-line);
+}
+.btn-ghost:hover { background: var(--prep-surface-2); }
+
+.btn-danger {
+  background: transparent;
+  color: var(--prep-danger);
+  border: 1px solid var(--prep-danger);
+}
+
+.btn:disabled { opacity: 0.45; pointer-events: none; }
+
+.chip {
+  @apply inline-flex items-center gap-1.5 text-sm select-none;
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
+  background: var(--prep-surface-2);
+  border: 1px solid var(--prep-line);
+  color: var(--prep-text-2);
+  transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+.chip-active {
+  background: var(--prep-amber-tint);
+  border-color: var(--prep-amber);
+  color: var(--prep-amber);
+}
+
+.input {
+  @apply w-full text-[15px] outline-none;
+  background: var(--prep-surface-2);
+  border: 1px solid var(--prep-line);
+  border-radius: var(--radius-tile);
+  padding: 12px 14px;
+  color: var(--prep-text);
+}
+.input::placeholder { color: var(--prep-text-3); }
+.input:focus { border-color: var(--prep-amber); }
+
+/* thin scrollbars for rails */
+.rail::-webkit-scrollbar { height: 0; width: 0; }
+.rail { scrollbar-width: none; }
