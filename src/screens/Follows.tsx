@@ -24,7 +24,7 @@ export default function Follows() {
   );
 
   return (
-    <div className="min-h-dvh pb-20">
+    <div className="min-h-dvh pb-28">
       <TopNav />
       <main className="mx-auto max-w-md px-5">
         <h1 className="mt-9 font-display text-[32px]" style={{ fontWeight: 500 }}>

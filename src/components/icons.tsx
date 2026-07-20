@@ -159,3 +159,101 @@ export const IconDollar = (p: IconProps) => (
     <path d="M12 3.5v17M16.5 7.5c0-1.7-2-2.8-4.5-2.8S7.5 5.8 7.5 7.7c0 4.3 9 2.4 9 6.8 0 1.9-2 3-4.5 3s-4.5-1.2-4.5-2.9" />
   </svg>
 );
+
+export const IconSearch = (p: IconProps) => (
+  <svg {...base(p)}>
+    <circle cx="10.5" cy="10.5" r="6.5" />
+    <path d="m15.5 15.5 5 5" />
+  </svg>
+);
+
+export const IconHome = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M4 11.5 12 4l8 7.5" />
+    <path d="M6 10v10h12V10" />
+  </svg>
+);
+
+export const IconCompass = (p: IconProps) => (
+  <svg {...base(p)}>
+    <circle cx="12" cy="12" r="8.5" />
+    <path d="m15.5 8.5-2 5-5 2 2-5 5-2Z" />
+  </svg>
+);
+
+export const IconLibrary = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M4 4.5v15M8.5 4.5v15" />
+    <path d="m12.5 5.5 5.5 13.5" transform="rotate(-8 15 12)" />
+  </svg>
+);
+
+export const IconHeart = (p: IconProps & { filled?: boolean }) => (
+  <svg {...base(p)} fill={p.filled ? "currentColor" : "none"}>
+    <path d="M12 20s-7.5-4.6-7.5-10A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 7.5 3c0 5.4-7.5 10-7.5 10Z" />
+  </svg>
+);
+
+export const IconTicket = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M4 8a2 2 0 0 0 2-2h12a2 2 0 0 0 2 2v3a2 2 0 0 0 0 2v3a2 2 0 0 0-2 2H6a2 2 0 0 0-2-2v-3a2 2 0 0 0 0-2V8Z" transform="rotate(0 12 12)" />
+    <path d="M14 6.5v11" strokeDasharray="2 2.5" />
+  </svg>
+);
+
+export const IconBolt = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M13 3 5.5 13.5H11L10 21l7.5-10.5H12L13 3Z" />
+  </svg>
+);
+
+export const IconDownload = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M12 4v11M7 11l5 5 5-5" />
+    <path d="M5 20h14" />
+  </svg>
+);
+
+export const IconPlus = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M12 5v14M5 12h14" />
+  </svg>
+);
+
+export const IconList = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M9 6.5h11M9 12h11M9 17.5h11" />
+    <circle cx="5" cy="6.5" r="0.6" fill="currentColor" />
+    <circle cx="5" cy="12" r="0.6" fill="currentColor" />
+    <circle cx="5" cy="17.5" r="0.6" fill="currentColor" />
+  </svg>
+);
+
+export const IconVideo = (p: IconProps) => (
+  <svg {...base(p)}>
+    <rect x="3.5" y="6.5" width="12" height="11" rx="2.5" />
+    <path d="m15.5 11 5-3v8l-5-3" />
+  </svg>
+);
+
+export const IconStar = (p: IconProps & { filled?: boolean }) => (
+  <svg {...base(p)} fill={p.filled ? "currentColor" : "none"}>
+    <path d="m12 4 2.35 4.9 5.35.7-3.93 3.72.99 5.32L12 16.06l-4.76 2.58.99-5.32L4.3 9.6l5.35-.7L12 4Z" />
+  </svg>
+);
+
+export const IconBuilding = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M5 20.5V5a1.5 1.5 0 0 1 1.5-1.5h7A1.5 1.5 0 0 1 15 5v15.5" />
+    <path d="M15 9.5h3A1.5 1.5 0 0 1 19.5 11v9.5M3.5 20.5h17" />
+    <path d="M8 7.5h1.5M11 7.5h1.5M8 11h1.5M11 11h1.5M8 14.5h1.5M11 14.5h1.5" />
+  </svg>
+);
+
+export const IconLink = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M9.5 14.5 14.5 9.5" />
+    <path d="M11 6.5 12.8 4.7a3.8 3.8 0 0 1 5.4 5.4L16.4 12" />
+    <path d="M13 17.5 11.2 19.3a3.8 3.8 0 0 1-5.4-5.4L7.6 12" />
+  </svg>
+);

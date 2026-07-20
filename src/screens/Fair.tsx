@@ -3,16 +3,17 @@ import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Avatar } from "../components/Avatar";
 import { Badge } from "../components/Badge";
-import { LivePill } from "../components/LiveStage";
+import { BottomNav } from "../components/BottomNav";
+import { Thumb } from "../components/Thumb";
 import { TopNav } from "../components/TopNav";
-import { IconEye } from "../components/icons";
-import { HOSTS, SECTIONS, SESSIONS } from "../data/seedData";
+import { IconEye, IconTicket } from "../components/icons";
+import { CLIPS, HOSTS, SECTIONS, SESSIONS } from "../data/seedData";
 import { fadeUp, springs, stagger } from "../lib/motion";
 import { fmtCount, usePrepStore } from "../store/usePrepStore";
 
-/* The Fair — discovery is the floor + the calendar, nothing else.
- * No feed, no ranking of people, no algorithmic ordering (Principle 3):
- * live rooms sort by section order, booths are the fixed floor plan. */
+/* Home — the fair floor + calendar. Discovery is the floor, the calendar,
+ * and search; never a feed (Principle 3). Live rooms sort by section order,
+ * booths are the fixed floor plan. */
 
 export default function Fair() {
   const nav = useNavigate();
@@ -28,55 +29,91 @@ export default function Fair() {
   }, [initFloor, driftFloor]);
 
   const liveSessions = SESSIONS.filter((s) => s.kind === "live");
-  const scheduled = SESSIONS.filter((s) => s.kind === "scheduled");
+  const events = SESSIONS.filter((s) => s.kind === "scheduled" && s.ticket);
+  const scheduled = SESSIONS.filter((s) => s.kind === "scheduled" && !s.ticket);
+
+  const h2 = "mt-11 font-display text-[26px]";
 
   return (
-    <div className="min-h-dvh pb-20">
+    <div className="min-h-dvh pb-28">
       <TopNav />
       <main className="mx-auto max-w-md px-5">
         {/* ---- Live now ---- */}
-        <h2 className="mt-9 font-display text-[28px]" style={{ fontWeight: 500 }}>
+        <h2 className="mt-8 font-display text-[26px]" style={{ fontWeight: 500 }}>
           Live now
         </h2>
-        <div className="mt-4 flex flex-col gap-3">
+        <div className="mt-4 flex flex-col gap-4">
           {liveSessions.map((sesh, i) => {
             const host = HOSTS.find((h) => h.id === sesh.hostId)!;
             const count = floorCounts[sesh.id];
             return (
               <motion.button
                 key={sesh.id}
-                className="card w-full p-5 text-left"
+                className="w-full text-left"
                 {...fadeUp}
                 transition={{ ...springs.standard, ...stagger(i) }}
                 onClick={() => nav(`/room/${sesh.id}`)}
               >
-                <div className="flex items-center justify-between">
-                  <LivePill />
-                  <span
-                    className="inline-flex items-center gap-1.5 text-[13px] tabular-nums"
-                    style={{ color: "var(--prep-text-2)" }}
-                  >
-                    <IconEye size={14} />
-                    {count !== undefined ? fmtCount(count) : "…"}
-                  </span>
-                </div>
-                <div className="mt-3 font-display text-[19px] leading-snug" style={{ fontWeight: 500 }}>
-                  {sesh.title}
-                </div>
-                <div className="mt-3 flex items-center gap-2.5">
-                  <Avatar hue={host.hue} initials={host.initials} size={26} />
-                  <span className="text-[14px]" style={{ color: "var(--prep-text-2)" }}>
-                    {host.name}
-                  </span>
-                  <Badge state={host.badge} />
+                <Thumb hue={host.hue} initials={host.initials} live video={sesh.video} height={168} />
+                <div className="mt-2.5 flex items-start gap-3">
+                  <Avatar hue={host.hue} initials={host.initials} size={34} />
+                  <div className="min-w-0 flex-1">
+                    <div className="line-clamp-2 text-[15.5px] font-medium leading-snug">
+                      {sesh.title}
+                    </div>
+                    <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] tabular-nums" style={{ color: "var(--prep-text-2)" }}>
+                      {host.name}
+                      <Badge state={host.badge} compact />
+                      <span className="inline-flex items-center gap-1" style={{ color: "var(--prep-text-3)" }}>
+                        <IconEye size={13} />
+                        {count !== undefined ? fmtCount(count) : "…"}
+                      </span>
+                      <span style={{ color: "var(--prep-text-3)" }}>
+                        {SECTIONS.find((x) => x.id === sesh.sectionId)?.name}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </motion.button>
             );
           })}
         </div>
 
+        {/* ---- Events (capacity-limited) ---- */}
+        <h2 className={h2} style={{ fontWeight: 500 }}>
+          Events
+        </h2>
+        <div className="mt-1 text-[13px]" style={{ color: "var(--prep-text-3)" }}>
+          Small rooms, real seats — first come, first served
+        </div>
+        {events.map((sesh) => {
+          const host = HOSTS.find((h) => h.id === sesh.hostId)!;
+          const left = sesh.ticket!.capacity - sesh.ticket!.seedTaken;
+          return (
+            <button
+              key={sesh.id}
+              className="card mt-3 flex w-full items-center gap-4 p-4 text-left"
+              onClick={() => nav(`/event/${sesh.id}`)}
+            >
+              <div className="overline w-[76px] shrink-0 !leading-snug">{sesh.when}</div>
+              <div className="min-w-0 flex-1">
+                <div className="text-[14.5px] font-medium leading-snug">{sesh.title}</div>
+                <div className="mt-1 flex flex-wrap items-center gap-1.5 text-[12.5px]" style={{ color: "var(--prep-text-2)" }}>
+                  {host.name}
+                  <span className="inline-flex items-center gap-1" style={{ color: left <= 5 ? "var(--prep-live)" : "var(--prep-text-3)" }}>
+                    · <IconTicket size={12} /> {left} seats left
+                  </span>
+                  <span style={{ color: "var(--prep-text-3)" }}>
+                    · {sesh.ticket!.price ? `$${sesh.ticket!.price}` : "$1 commit"}
+                  </span>
+                </div>
+              </div>
+            </button>
+          );
+        })}
+
         {/* ---- Calendar rail: co-equal with live-now (D2) ---- */}
-        <h2 className="mt-12 font-display text-[28px]" style={{ fontWeight: 500 }}>
+        <h2 className={h2} style={{ fontWeight: 500 }}>
           Coming up
         </h2>
         <div className="rail -mx-5 mt-4 flex gap-3 overflow-x-auto px-5 pb-1">
@@ -93,10 +130,7 @@ export default function Fair() {
                 <div className="mt-2 line-clamp-2 min-h-[44px] text-[15px] font-medium leading-snug">
                   {sesh.title}
                 </div>
-                <Link
-                  to={`/profile/${host.id}`}
-                  className="mt-3 flex items-center gap-2"
-                >
+                <Link to={`/profile/${host.id}`} className="mt-3 flex items-center gap-2">
                   <Avatar hue={host.hue} initials={host.initials} size={22} />
                   <span className="truncate text-[13px]" style={{ color: "var(--prep-text-2)" }}>
                     {host.name}
@@ -108,8 +142,24 @@ export default function Fair() {
           })}
         </div>
 
+        {/* ---- Shorts ---- */}
+        <h2 className={h2} style={{ fontWeight: 500 }}>
+          Shorts
+        </h2>
+        <div className="rail -mx-5 mt-4 flex gap-3 overflow-x-auto px-5">
+          {CLIPS.slice(0, 6).map((clip) => {
+            const host = HOSTS.find((h) => h.id === clip.hostId)!;
+            return (
+              <button key={clip.id} className="w-[120px] shrink-0 text-left" onClick={() => nav(`/shorts/${clip.id}`)}>
+                <Thumb hue={clip.hue} initials={host.initials} duration={clip.durationLabel} height={180} />
+                <div className="mt-1.5 line-clamp-2 text-[12.5px] font-medium leading-snug">{clip.title}</div>
+              </button>
+            );
+          })}
+        </div>
+
         {/* ---- The floor ---- */}
-        <h2 className="mt-12 font-display text-[28px]" style={{ fontWeight: 500 }}>
+        <h2 className={h2} style={{ fontWeight: 500 }}>
           The floor
         </h2>
         <div className="mt-4 grid grid-cols-2 gap-3">
@@ -156,6 +206,7 @@ export default function Fair() {
           })}
         </div>
       </main>
+      <BottomNav />
     </div>
   );
 }

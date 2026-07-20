@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Badge } from "../../components/Badge";
 import { TopNav } from "../../components/TopNav";
-import { IconArrowLeft, IconHand, IconMic } from "../../components/icons";
+import { IconArrowLeft, IconHand, IconMic, IconVideo } from "../../components/icons";
 import { SECTIONS } from "../../data/seedData";
 import { usePrepStore } from "../../store/usePrepStore";
 
@@ -112,7 +112,21 @@ export default function GoLiveWizard() {
         {/* room settings */}
         <div className="overline mt-8">Room</div>
         <div className="card mt-3 divide-y" style={{ borderColor: "var(--prep-line)" }}>
-          <label className="flex items-center justify-between gap-3 p-4.5 px-5 py-4">
+          <label className="flex items-center justify-between gap-3 px-5 py-4">
+            <span className="flex items-center gap-2.5 text-[15px]">
+              <IconVideo size={15} /> Camera on
+              <span className="text-[12px]" style={{ color: "var(--prep-text-3)" }}>
+                (audio-only if off)
+              </span>
+            </span>
+            <input
+              type="checkbox"
+              className="h-5 w-5 accent-[#191712]"
+              checked={draft.video}
+              onChange={(e) => setHostDraft({ video: e.target.checked })}
+            />
+          </label>
+          <label className="flex items-center justify-between gap-3 px-5 py-4" style={{ borderColor: "var(--prep-line)" }}>
             <span className="flex items-center gap-2.5 text-[15px]">
               <IconHand size={15} /> Hand raises
             </span>

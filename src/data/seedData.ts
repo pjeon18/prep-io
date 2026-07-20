@@ -1,4 +1,12 @@
-import type { CrowdPersona, Host, Section, SessionInfo } from "../lib/types";
+import type {
+  Clip,
+  Company,
+  CrowdPersona,
+  Host,
+  MembershipTier,
+  Section,
+  SessionInfo,
+} from "../lib/types";
 
 /* ------------------------------------------------------------------ */
 /* Sections — the fair floor. Finance is the rich booth; the rest are  */
@@ -17,8 +25,47 @@ export const SECTIONS: Section[] = [
 ];
 
 /* ------------------------------------------------------------------ */
+/* Companies — first-class discovery: search "BCG", find its people,   */
+/* streams, and events. A company with no hosts yet says so honestly.  */
+/* ------------------------------------------------------------------ */
+
+export const COMPANIES: Company[] = [
+  { id: "gs", name: "Goldman Sachs", blurb: "Investment banking · markets", initials: "GS", hue: 215, sectionIds: ["finance"] },
+  { id: "bcg", name: "BCG", blurb: "Strategy consulting", initials: "BC", hue: 145, sectionIds: ["consulting"] },
+  { id: "bain", name: "Bain & Company", blurb: "Strategy consulting", initials: "BA", hue: 355, sectionIds: ["consulting"] },
+  { id: "mck", name: "McKinsey", blurb: "Strategy consulting", initials: "MC", hue: 230, sectionIds: ["consulting"] },
+  { id: "ga", name: "General Atlantic", blurb: "Growth equity", initials: "GA", hue: 205, sectionIds: ["finance"] },
+  { id: "stripe", name: "Stripe", blurb: "Payments infrastructure", initials: "ST", hue: 250, sectionIds: ["stem"] },
+  { id: "figma", name: "Figma", blurb: "Design tools", initials: "FI", hue: 280, sectionIds: ["design"] },
+  { id: "jpm", name: "J.P. Morgan", blurb: "Investment banking", initials: "JP", hue: 30, sectionIds: ["finance"] },
+  { id: "jhu", name: "Johns Hopkins", blurb: "Medicine · research", initials: "JH", hue: 190, sectionIds: ["healthcare", "gradschool"] },
+  { id: "cravath", name: "Cravath", blurb: "Big law", initials: "CR", hue: 45, sectionIds: ["law"] },
+  { id: "npr", name: "NPR", blurb: "Audio journalism", initials: "NP", hue: 15, sectionIds: ["media"] },
+  { id: "berkeley", name: "UC Berkeley", blurb: "EECS · grad school", initials: "UC", hue: 120, sectionIds: ["gradschool", "stem"] },
+];
+
+/* ------------------------------------------------------------------ */
 /* Hosts — badge states must be visually distinct everywhere.          */
 /* ------------------------------------------------------------------ */
+
+const standardTiers = (base: number): MembershipTier[] => [
+  {
+    id: "supporter",
+    name: "Supporter",
+    price: base,
+    perks: ["Members-only recordings", "Member badge in chat", "Monthly members Q&A"],
+  },
+  {
+    id: "inner",
+    name: "Inner circle",
+    price: base * 3,
+    perks: [
+      "Everything in Supporter",
+      "Resource drops (templates, prep docs)",
+      "Quarterly 1:1 office-hours slot",
+    ],
+  },
+];
 
 export const HOSTS: Host[] = [
   {
@@ -26,6 +73,7 @@ export const HOSTS: Host[] = [
     name: "Maya Okafor",
     headline: "IB Analyst · Goldman Sachs",
     org: "Goldman Sachs",
+    companyId: "gs",
     school: "Harvard '24",
     badge: "verified-role",
     sectionId: "finance",
@@ -34,12 +82,14 @@ export const HOSTS: Host[] = [
     hue: 24,
     initials: "MO",
     followers: 1284,
+    tiers: standardTiers(5),
   },
   {
     id: "daniel",
     name: "Daniel Reyes",
     headline: "Growth Equity Associate · General Atlantic",
     org: "General Atlantic",
+    companyId: "ga",
     school: "Wharton '22",
     badge: "verified-role",
     sectionId: "finance",
@@ -48,6 +98,7 @@ export const HOSTS: Host[] = [
     hue: 210,
     initials: "DR",
     followers: 967,
+    tiers: standardTiers(6),
   },
   {
     id: "grace",
@@ -67,6 +118,7 @@ export const HOSTS: Host[] = [
     name: "Priya Natarajan",
     headline: "SWE II · Stripe",
     org: "Stripe",
+    companyId: "stripe",
     school: "MIT '23",
     badge: "verified-role",
     sectionId: "stem",
@@ -75,12 +127,14 @@ export const HOSTS: Host[] = [
     hue: 160,
     initials: "PN",
     followers: 2101,
+    tiers: standardTiers(5),
   },
   {
     id: "tom",
     name: "Tom Whitfield",
     headline: "Consultant · Bain (Boston)",
     org: "Bain & Company",
+    companyId: "bain",
     school: "Dartmouth '23",
     badge: "verified-role",
     sectionId: "consulting",
@@ -89,12 +143,30 @@ export const HOSTS: Host[] = [
     hue: 350,
     initials: "TW",
     followers: 743,
+    tiers: standardTiers(5),
+  },
+  {
+    id: "elena",
+    name: "Elena Sorokin",
+    headline: "Consultant · BCG",
+    org: "BCG",
+    companyId: "bcg",
+    school: "Yale '22",
+    badge: "verified-role",
+    sectionId: "consulting",
+    bio: "Two years at BCG after a non-business major. Case prep, the staffing game, and what 'strategy' actually means day to day.",
+    rate: 45,
+    hue: 150,
+    initials: "ES",
+    followers: 892,
+    tiers: standardTiers(5),
   },
   {
     id: "amara",
     name: "Amara Diallo",
     headline: "Product Designer · Figma",
     org: "Figma",
+    companyId: "figma",
     school: "RISD '21",
     badge: "verified-role",
     sectionId: "design",
@@ -103,12 +175,14 @@ export const HOSTS: Host[] = [
     hue: 265,
     initials: "AD",
     followers: 1567,
+    tiers: standardTiers(4),
   },
   {
     id: "jhoon",
     name: "Jae Hoon Kim",
     headline: "MD-PhD Candidate · Johns Hopkins",
     org: "Johns Hopkins",
+    companyId: "jhu",
     school: "Verified school only",
     badge: "verified-school",
     sectionId: "healthcare",
@@ -135,6 +209,7 @@ export const HOSTS: Host[] = [
     name: "Nathan Cole",
     headline: "PhD Student · Berkeley EECS",
     org: "UC Berkeley",
+    companyId: "berkeley",
     school: "Verified school",
     badge: "verified-school",
     sectionId: "gradschool",
@@ -148,6 +223,7 @@ export const HOSTS: Host[] = [
     name: "Leila Haddad",
     headline: "Producer · NPR",
     org: "NPR",
+    companyId: "npr",
     school: "Northwestern '20",
     badge: "verified-role",
     sectionId: "media",
@@ -173,6 +249,7 @@ export const SESSIONS: SessionInfo[] = [
     title: "Superday week: ask me anything about IB interviews",
     kind: "live",
     seedViewers: 134,
+    video: true,
   },
   {
     id: "daniel-live",
@@ -197,6 +274,7 @@ export const SESSIONS: SessionInfo[] = [
     title: "Technicals bootcamp: DCF questions they actually ask",
     kind: "scheduled",
     when: "Thu 7:00 PM",
+    video: true,
   },
   {
     id: "daniel-sched-1",
@@ -214,6 +292,48 @@ export const SESSIONS: SessionInfo[] = [
     kind: "scheduled",
     when: "Sat 2:00 PM",
   },
+
+  // ---- Ticketed events (capacity-limited for real engagement) ----
+  {
+    id: "event-networking",
+    hostId: "maya",
+    sectionId: "finance",
+    title: "Networking night: meet IB analysts in small rooms",
+    kind: "scheduled",
+    when: "Fri 8:00 PM",
+    ticket: { capacity: 40, seedTaken: 31, price: null, commit: true },
+  },
+  {
+    id: "event-superday",
+    hostId: "daniel",
+    sectionId: "finance",
+    title: "Mock superday: live technicals with feedback",
+    kind: "scheduled",
+    when: "Sun 1:00 PM",
+    ticket: { capacity: 15, seedTaken: 11, price: 12, commit: false },
+    video: true,
+  },
+  {
+    id: "event-casejam",
+    hostId: "elena",
+    sectionId: "consulting",
+    title: "Case jam: run a full case with a BCG consultant",
+    kind: "scheduled",
+    when: "Sat 4:00 PM",
+    ticket: { capacity: 20, seedTaken: 14, price: 8, commit: false },
+    video: true,
+  },
+  {
+    id: "event-portfolio",
+    hostId: "amara",
+    sectionId: "design",
+    title: "Portfolio teardown night (bring one project)",
+    kind: "scheduled",
+    when: "Tue 7:00 PM",
+    ticket: { capacity: 25, seedTaken: 9, price: null, commit: true },
+  },
+
+  // ---- Recordings: seeded ones are the FREE public library ----
   {
     id: "maya-vod-1",
     hostId: "maya",
@@ -252,6 +372,42 @@ export const SESSIONS: SessionInfo[] = [
       ],
     },
   },
+  {
+    id: "maya-vod-2",
+    hostId: "maya",
+    sectionId: "finance",
+    title: "Members recording: my full superday debrief",
+    kind: "vod",
+    vod: {
+      recordedOn: "Jul 17",
+      views: 412,
+      durationLabel: "41 min",
+      premium: true,
+      chapters: [
+        { t: "03:05", question: "What did each interviewer actually probe?", askedBy: "members" },
+        { t: "14:26", question: "The technical I fumbled and how I recovered", askedBy: "members" },
+        { t: "29:41", question: "Exactly what I said in the final round", askedBy: "members" },
+      ],
+    },
+  },
+  {
+    id: "elena-vod-1",
+    hostId: "elena",
+    sectionId: "consulting",
+    title: "Market sizing from zero (full case, real time)",
+    kind: "vod",
+    vod: {
+      recordedOn: "Jul 12",
+      views: 1103,
+      durationLabel: "49 min",
+      premium: true,
+      chapters: [
+        { t: "05:12", question: "Structuring the estimate tree", askedBy: "live case" },
+        { t: "21:38", question: "Sanity checks that impress interviewers", askedBy: "live case" },
+        { t: "37:02", question: "The synthesis: how to land the answer", askedBy: "live case" },
+      ],
+    },
+  },
 
   // ---- The other seven booths: honestly sparse ----
   {
@@ -261,6 +417,7 @@ export const SESSIONS: SessionInfo[] = [
     title: "New-grad SWE interviews: what changed this year",
     kind: "live",
     seedViewers: 88,
+    video: true,
   },
   {
     id: "priya-sched-1",
@@ -277,6 +434,14 @@ export const SESSIONS: SessionInfo[] = [
     title: "Live case drill: market sizing with a volunteer",
     kind: "scheduled",
     when: "Thu 8:00 PM",
+  },
+  {
+    id: "elena-sched-1",
+    hostId: "elena",
+    sectionId: "consulting",
+    title: "Consulting recruiting timeline, explained properly",
+    kind: "scheduled",
+    when: "Mon 6:00 PM",
   },
   {
     id: "amara-live",
@@ -335,6 +500,22 @@ export const SESSIONS: SessionInfo[] = [
     kind: "scheduled",
     when: "Wed 6:30 PM",
   },
+];
+
+/* ------------------------------------------------------------------ */
+/* Shorts — clips channels publish. Browsed on channels and explore,   */
+/* never an infinite feed.                                             */
+/* ------------------------------------------------------------------ */
+
+export const CLIPS: Clip[] = [
+  { id: "clip-maya-1", hostId: "maya", title: "The 30-second answer to 'why banking?'", views: 8121, durationLabel: "0:47", hue: 24 },
+  { id: "clip-maya-2", hostId: "maya", title: "What a superday actually looks like, hour by hour", views: 5304, durationLabel: "0:58", hue: 35 },
+  { id: "clip-daniel-1", hostId: "daniel", title: "Paper LBO in 90 seconds", views: 4419, durationLabel: "1:00", hue: 210 },
+  { id: "clip-elena-1", hostId: "elena", title: "Case math without a calculator", views: 3877, durationLabel: "0:52", hue: 150 },
+  { id: "clip-elena-2", hostId: "elena", title: "The one slide every case answer needs", views: 2941, durationLabel: "0:44", hue: 160 },
+  { id: "clip-priya-1", hostId: "priya", title: "How I'd prep DS&A with 3 weeks left", views: 6672, durationLabel: "0:59", hue: 160 },
+  { id: "clip-amara-1", hostId: "amara", title: "Kill this slide from your portfolio", views: 3310, durationLabel: "0:41", hue: 265 },
+  { id: "clip-leila-1", hostId: "leila", title: "Pitching an editor who doesn't know you", views: 1508, durationLabel: "0:55", hue: 15 },
 ];
 
 /* ------------------------------------------------------------------ */

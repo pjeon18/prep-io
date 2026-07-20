@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { usePrepStore } from "../store/usePrepStore";
-import { IconBell, IconGear, IconMic } from "./icons";
+import { IconBell, IconSearch, IconStar } from "./icons";
 
 export function Wordmark({ size = 21 }: { size?: number }) {
   return (
@@ -13,11 +13,12 @@ export function Wordmark({ size = 21 }: { size?: number }) {
   );
 }
 
-/** Top chrome for browse surfaces. Discovery = fair + calendar; there is no
- *  feed icon because there is no feed (Principle 3). */
+/** Top chrome for browse surfaces. Discovery = fair + calendar + search;
+ *  there is no feed icon because there is no feed (Principle 3). */
 export function TopNav() {
   const nav = useNavigate();
   const notifications = usePrepStore((s) => s.notifications);
+  const premium = usePrepStore((s) => s.premium);
   return (
     <header
       className="sticky top-0 z-30 border-b"
@@ -28,19 +29,28 @@ export function TopNav() {
       }}
     >
       <div className="mx-auto flex h-[60px] max-w-md items-center justify-between px-5">
-        <Link to="/fair" aria-label="Prep.io fair floor">
+        <Link to="/fair" aria-label="Prep.io home" className="flex items-center gap-2">
           <Wordmark />
+          {premium && (
+            <span
+              className="rounded-pill px-1.5 py-0.5 text-[10px] font-semibold tracking-[0.06em]"
+              style={{ background: "var(--prep-text)", color: "var(--prep-bg)" }}
+            >
+              PREMIUM
+            </span>
+          )}
         </Link>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5">
           <button
-            className="btn btn-ghost !gap-1.5 !px-3.5 !py-2 text-[14px]"
-            onClick={() => nav("/host")}
+            aria-label="Search"
+            className="flex h-10 w-10 items-center justify-center rounded-full"
+            style={{ color: "var(--prep-text-2)" }}
+            onClick={() => nav("/search")}
           >
-            <IconMic size={15} />
-            Host
+            <IconSearch size={19} />
           </button>
           <button
-            aria-label="Follows and notifications"
+            aria-label="Alerts"
             className="relative flex h-10 w-10 items-center justify-center rounded-full"
             style={{ color: "var(--prep-text-2)" }}
             onClick={() => nav("/follows")}
@@ -53,14 +63,16 @@ export function TopNav() {
               />
             )}
           </button>
-          <button
-            aria-label="Settings"
-            className="flex h-10 w-10 items-center justify-center rounded-full"
-            style={{ color: "var(--prep-text-2)" }}
-            onClick={() => nav("/settings")}
-          >
-            <IconGear size={19} />
-          </button>
+          {!premium && (
+            <button
+              aria-label="Premium"
+              className="flex h-10 w-10 items-center justify-center rounded-full"
+              style={{ color: "var(--prep-text-2)" }}
+              onClick={() => nav("/premium")}
+            >
+              <IconStar size={19} />
+            </button>
+          )}
         </div>
       </div>
     </header>

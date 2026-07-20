@@ -26,7 +26,10 @@ export default function Recap() {
     [String(recap.peakViewers), "peak viewers"],
     [String(recap.handsRaised), "hands raised"],
     [String(recap.questionsAnswered.length), "answered live"],
-    [`+${recap.followsGained}`, "new followers"],
+    [`+${recap.followsGained}`, "new subscribers"],
+    ...(recap.boostPoints > 0
+      ? ([[String(recap.boostPoints), "boost points earned"]] as [string, string][])
+      : []),
   ];
 
   return (

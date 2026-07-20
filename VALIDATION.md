@@ -84,3 +84,40 @@ fallback); verified live after deploy.
 - Persona chat lines intentionally read casual (user-generated content);
   UI chrome itself contains no emoji, per the design rules.
 - One section rich (Finance), seven sparse — intentional (cold-start story).
+
+## V2 additions (2026-07-20, per Paul's 12-feature request; decisions D9–D14)
+
+Verified in-browser on mobile viewport, `tsc -b` + `npm run build` clean:
+
+- **Search** (`/search`): "BCG" surfaces the company, Elena Sorokin, her
+  ticketed case jam, and recordings. Companies browsable when query empty.
+- **Company pages** (`/company/:id`): people, live, events, recordings;
+  add-to-goals chip; empty state honest ("No one from X hosts here yet").
+- **Explore** (D10): explicit goal chips drive finite labeled shelves
+  ("because you're targeting Finance, Consulting, Goldman Sachs"). No
+  behavioral inference, no infinite scroll.
+- **History**: joins/recordings/shorts recorded locally (cap 50), Library →
+  History; clearable. Private to the browser.
+- **Subscriptions & tiers** (D13): free subscribe = alerts; Supporter/Inner
+  circle tiers stubbed with perks; membership unlocks that channel's
+  premium recordings.
+- **Ticketed events + $1 commit** (D12): capacity enforced in the store
+  (full events refuse reservation); "Commit to Your Learning — $1 to hold
+  your seat… refunded when you attend" verified on the networking event;
+  tickets appear in Library with release option.
+- **Boosts** (D9): points purchase stubbed; boosted question (200 pts)
+  pinned in host view, sim host picked it first, points debited, host
+  earnings tracked in recap. Promotion still flows through `promoteHand`
+  (consent gate untouched). Boosted chat renders highlighted.
+- **LinkedIn sync**: stubbed connect in Settings; feeds verification.
+- **Video mode**: `video: true` sessions render the mocked-camera stage;
+  go-live wizard has a camera toggle.
+- **Shorts**: clip player with prev/next (finite, "1 / 8"), channel Shorts
+  tab, shelves on Home/Explore/Search. Never an infinite feed.
+- **Premium** (D11): gate verified both ways (locked pitch when off,
+  unlocked player when on); AI transcript downloads a composed .txt;
+  playlists create/add/reorder-by-add/delete verified ("IB prep sprint",
+  3 items across a members recording, a short, and a free VOD).
+- **Principle audit still holds**: live rooms never gated, counts still
+  sim-driven, promotion still consent-only, no DMs, discovery reads no
+  payment flags (boost pinning exists only inside the host's queue view).

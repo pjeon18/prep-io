@@ -117,6 +117,50 @@ verified); large type and generous negative space; copy stripped of cute
 AI-isms. The old "one confident amber" rule is superseded by "ink acts,
 crimson is live, green is verified."
 
+**D9 — Boosts raise visibility, never buy the stage.** (2026-07-20, Paul chose
+the host-consent option over true super-chat.) Purchasable points can
+highlight a chat message or boost a raised question. Boosted questions pin
+higher in the HOST's view (and hosts naturally tend to take them), and the
+points pay the host — but promotion remains the host's explicit pick and
+the viewer's raised hand remains the only path on stage. Principle 1 is
+amended, not repealed: money may buy the host's attention, never a place on
+stage or in discovery.
+
+**D10 — Explore is goal-driven, not a feed.** (2026-07-20) Paul asked for a
+recommendations page; Principle 3 bans algorithmic feeds. Resolution: the
+user explicitly states career goals (target fields + target companies);
+Explore renders finite, labeled shelves matched against those goals
+("because you're targeting…"). Nothing is inferred from behavior, nothing
+scrolls forever.
+
+**D11 — Premium (viewer subscription) + gated recordings.** (2026-07-20,
+Paul confirmed, superseding part of D3.) New session recordings default to
+the premium library; channels can publish selected recordings free (the
+seeded library stays free). Premium also includes AI transcription
+(downloadable notes), playlists (self-assembled mini-courses), and
+exclusive/member content access. Watching LIVE stays free for everyone —
+lurking is untouched (Principle 4).
+
+**D12 — Ticketed events + the $1 commitment.** (2026-07-20) Hosts can cap
+events ("meaningful engagement within capability"), first come first
+served, enforced in the store. Free networking events use a $1 commitment —
+explicitly not revenue: a bot filter and attendance stake, refunded on
+attendance. Priced events ($5–$12 range) are the host monetizing scarce
+formats.
+
+**D13 — Channel subscriptions with paid membership tiers.** (2026-07-20)
+Free subscribe = go-live alerts (the old follow). Paid tiers (Supporter /
+Inner circle) buy resources, members-only recordings, and 1:1 access —
+host's time and tools, never placement.
+
+**D14 — Streaming-product surface layer.** (2026-07-20, Paul: "editorial +
+streaming layer.") Companies as first-class discovery objects (search
+"BCG"), a search bar, watch history, video-mode streams (mocked camera),
+shorts/clips, tabbed channel pages, LinkedIn sync (stubbed), bottom tab nav
+(Home / Explore / Library / Host). The paper-and-ink + theater design
+language from D8 carries the new vocabulary: 16:9 mock thumbnails, shelves,
+denser cards.
+
 ## 6. Open questions
 
 Tracked in PRD §14; raise new ones here first, promote when decided.

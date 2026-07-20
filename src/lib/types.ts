@@ -14,8 +14,26 @@ export interface Section {
   blurb: string;
 }
 
+/** Companies are first-class discovery objects: search "BCG" and find its
+ *  people, streams, and events. */
+export interface Company {
+  id: string;
+  name: string;
+  blurb: string;
+  initials: string;
+  hue: number;
+  sectionIds: SectionId[];
+}
+
 /** Verification is the product. Unverified must be clearly marked everywhere. */
 export type BadgeState = "verified-role" | "verified-school" | "unverified";
+
+export interface MembershipTier {
+  id: string;
+  name: string;
+  price: number;
+  perks: string[];
+}
 
 export interface Host {
   id: string;
@@ -23,6 +41,7 @@ export interface Host {
   /** e.g. "IB Analyst · Goldman Sachs" */
   headline: string;
   org: string;
+  companyId?: string;
   school: string;
   badge: BadgeState;
   sectionId: SectionId;
@@ -33,6 +52,8 @@ export interface Host {
   hue: number;
   initials: string;
   followers: number;
+  /** paid membership tiers (channel subscriptions); optional */
+  tiers?: MembershipTier[];
 }
 
 export type SessionKind = "live" | "scheduled" | "vod";
@@ -42,6 +63,16 @@ export interface VodChapter {
   t: string;
   question: string;
   askedBy: string;
+}
+
+/** Capacity-limited event config. price=null + commit → the $1 commitment
+ *  model (not revenue: bot filter + attendance stake, refunded on show-up). */
+export interface TicketConfig {
+  capacity: number;
+  /** seed for simulated seats already taken */
+  seedTaken: number;
+  price: number | null;
+  commit: boolean;
 }
 
 export interface SessionInfo {
@@ -54,12 +85,27 @@ export interface SessionInfo {
   when?: string;
   /** live sessions: seed for the crowd simulation (evolves; never rendered raw) */
   seedViewers?: number;
+  /** camera stream vs audio-only office hours */
+  video?: boolean;
+  ticket?: TicketConfig;
   vod?: {
     chapters: VodChapter[];
     views: number;
     recordedOn: string;
     durationLabel: string;
+    /** premium-gated recording (channel chose not to publish it free) */
+    premium?: boolean;
   };
+}
+
+/** Shorts / clips — vertical moments a channel publishes. */
+export interface Clip {
+  id: string;
+  hostId: string;
+  title: string;
+  views: number;
+  durationLabel: string;
+  hue: number;
 }
 
 export interface ChatMsg {
@@ -72,6 +118,8 @@ export interface ChatMsg {
   isYou?: boolean;
   /** system lines: joins, promotions */
   isSystem?: boolean;
+  /** points attached — highlighted "boosted" chat */
+  boost?: number;
 }
 
 export type HandStatus = "queued" | "hotseat" | "answered" | "dismissed";
@@ -84,6 +132,9 @@ export interface Hand {
   hue: number;
   question: string;
   status: HandStatus;
+  /** points attached. Boost raises VISIBILITY to the host (pinned shelf) —
+   *  it never buys the stage; promotion stays the host's choice. */
+  boost?: number;
 }
 
 export interface AnsweredQ {
@@ -109,6 +160,8 @@ export interface Recap {
   questionsAnswered: AnsweredQ[];
   handsRaised: number;
   followsGained: number;
+  /** points earned from boosts this session */
+  boostPoints: number;
   /** the recap's promise: the session compounds into the library */
   vodId: string;
 }
@@ -129,4 +182,34 @@ export interface GoLiveDraft {
   handRaise: boolean;
   slowMode: boolean;
   rate: number | null;
+  video: boolean;
+}
+
+/** Watch history entry (local, private). */
+export interface HistoryEntry {
+  id: string;
+  kind: "live" | "vod" | "clip";
+  title: string;
+  hostId: string;
+  when: string;
+}
+
+export interface Ticket {
+  sessionId: string;
+  /** paid amount; 1 = the commitment dollar (refundable on attendance) */
+  paid: number;
+  status: "reserved";
+}
+
+/** Premium playlists: string recordings and shorts into a mini-course. */
+export interface Playlist {
+  id: string;
+  name: string;
+  /** vod ids and clip ids, ordered */
+  items: string[];
+}
+
+export interface CareerGoals {
+  sections: SectionId[];
+  companyIds: string[];
 }

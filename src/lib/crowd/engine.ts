@@ -127,7 +127,10 @@ export function startCrowd(role: Role) {
     if (remaining.length === 0) return;
     const q = pick(remaining);
     usedQuestions.add(q);
-    store().simRaiseHand({ who: asker.id, name: asker.name, hue: asker.hue, question: q });
+    // some personas boost their question — visibility to the host, never
+    // an automatic place on stage (D9)
+    const boost = Math.random() < 0.25 ? Math.round(rand(1, 4)) * 50 : undefined;
+    store().simRaiseHand({ who: asker.id, name: asker.name, hue: asker.hue, question: q, boost });
   });
 
   // Viewer mode only: the sim host runs the room — promotes queued hands
@@ -139,9 +142,20 @@ export function startCrowd(role: Role) {
         if (!r) return;
         if (!r.hotSeat && r.queue.length > 0) {
           const s = store();
-          // debug fast-track: your hand jumps the line (still a raised hand)
+          // debug fast-track: your hand jumps the line (still a raised hand).
+          // Otherwise the sim host reads the room the way a real host would:
+          // boosted questions are more VISIBLE, so they tend to get picked —
+          // but it's the host's pick, not a bought place (D9).
           const yours = r.queue.find((h) => h.who === "you");
-          const next = s.debug.fastTrackYou && yours ? yours : r.queue[0];
+          const topBoosted = [...r.queue].sort(
+            (a, b) => (b.boost ?? 0) - (a.boost ?? 0),
+          )[0];
+          const next =
+            s.debug.fastTrackYou && yours
+              ? yours
+              : topBoosted && (topBoosted.boost ?? 0) > 0 && Math.random() < 0.7
+                ? topBoosted
+                : r.queue[0];
           if (s.debug.fastTrackYou && yours) {
             usePrepStore.setState((st) => ({
               debug: { ...st.debug, fastTrackYou: false },

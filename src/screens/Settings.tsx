@@ -1,17 +1,22 @@
 import { useNavigate } from "react-router-dom";
 import { Badge } from "../components/Badge";
+import { BottomNav } from "../components/BottomNav";
 import { TopNav } from "../components/TopNav";
+import { IconLink } from "../components/icons";
 import { usePrepStore } from "../store/usePrepStore";
 
 export default function Settings() {
   const nav = useNavigate();
   const verification = usePrepStore((s) => s.verification);
   const resetAll = usePrepStore((s) => s.resetAll);
+  const linkedin = usePrepStore((s) => s.linkedin);
+  const connectLinkedIn = usePrepStore((s) => s.connectLinkedIn);
+  const premium = usePrepStore((s) => s.premium);
 
   const row = "card mt-3 flex items-center justify-between gap-4 p-5";
 
   return (
-    <div className="min-h-dvh pb-20">
+    <div className="min-h-dvh pb-28">
       <TopNav />
       <main className="mx-auto max-w-md px-5">
         <h1 className="mt-9 font-display text-[32px]" style={{ fontWeight: 500 }}>
@@ -36,6 +41,38 @@ export default function Settings() {
               {verification.state === "pending" ? "View" : "Start"}
             </button>
           )}
+        </div>
+
+        <div className={row}>
+          <div>
+            <div className="flex items-center gap-2 text-[15px] font-medium">
+              <IconLink size={15} /> LinkedIn
+            </div>
+            <div className="mt-1 text-[13px] leading-relaxed" style={{ color: "var(--prep-text-2)" }}>
+              {linkedin.connected
+                ? "Connected — role and school stay in sync, and verification is one tap"
+                : "Sync your role and school; speeds up verification"}
+            </div>
+          </div>
+          {linkedin.connected ? (
+            <span className="chip chip-active !py-1.5 text-[13px]">Synced</span>
+          ) : (
+            <button className="chip" onClick={connectLinkedIn}>
+              Connect
+            </button>
+          )}
+        </div>
+
+        <div className={row}>
+          <div>
+            <div className="text-[15px] font-medium">Premium</div>
+            <div className="mt-1 text-[13px]" style={{ color: "var(--prep-text-2)" }}>
+              {premium ? "Active — library, transcripts, playlists" : "Recordings, transcripts, playlists"}
+            </div>
+          </div>
+          <button className="chip" onClick={() => nav("/premium")}>
+            {premium ? "Manage" : "See plans"}
+          </button>
         </div>
 
         <div className={row}>
@@ -71,6 +108,7 @@ export default function Settings() {
           Reset the prototype
         </button>
       </main>
+      <BottomNav />
     </div>
   );
 }

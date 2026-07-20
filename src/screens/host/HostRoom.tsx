@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Avatar } from "../../components/Avatar";
 import { Badge } from "../../components/Badge";
 import { LivePill, Waveform } from "../../components/LiveStage";
-import { IconCheck, IconEye, IconHand, IconX } from "../../components/icons";
+import { IconBolt, IconCheck, IconEye, IconHand, IconVideo, IconX } from "../../components/icons";
 import { startCrowd, stopCrowd } from "../../lib/crowd/engine";
 import { springs } from "../../lib/motion";
 import { fmtClock, fmtCount, usePrepStore } from "../../store/usePrepStore";
@@ -62,6 +62,7 @@ export default function HostRoom() {
               </span>
               <span style={{ color: "var(--prep-text-3)" }}>{fmtClock(room.elapsedSec)}</span>
               <Badge state={badge} compact />
+              {room.video && <IconVideo size={13} />}
             </div>
           </div>
           <button
@@ -126,10 +127,15 @@ export default function HostRoom() {
             {room.queue.length === 0 ? "No hands up yet" : `${room.queue.length} hands raised`}
           </div>
           <AnimatePresence>
-            {room.queue.map((h) => (
+            {/* boosted hands surface first in YOUR view — visibility, not a
+                bought place; you still choose who comes up (D9) */}
+            {[...room.queue]
+              .sort((a, b) => (b.boost ?? 0) - (a.boost ?? 0))
+              .map((h) => (
               <motion.div
                 key={h.id}
                 className="card mt-2 flex items-center gap-3 p-3.5"
+                style={h.boost ? { borderColor: "var(--prep-live)" } : undefined}
                 initial={{ opacity: 0, x: -12 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 12 }}
@@ -137,7 +143,14 @@ export default function HostRoom() {
               >
                 <Avatar hue={h.hue} initials={h.name.slice(0, 2).toUpperCase()} size={30} />
                 <div className="min-w-0 flex-1">
-                  <div className="text-[12.5px] font-semibold">{h.name}</div>
+                  <div className="flex items-center gap-1.5 text-[12.5px] font-semibold">
+                    {h.name}
+                    {h.boost ? (
+                      <span className="inline-flex items-center gap-0.5 text-[11px] tabular-nums" style={{ color: "var(--prep-live)" }}>
+                        <IconBolt size={10} /> {h.boost}
+                      </span>
+                    ) : null}
+                  </div>
                   <div className="truncate text-[13.5px]" style={{ color: "var(--prep-text-2)" }}>
                     “{h.question}”
                   </div>
@@ -175,7 +188,7 @@ export default function HostRoom() {
         <HostChatLog />
 
         <div className="border-t px-4 py-3 text-center text-[12px] tabular-nums" style={{ borderColor: "var(--prep-line)", color: "var(--prep-text-3)" }}>
-          {room.answered.length} answered · each one becomes a chapter in the archive
+          {room.answered.length} answered · {room.boostEarned} boost points earned · every answer becomes a chapter
         </div>
       </div>
     </div>

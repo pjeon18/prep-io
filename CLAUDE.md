@@ -18,14 +18,18 @@ session start.
 **Fable**. Sonnet is only for mechanical data-labor chores, of which this project
 has essentially none.
 
-## THE NON-NEGOTIABLE PRINCIPLES (short form — full text PRD §5)
+## THE NON-NEGOTIABLE PRINCIPLES (short form — full text PRD §5, amended by CONCEPT D9–D14)
 
 Violating one is a failure even if the feature works. Flag instead of building.
 
 1. **Monetize the host's time/tools — never visibility.** Nothing in discovery
-   reads a payment flag.
+   reads a payment flag. (D9 amendment: boosts may buy the HOST's attention —
+   pinned in the host's queue view — never a place on stage or in discovery.
+   D11: premium gates RECORDINGS, never live rooms.)
 2. **Verified means verified.** Unverified hosts clearly marked, everywhere.
-3. **No feed.** Discovery = fair floor + calendar. No algorithmic scroll.
+3. **No feed.** Discovery = fair floor + calendar + user-initiated search +
+   goal-driven Explore (D10: explicit goals, finite labeled shelves, nothing
+   inferred, no infinite scroll). No algorithmic engagement loop.
 4. **Lurking is first-class.** No signup wall on public rooms.
 5. **Honest liveness — enforced in the store.** Viewer counts, chat, and queue
    derive from the crowd simulation; hardcoded inflated numbers are forbidden.

@@ -3,13 +3,16 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Avatar } from "../components/Avatar";
 import { Badge } from "../components/Badge";
-import { LivePill, LiveStage } from "../components/LiveStage";
+import { LivePill, LiveStage, Waveform } from "../components/LiveStage";
 import { Sheet } from "../components/Sheet";
 import {
   IconArrowLeft,
+  IconBolt,
   IconEye,
   IconHand,
+  IconHeart,
   IconPlay,
+  IconVideo,
   IconX,
 } from "../components/icons";
 import { HOSTS, SESSIONS } from "../data/seedData";
@@ -19,7 +22,10 @@ import { fmtClock, fmtCount, usePrepStore } from "../store/usePrepStore";
 
 /* The Live Room (viewer) — the funnel's free layer, and the app's one dark
  * surface: the theater. Lurking needs nothing; the hand raise is the
- * explicit consent that makes the hot seat possible. */
+ * explicit consent that makes the hot seat possible. Boosts raise a
+ * question's visibility to the host — they never buy the stage (D9). */
+
+const BOOST_STEPS = [50, 100, 200];
 
 export default function LiveRoom() {
   const { sessionId } = useParams();
@@ -27,12 +33,19 @@ export default function LiveRoom() {
   const room = usePrepStore((s) => s.room);
   const joinRoom = usePrepStore((s) => s.joinRoom);
   const leaveRoom = usePrepStore((s) => s.leaveRoom);
+  const likes = usePrepStore((s) => s.likes);
+  const toggleLike = usePrepStore((s) => s.toggleLike);
+  const follows = usePrepStore((s) => s.follows);
+  const toggleFollowHost = usePrepStore((s) => s.toggleFollowHost);
+  const points = usePrepStore((s) => s.points);
 
   const sesh = SESSIONS.find((x) => x.id === sessionId);
   const host = sesh ? HOSTS.find((h) => h.id === sesh.hostId) : undefined;
 
   const [handSheet, setHandSheet] = useState(false);
   const [question, setQuestion] = useState("");
+  const [boostPick, setBoostPick] = useState(0);
+  const [pointsSheet, setPointsSheet] = useState(false);
 
   useEffect(() => {
     if (!sessionId || !sesh || sesh.kind !== "live") return;
@@ -72,6 +85,8 @@ export default function LiveRoom() {
     (room.hotSeat?.who === "you" ? room.hotSeat : undefined);
   const yourPos = room.queue.findIndex((h) => h.who === "you");
   const youOnStage = room.hotSeat?.who === "you";
+  const liked = likes.sessions.includes(sesh.id);
+  const subscribed = follows.hosts.includes(host.id);
 
   return (
     <div className="theater">
@@ -98,28 +113,85 @@ export default function LiveRoom() {
               <span style={{ color: "var(--prep-text-3)" }}>{fmtClock(room.elapsedSec)}</span>
             </div>
           </div>
+          <button
+            aria-label="Like this stream"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
+            style={{ color: liked ? "var(--prep-live)" : "var(--prep-text-2)" }}
+            onClick={() => toggleLike("sessions", sesh.id)}
+          >
+            <IconHeart size={19} filled={liked} />
+          </button>
         </header>
 
-        {/* stage */}
+        {/* stage — video or audio treatment */}
         <div className="px-4">
-          <LiveStage
-            hue={host.hue}
-            initials={host.initials}
-            name={host.name}
-            headline={host.headline}
-            speaking={room.hostAnswering || !room.hotSeat}
-          >
-            <div className="mt-3">
-              <Badge state={host.badge} />
+          {room.video ? (
+            <div
+              className="relative flex aspect-video flex-col items-center justify-center overflow-hidden rounded-card"
+              style={{
+                background: `radial-gradient(110% 130% at 50% 0%, hsl(${host.hue} 18% 18%) 0%, #131210 70%)`,
+              }}
+            >
+              <Avatar hue={host.hue} initials={host.initials} size={64} />
+              <div className="mt-2.5 font-display text-[17px]" style={{ fontWeight: 500 }}>
+                {host.name}
+              </div>
+              <div className="mt-1.5">
+                <Waveform active={room.hostAnswering || !room.hotSeat} bars={20} height={16} />
+              </div>
+              <span
+                className="absolute left-2.5 top-2.5 inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10.5px] font-medium"
+                style={{ background: "rgba(15,13,10,0.7)", color: "var(--prep-text-2)" }}
+              >
+                <IconVideo size={11} /> camera mocked
+              </span>
+              <div className="absolute bottom-2.5 right-2.5">
+                <Badge state={host.badge} compact />
+              </div>
             </div>
-          </LiveStage>
+          ) : (
+            <LiveStage
+              hue={host.hue}
+              initials={host.initials}
+              name={host.name}
+              headline={host.headline}
+              speaking={room.hostAnswering || !room.hotSeat}
+            >
+              <div className="mt-3">
+                <Badge state={host.badge} />
+              </div>
+            </LiveStage>
+          )}
+        </div>
+
+        {/* channel row: subscribe + points */}
+        <div className="mx-4 mt-2.5 flex items-center gap-2.5">
+          <Link to={`/profile/${host.id}`} className="flex min-w-0 flex-1 items-center gap-2">
+            <Avatar hue={host.hue} initials={host.initials} size={26} />
+            <span className="truncate text-[13px]" style={{ color: "var(--prep-text-2)" }}>
+              {host.headline}
+            </span>
+          </Link>
+          <button
+            className={`chip !py-1.5 text-[12.5px] ${subscribed ? "chip-active" : ""}`}
+            onClick={() => toggleFollowHost(host.id)}
+          >
+            {subscribed ? "Subscribed" : "Subscribe"}
+          </button>
+          <button
+            className="chip !py-1.5 text-[12.5px] tabular-nums"
+            onClick={() => setPointsSheet(true)}
+            title="Your points"
+          >
+            <IconBolt size={12} /> {fmtCount(points)}
+          </button>
         </div>
 
         {/* hot seat banner */}
         <AnimatePresence>
           {room.hotSeat && (
             <motion.div
-              className="mx-4 mt-3 rounded-tile border p-4"
+              className="mx-4 mt-2.5 rounded-tile border p-4"
               style={{
                 borderColor: "var(--prep-live)",
                 background: "var(--prep-live-tint)",
@@ -136,12 +208,14 @@ export default function LiveRoom() {
                   size={26}
                   ring
                 />
-                <span
-                  className="overline"
-                  style={{ color: "var(--prep-live)" }}
-                >
+                <span className="overline" style={{ color: "var(--prep-live)" }}>
                   {youOnStage ? "You have the floor" : `${room.hotSeat.name} has the floor`}
                 </span>
+                {room.hotSeat.boost ? (
+                  <span className="ml-auto inline-flex items-center gap-1 text-[11.5px] font-semibold tabular-nums" style={{ color: "var(--prep-live)" }}>
+                    <IconBolt size={11} /> {room.hotSeat.boost}
+                  </span>
+                ) : null}
               </div>
               <div className="mt-2.5 font-display text-[17px] leading-snug" style={{ fontWeight: 500 }}>
                 “{room.hotSeat.question}”
@@ -152,12 +226,17 @@ export default function LiveRoom() {
 
         {/* queue strip */}
         {room.queue.length > 0 && (
-          <div className="mx-4 mt-3 flex items-center gap-2.5 text-[13px]" style={{ color: "var(--prep-text-2)" }}>
+          <div className="mx-4 mt-2.5 flex items-center gap-2.5 text-[13px]" style={{ color: "var(--prep-text-2)" }}>
             <IconHand size={14} />
             <span className="tabular-nums">
               {room.queue.length} in queue
               {yourHand && yourPos >= 0 && (
-                <span style={{ color: "var(--prep-text)" }}> · you're #{yourPos + 1}</span>
+                <span style={{ color: "var(--prep-text)" }}>
+                  {" "}· you're #{yourPos + 1}
+                  {yourHand.boost ? (
+                    <span style={{ color: "var(--prep-live)" }}> · boosted {yourHand.boost}</span>
+                  ) : null}
+                </span>
               )}
             </span>
             <div className="flex -space-x-1.5">
@@ -165,6 +244,19 @@ export default function LiveRoom() {
                 <Avatar key={h.id} hue={h.hue} initials={h.name.slice(0, 2).toUpperCase()} size={20} />
               ))}
             </div>
+            {yourHand && yourPos >= 0 && (
+              <button
+                className="ml-auto inline-flex shrink-0 items-center gap-1 text-[12px] font-medium underline"
+                style={{ color: "var(--prep-text-2)" }}
+                onClick={() => {
+                  const st = usePrepStore.getState();
+                  if (st.points < 50) setPointsSheet(true);
+                  else st.boostYourHand(50);
+                }}
+              >
+                <IconBolt size={12} /> Boost +50
+              </button>
+            )}
           </div>
         )}
 
@@ -175,6 +267,7 @@ export default function LiveRoom() {
         <Composer
           onRaise={() => setHandSheet(true)}
           handState={youOnStage ? "stage" : yourHand ? "queued" : "none"}
+          onNeedPoints={() => setPointsSheet(true)}
         />
 
         {/* raise-hand sheet — the consent moment, made explicit */}
@@ -193,17 +286,41 @@ export default function LiveRoom() {
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
           />
+          <div className="mt-3.5 flex items-center gap-2">
+            <span className="text-[12.5px]" style={{ color: "var(--prep-text-3)" }}>
+              Boost
+            </span>
+            {[0, ...BOOST_STEPS].map((b) => (
+              <button
+                key={b}
+                className={`chip !px-3 !py-1.5 text-[12.5px] tabular-nums ${boostPick === b ? "chip-active" : ""}`}
+                onClick={() => setBoostPick(b)}
+              >
+                {b === 0 ? "none" : b}
+              </button>
+            ))}
+          </div>
+          <div className="mt-1.5 text-[11.5px] leading-relaxed" style={{ color: "var(--prep-text-3)" }}>
+            A boost pins your question higher in the host's view and supports
+            them. It never buys the stage — the host still chooses.
+            {boostPick > points && (
+              <button className="ml-1 underline" onClick={() => setPointsSheet(true)}>
+                You have {points} points — get more
+              </button>
+            )}
+          </div>
           <div className="mt-4 flex gap-2">
             <button className="btn btn-ghost flex-1" onClick={() => setHandSheet(false)}>
               Not yet
             </button>
             <button
               className="btn btn-primary flex-1"
-              disabled={!question.trim()}
+              disabled={!question.trim() || boostPick > points}
               onClick={() => {
-                if (usePrepStore.getState().raiseHand(question)) {
+                if (usePrepStore.getState().raiseHand(question, boostPick)) {
                   setHandSheet(false);
                   setQuestion("");
+                  setBoostPick(0);
                 }
               }}
             >
@@ -212,6 +329,7 @@ export default function LiveRoom() {
           </div>
         </Sheet>
 
+        <PointsSheet open={pointsSheet} onClose={() => setPointsSheet(false)} />
         <HotSeatMoment />
         <BreakoutOfferSheet hostName={host.name} />
       </div>
@@ -240,23 +358,32 @@ function ChatLog() {
     ref.current?.scrollTo({ top: ref.current.scrollHeight });
   }, [chat?.length]);
   return (
-    <div ref={ref} className="rail mt-3 flex-1 overflow-y-auto px-5 py-1">
+    <div ref={ref} className="rail mt-2.5 flex-1 overflow-y-auto px-5 py-1">
       {chat?.map((m) => (
         <div key={m.id} className="py-[5px] text-[14px] leading-snug">
           {m.isSystem ? (
             <span className="text-[12.5px] italic" style={{ color: "var(--prep-text-3)" }}>
               — {m.text}
             </span>
+          ) : m.boost ? (
+            <span
+              className="inline-block rounded-tile border px-2.5 py-1.5"
+              style={{ borderColor: "var(--prep-live)", background: "var(--prep-live-tint)" }}
+            >
+              <span className="mr-2 inline-flex items-center gap-1 text-[11.5px] font-semibold tabular-nums" style={{ color: "var(--prep-live)" }}>
+                <IconBolt size={11} /> {m.boost}
+              </span>
+              <span className="mr-2 font-semibold">{m.author}</span>
+              <span style={{ color: "var(--prep-text-2)" }}>{m.text}</span>
+            </span>
           ) : (
             <>
               <span
                 className="mr-2 font-semibold"
                 style={{
-                  color: m.isHost
+                  color: m.isHost || m.isYou
                     ? "var(--prep-text)"
-                    : m.isYou
-                      ? "var(--prep-text)"
-                      : `hsl(${m.authorHue} 18% 62%)`,
+                    : `hsl(${m.authorHue} 18% 62%)`,
                 }}
               >
                 {m.isHost ? `${m.author} · host` : m.author}
@@ -273,15 +400,22 @@ function ChatLog() {
 function Composer({
   onRaise,
   handState,
+  onNeedPoints,
 }: {
   onRaise: () => void;
   handState: "none" | "queued" | "stage";
+  onNeedPoints: () => void;
 }) {
   const [text, setText] = useState("");
   const sendChat = usePrepStore((s) => s.sendChat);
   const lowerHand = usePrepStore((s) => s.lowerHand);
-  const send = () => {
-    sendChat(text);
+  const send = (boost?: number) => {
+    if (!text.trim()) return;
+    if (boost && usePrepStore.getState().points < boost) {
+      onNeedPoints();
+      return;
+    }
+    sendChat(text, boost);
     setText("");
   };
   return (
@@ -295,6 +429,15 @@ function Composer({
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && send()}
         />
+        <button
+          aria-label="Send with 100 points"
+          title="Send highlighted (100 points)"
+          className="btn btn-ghost !px-3.5 !py-3"
+          disabled={!text.trim()}
+          onClick={() => send(100)}
+        >
+          <IconBolt size={16} />
+        </button>
         {handState === "none" && (
           <button className="btn btn-primary !px-4 !py-3" onClick={onRaise} aria-label="Raise hand">
             <IconHand size={18} />
@@ -323,6 +466,45 @@ function Composer({
         Slow mode · questions go through the queue, not DMs
       </div>
     </div>
+  );
+}
+
+/** Buy points — stubbed. Points highlight chat and boost questions; they
+ *  support hosts and never purchase stage time (D9). */
+function PointsSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const points = usePrepStore((s) => s.points);
+  const buyPoints = usePrepStore((s) => s.buyPoints);
+  return (
+    <Sheet open={open} onClose={onClose}>
+      <div className="overline">Points</div>
+      <h3 className="mt-2 font-display text-[24px]" style={{ fontWeight: 500 }}>
+        You have {points}
+      </h3>
+      <p className="mt-2 text-[13.5px] leading-relaxed" style={{ color: "var(--prep-text-2)" }}>
+        Points highlight your chat and pin your question higher in the host's
+        view. They pay the host — they never buy the stage.
+      </p>
+      <div className="mt-4 flex gap-2">
+        {[500, 1200, 3000].map((n, i) => (
+          <button
+            key={n}
+            className="card flex-1 p-4 text-center"
+            onClick={() => {
+              buyPoints(n);
+              onClose();
+            }}
+          >
+            <div className="font-display text-[18px] tabular-nums" style={{ fontWeight: 500 }}>{n}</div>
+            <div className="mt-0.5 text-[12px]" style={{ color: "var(--prep-text-3)" }}>
+              ${[5, 10, 20][i]}
+            </div>
+          </button>
+        ))}
+      </div>
+      <div className="mt-3 text-center text-[11.5px]" style={{ color: "var(--prep-text-3)" }}>
+        Prototype — no real billing.
+      </div>
+    </Sheet>
   );
 }
 
@@ -366,7 +548,7 @@ function HotSeatMoment() {
               You're up.
             </div>
             <div className="mt-3 text-[15px]" style={{ color: "#b5b0a4" }}>
-              {`The room is yours for a minute.`}
+              The room is yours for a minute.
             </div>
           </motion.div>
         </motion.div>
