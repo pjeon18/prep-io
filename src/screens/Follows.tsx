@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Avatar } from "../components/Avatar";
 import { Badge } from "../components/Badge";
 import { TopNav } from "../components/TopNav";
-import { IconBell, IconCalendar, IconX } from "../components/icons";
+import { IconX } from "../components/icons";
 import { HOSTS, SECTIONS, SESSIONS } from "../data/seedData";
 import { usePrepStore } from "../store/usePrepStore";
 
@@ -24,22 +24,24 @@ export default function Follows() {
   );
 
   return (
-    <div className="min-h-dvh pb-16">
+    <div className="min-h-dvh pb-20">
       <TopNav />
-      <main className="mx-auto max-w-md px-4">
-        <h1 className="mt-5 font-display text-[22px] font-semibold">Follows</h1>
-        <p className="mt-1 text-[13px]" style={{ color: "var(--prep-text-2)" }}>
-          Your follows become a calendar and go-live alerts. No feed, ever.
+      <main className="mx-auto max-w-md px-5">
+        <h1 className="mt-9 font-display text-[32px]" style={{ fontWeight: 500 }}>
+          Follows
+        </h1>
+        <p className="mt-2 text-[15px]" style={{ color: "var(--prep-text-2)" }}>
+          Follows become a calendar and go-live alerts. No feed.
         </p>
 
         {notifications.length > 0 && (
           <>
-            <h2 className="mt-6 flex items-center gap-2 font-display text-[15px] font-semibold">
-              <IconBell size={15} /> Alerts
+            <h2 className="mt-9 font-display text-[24px]" style={{ fontWeight: 500 }}>
+              Alerts
             </h2>
             {notifications.map((n) => (
-              <div key={n.id} className="card mt-3 flex items-center gap-3 p-3.5">
-                <button className="min-w-0 flex-1 text-left text-[13px] leading-snug" onClick={() => nav(n.to)}>
+              <div key={n.id} className="card mt-3 flex items-center gap-3 p-4">
+                <button className="min-w-0 flex-1 text-left text-[14px] leading-snug" onClick={() => nav(n.to)}>
                   {n.text}
                 </button>
                 <button
@@ -55,14 +57,14 @@ export default function Follows() {
           </>
         )}
 
-        <h2 className="mt-6 flex items-center gap-2 font-display text-[15px] font-semibold">
-          <IconCalendar size={15} /> Your calendar
+        <h2 className="mt-9 font-display text-[24px]" style={{ fontWeight: 500 }}>
+          Your calendar
         </h2>
         {calendar.length === 0 ? (
-          <div className="card mt-3 p-5 text-center text-[13.5px]" style={{ color: "var(--prep-text-3)" }}>
+          <div className="card mt-3 p-6 text-center text-[14.5px]" style={{ color: "var(--prep-text-3)" }}>
             Follow a host or a booth and their scheduled sessions land here.
-            <div className="mt-3">
-              <Link to="/fair" className="btn btn-ghost !py-2 text-[13px]">
+            <div className="mt-4">
+              <Link to="/fair" className="btn btn-ghost !py-2.5 text-[14px]">
                 Walk the fair
               </Link>
             </div>
@@ -71,13 +73,11 @@ export default function Follows() {
           calendar.map((sesh) => {
             const host = HOSTS.find((h) => h.id === sesh.hostId)!;
             return (
-              <div key={sesh.id} className="card mt-3 flex items-center gap-3 p-3.5">
-                <div className="w-[74px] shrink-0 text-center font-display text-[12px] font-semibold" style={{ color: "var(--prep-amber)" }}>
-                  {sesh.when}
-                </div>
+              <div key={sesh.id} className="card mt-3 flex items-center gap-4 p-4">
+                <div className="overline w-[76px] shrink-0 !leading-snug">{sesh.when}</div>
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-[13.5px] font-medium">{sesh.title}</div>
-                  <Link to={`/profile/${host.id}`} className="mt-0.5 flex items-center gap-1.5 text-[12px]" style={{ color: "var(--prep-text-2)" }}>
+                  <div className="truncate text-[15px] font-medium">{sesh.title}</div>
+                  <Link to={`/profile/${host.id}`} className="mt-1 flex items-center gap-1.5 text-[13px]" style={{ color: "var(--prep-text-2)" }}>
                     {host.name} <Badge state={host.badge} compact />
                   </Link>
                 </div>
@@ -88,19 +88,21 @@ export default function Follows() {
 
         {followedHosts.length > 0 && (
           <>
-            <h2 className="mt-6 font-display text-[15px] font-semibold">Hosts you follow</h2>
+            <h2 className="mt-9 font-display text-[24px]" style={{ fontWeight: 500 }}>
+              Hosts you follow
+            </h2>
             {followedHosts.map((host) => (
-              <div key={host.id} className="card mt-3 flex items-center gap-3 p-3.5">
+              <div key={host.id} className="card mt-3 flex items-center gap-3.5 p-4">
                 <Avatar hue={host.hue} initials={host.initials} size={36} />
                 <Link to={`/profile/${host.id}`} className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 text-[13.5px] font-medium">
+                  <div className="flex items-center gap-2 text-[15px] font-medium">
                     {host.name} <Badge state={host.badge} compact />
                   </div>
-                  <div className="truncate text-[12px]" style={{ color: "var(--prep-text-2)" }}>
+                  <div className="mt-0.5 truncate text-[13px]" style={{ color: "var(--prep-text-2)" }}>
                     {host.headline}
                   </div>
                 </Link>
-                <button className="chip !py-1 text-[12px]" onClick={() => toggleFollowHost(host.id)}>
+                <button className="chip !py-1.5 text-[13px]" onClick={() => toggleFollowHost(host.id)}>
                   Unfollow
                 </button>
               </div>
@@ -110,7 +112,9 @@ export default function Follows() {
 
         {follows.sections.length > 0 && (
           <>
-            <h2 className="mt-6 font-display text-[15px] font-semibold">Booths you follow</h2>
+            <h2 className="mt-9 font-display text-[24px]" style={{ fontWeight: 500 }}>
+              Booths you follow
+            </h2>
             <div className="mt-3 flex flex-wrap gap-2">
               {follows.sections.map((id) => (
                 <Link key={id} to={`/section/${id}`} className="chip chip-active">

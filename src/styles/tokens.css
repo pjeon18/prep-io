@@ -3,34 +3,73 @@
 @tailwind utilities;
 
 /* ------------------------------------------------------------------ */
-/* Prep.io design tokens — "campus at night"                           */
-/* Deep navy surfaces, chalk-warm text, ONE confident amber for the    */
-/* live/primary element. Green is reserved for VERIFIED — nothing else */
-/* may use it. Revise deliberately here, never ad hoc in components.   */
+/* Prep.io design tokens — "financial editorial"                       */
+/*                                                                     */
+/* Paper-and-ink shell for every browse surface; the live room is the  */
+/* one dark place (the theater — lights down when someone's on).       */
+/*                                                                     */
+/* Exactly three color roles, all semantic:                            */
+/*   ink      — primary actions, emphasis                              */
+/*   live     — muted broadcast crimson, LIVE + on-air + end only      */
+/*   verified — racing green, credential badges ONLY                   */
+/* Nothing else gets color. Revise here, never ad hoc in components.   */
 /* ------------------------------------------------------------------ */
 
 :root {
-  --prep-bg: #0e1626;          /* page night sky */
-  --prep-surface: #141e33;     /* cards, booths */
-  --prep-surface-2: #1c2942;   /* raised layer: sheets, inputs, hover */
-  --prep-line: #2a3a5c;        /* hairlines, borders */
+  --prep-bg: #faf8f4;          /* warm paper */
+  --prep-surface: #ffffff;     /* cards */
+  --prep-surface-2: #f1eee7;   /* wells, inputs, hover */
+  --prep-line: #e5e1d7;        /* hairlines */
 
-  --prep-text: #f2eee6;        /* chalk-warm primary */
-  --prep-text-2: #c9c3b4;      /* secondary */
-  --prep-text-3: #8e8a7e;      /* tertiary / captions */
+  --prep-text: #191712;        /* ink */
+  --prep-text-2: #55524a;      /* secondary */
+  --prep-text-3: #8d897e;      /* captions, overlines */
 
-  --prep-amber: #ffb547;       /* THE accent: live, primary action */
-  --prep-amber-soft: #e8a53f;  /* pressed / hover amber */
-  --prep-amber-tint: rgba(255, 181, 71, 0.14); /* amber wash */
+  --prep-live: #b0402d;        /* broadcast crimson — LIVE, on-air, end */
+  --prep-live-tint: rgba(176, 64, 45, 0.08);
 
-  --prep-verified: #43dd9a;    /* verified ONLY */
-  --prep-verified-tint: rgba(67, 221, 154, 0.12);
+  --prep-verified: #1c5c41;    /* verified ONLY */
+  --prep-verified-tint: rgba(28, 92, 65, 0.09);
 
-  --prep-danger: #ff6b5e;      /* end/leave/report */
+  --prep-danger: #b0402d;      /* same family as live — ending things */
 
-  --radius-card: 16px;
-  --radius-tile: 14px;
+  /* action tokens let the theater invert buttons cleanly */
+  --prep-action-bg: #191712;
+  --prep-action-fg: #faf8f4;
+
+  --radius-card: 14px;
+  --radius-tile: 10px;
   --radius-pill: 99px;
+
+  --shadow-card: 0 1px 2px rgba(25, 23, 18, 0.04);
+}
+
+/* The theater: live rooms only. Lights down, same discipline. */
+.theater {
+  --prep-bg: #171512;
+  --prep-surface: #1f1d19;
+  --prep-surface-2: #29261f;
+  --prep-line: #37332a;
+
+  --prep-text: #f3f0e9;
+  --prep-text-2: #b5b0a4;
+  --prep-text-3: #7d7869;
+
+  --prep-live: #d3573f;
+  --prep-live-tint: rgba(211, 87, 63, 0.13);
+
+  --prep-verified: #4caf82;
+  --prep-verified-tint: rgba(76, 175, 130, 0.12);
+
+  --prep-danger: #d3573f;
+
+  --prep-action-bg: #f3f0e9;
+  --prep-action-fg: #171512;
+
+  --shadow-card: none;
+
+  background: var(--prep-bg);
+  color: var(--prep-text);
 }
 
 html,
@@ -43,12 +82,27 @@ body {
   background: var(--prep-bg);
   color: var(--prep-text);
   font-family: Inter, system-ui, sans-serif;
+  font-size: 15px;
   -webkit-font-smoothing: antialiased;
   overscroll-behavior-y: none;
 }
 
+/* Editorial serif for display. .font-display maps to Newsreader. */
 h1, h2, h3, h4, .font-display {
-  font-family: Poppins, system-ui, sans-serif;
+  font-family: Newsreader, Georgia, serif;
+  letter-spacing: -0.01em;
+}
+
+/* Overline labels — the app's small-caps voice (replaces tiny bold sans).
+   text-decoration: none guards against Tailwind's `overline` utility. */
+.overline {
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none !important;
+  color: var(--prep-text-3);
 }
 
 /* ---------------- base component classes ---------------- */
@@ -57,22 +111,24 @@ h1, h2, h3, h4, .font-display {
   background: var(--prep-surface);
   border: 1px solid var(--prep-line);
   border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
 }
 
 .btn {
-  @apply inline-flex items-center justify-center gap-2 font-display font-semibold select-none;
+  @apply inline-flex items-center justify-center gap-2 font-medium select-none;
+  font-family: Inter, system-ui, sans-serif;
   border-radius: var(--radius-pill);
-  padding: 12px 22px;
+  padding: 13px 24px;
   font-size: 15px;
-  transition: transform 120ms ease, background-color 120ms ease, opacity 120ms ease;
+  transition: transform 120ms ease, opacity 120ms ease, background-color 120ms ease;
 }
-.btn:active { transform: scale(0.97); }
+.btn:active { transform: scale(0.98); }
 
 .btn-primary {
-  background: var(--prep-amber);
-  color: #201302;
+  background: var(--prep-action-bg);
+  color: var(--prep-action-fg);
 }
-.btn-primary:hover { background: var(--prep-amber-soft); }
+.btn-primary:hover { opacity: 0.9; }
 
 .btn-ghost {
   background: transparent;
@@ -84,36 +140,40 @@ h1, h2, h3, h4, .font-display {
 .btn-danger {
   background: transparent;
   color: var(--prep-danger);
-  border: 1px solid var(--prep-danger);
+  border: 1px solid currentColor;
 }
 
-.btn:disabled { opacity: 0.45; pointer-events: none; }
+.btn:disabled { opacity: 0.4; pointer-events: none; }
 
 .chip {
-  @apply inline-flex items-center gap-1.5 text-sm select-none;
+  @apply inline-flex items-center gap-1.5 select-none;
+  font-size: 14px;
   border-radius: var(--radius-pill);
-  padding: 6px 14px;
-  background: var(--prep-surface-2);
+  padding: 7px 15px;
+  background: transparent;
   border: 1px solid var(--prep-line);
   color: var(--prep-text-2);
   transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
 }
 .chip-active {
-  background: var(--prep-amber-tint);
-  border-color: var(--prep-amber);
-  color: var(--prep-amber);
+  border-color: var(--prep-text);
+  color: var(--prep-text);
+  background: var(--prep-surface);
 }
 
 .input {
-  @apply w-full text-[15px] outline-none;
-  background: var(--prep-surface-2);
+  @apply w-full outline-none;
+  font-size: 15px;
+  background: var(--prep-surface);
   border: 1px solid var(--prep-line);
   border-radius: var(--radius-tile);
-  padding: 12px 14px;
+  padding: 13px 15px;
   color: var(--prep-text);
 }
 .input::placeholder { color: var(--prep-text-3); }
-.input:focus { border-color: var(--prep-amber); }
+.input:focus { border-color: var(--prep-text-2); }
+
+.theater .input { background: var(--prep-surface-2); }
 
 /* thin scrollbars for rails */
 .rail::-webkit-scrollbar { height: 0; width: 0; }

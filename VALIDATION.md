@@ -45,7 +45,7 @@ Jae Hoon (verified-school), Grace/Sofia (unverified).
 - Host "End" always produces a recap (peak viewers, hands, questions
   answered, follows) and mints a chaptered VOD into "Your library."
   A hot seat interrupted by ending the session is still credited.
-- VODs are labeled `ARCHIVE · <date>` everywhere (library rows and player);
+- VODs are labeled `Recorded · <date>` everywhere (library rows and player);
   `joinRoom` refuses non-live sessions in the store, and the room route
   renders an archive redirect card instead.
 

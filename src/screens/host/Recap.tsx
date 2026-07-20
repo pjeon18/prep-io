@@ -1,12 +1,11 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { IconEye, IconHand, IconPlay, IconUsers } from "../../components/icons";
 import { SECTIONS } from "../../data/seedData";
 import { fadeUp, springs, stagger } from "../../lib/motion";
 import { usePrepStore } from "../../store/usePrepStore";
 
 /** Every session ends here — cleanly, with proof it compounded: the numbers,
- *  the questions, and the archive it just became. No dead ends. */
+ *  the questions, and the recording it just became. No dead ends. */
 export default function Recap() {
   const nav = useNavigate();
   const recap = usePrepStore((s) => s.recap);
@@ -16,72 +15,70 @@ export default function Recap() {
     return (
       <div className="flex min-h-dvh flex-col items-center justify-center px-6">
         <div style={{ color: "var(--prep-text-2)" }}>No recent session to recap.</div>
-        <button className="btn btn-ghost mt-4" onClick={() => nav("/host")}>
+        <button className="btn btn-ghost mt-5" onClick={() => nav("/host")}>
           Host home
         </button>
       </div>
     );
   }
 
-  const stat = (icon: React.ReactNode, value: string, label: string, i: number) => (
-    <motion.div
-      className="card flex flex-col items-center p-4"
-      {...fadeUp}
-      transition={{ ...springs.standard, ...stagger(i, 0.07) }}
-    >
-      <span style={{ color: "var(--prep-amber)" }}>{icon}</span>
-      <div className="mt-1.5 font-display text-[20px] font-semibold">{value}</div>
-      <div className="text-[11.5px]" style={{ color: "var(--prep-text-3)" }}>
-        {label}
-      </div>
-    </motion.div>
-  );
+  const stats: [string, string][] = [
+    [String(recap.peakViewers), "peak viewers"],
+    [String(recap.handsRaised), "hands raised"],
+    [String(recap.questionsAnswered.length), "answered live"],
+    [`+${recap.followsGained}`, "new followers"],
+  ];
 
   return (
-    <div className="mx-auto min-h-dvh max-w-md px-4 pb-16">
+    <div className="mx-auto min-h-dvh max-w-md px-5 pb-16">
       <motion.div
-        className="mt-10 text-center"
+        className="mt-14"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={springs.calm}
       >
-        <div className="font-display text-[12px] font-bold tracking-wider" style={{ color: "var(--prep-text-3)" }}>
-          SESSION COMPLETE
-        </div>
-        <h1 className="mt-2 font-display text-[22px] font-semibold leading-snug">
+        <div className="overline">Session complete</div>
+        <h1 className="mt-2 font-display text-[30px] leading-tight" style={{ fontWeight: 500 }}>
           {recap.sessionTitle}
         </h1>
-        <div className="mt-1 text-[13px]" style={{ color: "var(--prep-text-2)" }}>
+        <div className="mt-2 text-[14px]" style={{ color: "var(--prep-text-2)" }}>
           {SECTIONS.find((s) => s.id === recap.sectionId)?.name} · {recap.durationLabel}
         </div>
       </motion.div>
 
-      <div className="mt-6 grid grid-cols-2 gap-3">
-        {stat(<IconEye size={20} />, String(recap.peakViewers), "peak viewers", 0)}
-        {stat(<IconHand size={20} />, String(recap.handsRaised), "hands raised", 1)}
-        {stat(
-          <IconPlay size={20} />,
-          String(recap.questionsAnswered.length),
-          "questions answered live",
-          2,
-        )}
-        {stat(<IconUsers size={20} />, `+${recap.followsGained}`, "new followers", 3)}
+      <div className="mt-8 grid grid-cols-2 gap-x-6">
+        {stats.map(([value, label], i) => (
+          <motion.div
+            key={label}
+            className="border-t py-4"
+            style={{ borderColor: "var(--prep-line)" }}
+            {...fadeUp}
+            transition={{ ...springs.standard, ...stagger(i, 0.07) }}
+          >
+            <div className="font-display text-[34px] leading-none tabular-nums" style={{ fontWeight: 500 }}>
+              {value}
+            </div>
+            <div className="mt-1.5 text-[13px]" style={{ color: "var(--prep-text-3)" }}>
+              {label}
+            </div>
+          </motion.div>
+        ))}
       </div>
 
       {recap.questionsAnswered.length > 0 && (
         <>
-          <h2 className="mt-7 font-display text-[15px] font-semibold">
+          <h2 className="mt-10 font-display text-[24px]" style={{ fontWeight: 500 }}>
             What the room learned
           </h2>
-          <div className="mt-3 flex flex-col gap-2">
+          <div className="mt-4 flex flex-col gap-2">
             {recap.questionsAnswered.map((q, i) => (
-              <div key={i} className="card flex items-start gap-3 p-3.5">
-                <span className="mt-0.5 shrink-0 font-display text-[12px] font-semibold" style={{ color: "var(--prep-amber)" }}>
+              <div key={i} className="card flex items-start gap-4 p-4">
+                <span className="mt-0.5 shrink-0 text-[13px] font-medium tabular-nums" style={{ color: "var(--prep-text-3)" }}>
                   {String(Math.floor(q.atSec / 60)).padStart(2, "0")}:{String(q.atSec % 60).padStart(2, "0")}
                 </span>
                 <span className="flex-1">
-                  <span className="block text-[13.5px] leading-snug">“{q.question}”</span>
-                  <span className="mt-0.5 block text-[12px]" style={{ color: "var(--prep-text-3)" }}>
+                  <span className="block text-[15px] leading-snug">“{q.question}”</span>
+                  <span className="mt-1 block text-[13px]" style={{ color: "var(--prep-text-3)" }}>
                     {q.askedBy}
                   </span>
                 </span>
@@ -92,8 +89,7 @@ export default function Recap() {
       )}
 
       <motion.button
-        className="card mt-6 w-full p-4 text-left"
-        style={{ borderColor: "var(--prep-amber)" }}
+        className="card mt-8 w-full p-5 text-left"
         {...fadeUp}
         transition={{ ...springs.standard, delay: 0.4 }}
         onClick={() => {
@@ -102,12 +98,10 @@ export default function Recap() {
           nav(`/vod/${id}`);
         }}
       >
-        <div className="font-display text-[12px] font-bold tracking-wider" style={{ color: "var(--prep-amber)" }}>
-          YOUR SESSION IS NOW AN ARCHIVE
-        </div>
-        <div className="mt-1 text-[13px] leading-relaxed" style={{ color: "var(--prep-text-2)" }}>
-          Chaptered by question, searchable forever. This is how one live hour
-          keeps helping people while you sleep.
+        <div className="overline">Saved to your library</div>
+        <div className="mt-2 text-[14.5px] leading-relaxed" style={{ color: "var(--prep-text-2)" }}>
+          The session is now a recording, chaptered by question. It keeps
+          answering after you've logged off.
         </div>
       </motion.button>
 

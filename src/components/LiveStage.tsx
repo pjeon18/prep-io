@@ -3,15 +3,15 @@ import { useEffect, useState } from "react";
 import { Avatar } from "./Avatar";
 
 /**
- * The mocked-video treatment (CONCEPT.md D7): an ambient host portrait over a
- * slow-breathing gradient, with a live audio waveform. No fake video — the
- * stage is honest about being a person talking, not a stream capture.
+ * The mocked-video treatment (CONCEPT.md D7): an ambient host portrait with a
+ * live audio waveform. No fake video — the stage is honest about being a
+ * person talking, not a stream capture. Restraint over glow.
  */
 
 export function Waveform({
-  bars = 24,
-  height = 28,
-  color = "var(--prep-amber)",
+  bars = 26,
+  height = 26,
+  color = "var(--prep-text-3)",
   active = true,
 }: {
   bars?: number;
@@ -34,8 +34,12 @@ export function Waveform({
         return (
           <div
             key={i}
-            className="w-[3px] rounded-full transition-all duration-150"
-            style={{ height: `${Math.max(8, h * 100)}%`, background: color, opacity: 0.4 + h * 0.6 }}
+            className="w-[2.5px] rounded-full transition-all duration-150"
+            style={{
+              height: `${Math.max(8, h * 100)}%`,
+              background: color,
+              opacity: 0.35 + h * 0.55,
+            }}
           />
         );
       })}
@@ -46,14 +50,14 @@ export function Waveform({
 export function LivePill({ label = "LIVE" }: { label?: string }) {
   return (
     <span
-      className="inline-flex items-center gap-1.5 rounded-pill px-2.5 py-1 font-display text-[11px] font-bold tracking-wide"
-      style={{ background: "var(--prep-amber)", color: "#201302" }}
+      className="inline-flex items-center gap-1.5 rounded-pill px-2.5 py-[3px] text-[11px] font-semibold tracking-[0.08em]"
+      style={{ background: "var(--prep-live)", color: "#fdfbf7" }}
     >
       <motion.span
         className="h-1.5 w-1.5 rounded-full"
-        style={{ background: "#201302" }}
-        animate={{ opacity: [1, 0.3, 1] }}
-        transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+        style={{ background: "#fdfbf7" }}
+        animate={{ opacity: [1, 0.35, 1] }}
+        transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
       />
       {label}
     </span>
@@ -78,28 +82,22 @@ export function LiveStage({
   return (
     <div
       className="relative overflow-hidden rounded-card border"
-      style={{ borderColor: "var(--prep-line)" }}
+      style={{ borderColor: "var(--prep-line)", background: "var(--prep-surface)" }}
     >
-      <motion.div
-        className="absolute inset-0"
-        style={{
-          background: `radial-gradient(120% 90% at 50% 0%, hsl(${hue} 45% 24%) 0%, var(--prep-surface) 70%)`,
-        }}
-        animate={{ opacity: [0.85, 1, 0.85] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <div className="relative flex flex-col items-center px-4 pb-4 pt-7">
+      <div className="relative flex flex-col items-center px-4 pb-6 pt-8">
         <motion.div
-          animate={speaking ? { scale: [1, 1.02, 1] } : { scale: 1 }}
-          transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+          animate={speaking ? { scale: [1, 1.015, 1] } : { scale: 1 }}
+          transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
         >
-          <Avatar hue={hue} initials={initials} size={84} />
+          <Avatar hue={hue} initials={initials} size={88} />
         </motion.div>
-        <div className="mt-3 font-display text-[17px] font-semibold">{name}</div>
-        <div className="text-[13px]" style={{ color: "var(--prep-text-2)" }}>
+        <div className="mt-4 font-display text-[20px]" style={{ fontWeight: 500 }}>
+          {name}
+        </div>
+        <div className="mt-0.5 text-[14px]" style={{ color: "var(--prep-text-2)" }}>
           {headline}
         </div>
-        <div className="mt-3">
+        <div className="mt-4">
           <Waveform active={speaking} />
         </div>
         {children}

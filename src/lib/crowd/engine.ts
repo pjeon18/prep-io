@@ -90,7 +90,7 @@ export function startCrowd(role: Role) {
         s.simPushChat({
           author: "prep.io",
           authorHue: 36,
-          text: "a wave of viewers just joined",
+          text: "the room is filling up",
           isSystem: true,
         });
       }
@@ -153,8 +153,8 @@ export function startCrowd(role: Role) {
               authorHue: 36,
               text:
                 next.who === "you"
-                  ? "you're on the hot seat"
-                  : `${next.name} is on the hot seat`,
+                  ? "you have the floor"
+                  : `${next.name} has the floor`,
               isSystem: true,
             });
             answerSequence(next.name, next.who === "you");
@@ -207,9 +207,7 @@ function answerSequence(askerName: string, isYou: boolean) {
     store().simPushChat({
       author: "prep.io",
       authorHue: 36,
-      text: isYou
-        ? "you step down — thanks for asking"
-        : `${askerName} steps down — thanks for asking`,
+      text: isYou ? "you step down" : `${askerName} steps down`,
       isSystem: true,
     });
     // After YOUR hot seat, a host with a rate may offer a breakout.

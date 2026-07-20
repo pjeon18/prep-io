@@ -8,18 +8,20 @@ export default function Settings() {
   const verification = usePrepStore((s) => s.verification);
   const resetAll = usePrepStore((s) => s.resetAll);
 
-  const row = "card mt-3 flex items-center justify-between gap-3 p-4";
+  const row = "card mt-3 flex items-center justify-between gap-4 p-5";
 
   return (
-    <div className="min-h-dvh pb-16">
+    <div className="min-h-dvh pb-20">
       <TopNav />
-      <main className="mx-auto max-w-md px-4">
-        <h1 className="mt-5 font-display text-[22px] font-semibold">Settings</h1>
+      <main className="mx-auto max-w-md px-5">
+        <h1 className="mt-9 font-display text-[32px]" style={{ fontWeight: 500 }}>
+          Settings
+        </h1>
 
         <div className={row}>
           <div>
-            <div className="text-[14px] font-medium">Host verification</div>
-            <div className="mt-0.5 text-[12px]" style={{ color: "var(--prep-text-2)" }}>
+            <div className="text-[15px] font-medium">Host verification</div>
+            <div className="mt-1 text-[13px]" style={{ color: "var(--prep-text-2)" }}>
               {verification.state === "none" && "Not started"}
               {verification.state === "pending" && "Under review"}
               {(verification.state === "verified-role" ||
@@ -38,33 +40,34 @@ export default function Settings() {
 
         <div className={row}>
           <div>
-            <div className="text-[14px] font-medium">Notifications</div>
-            <div className="mt-0.5 text-[12px]" style={{ color: "var(--prep-text-2)" }}>
+            <div className="text-[15px] font-medium">Notifications</div>
+            <div className="mt-1 text-[13px]" style={{ color: "var(--prep-text-2)" }}>
               Go-live and schedule alerts from your follows
             </div>
           </div>
-          <span className="chip chip-active !py-1 text-[12px]">On</span>
+          <span className="chip chip-active !py-1.5 text-[13px]">On</span>
         </div>
 
         <div className={row}>
           <div>
-            <div className="text-[14px] font-medium">Privacy</div>
-            <div className="mt-0.5 text-[12px]" style={{ color: "var(--prep-text-2)" }}>
-              You lurk anonymously. Your name appears only when you raise your hand.
+            <div className="text-[15px] font-medium">Privacy</div>
+            <div className="mt-1 text-[13px] leading-relaxed" style={{ color: "var(--prep-text-2)" }}>
+              You watch anonymously. Your name appears only when you raise
+              your hand.
             </div>
           </div>
         </div>
 
         <div
-          className="card mt-6 p-4 text-[12.5px] leading-relaxed"
-          style={{ color: "var(--prep-text-3)" }}
+          className="mt-8 border-t pt-5 text-[13px] leading-relaxed"
+          style={{ borderColor: "var(--prep-line)", color: "var(--prep-text-3)" }}
         >
           Prep.io prototype — all data is simulated and lives in your browser.
           No accounts, no payments, no real streams. Add <code>?debug</code> to
           the URL for demo controls.
         </div>
 
-        <button className="btn btn-danger mt-4 w-full" onClick={resetAll}>
+        <button className="btn btn-danger mt-5 w-full" onClick={resetAll}>
           Reset the prototype
         </button>
       </main>

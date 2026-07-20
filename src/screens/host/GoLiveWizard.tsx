@@ -31,32 +31,35 @@ export default function GoLiveWizard() {
   };
 
   return (
-    <div className="min-h-dvh pb-24">
+    <div className="min-h-dvh pb-28">
       <TopNav />
-      <main className="mx-auto max-w-md px-4">
-        <div className="mt-4 flex items-center gap-2">
-          <button
-            aria-label="Back"
-            className="flex h-9 w-9 items-center justify-center rounded-full"
-            style={{ color: "var(--prep-text-2)" }}
-            onClick={() => nav("/host")}
-          >
-            <IconArrowLeft size={20} />
-          </button>
-          <h1 className="font-display text-[20px] font-semibold">Set up your session</h1>
-        </div>
+      <main className="mx-auto max-w-md px-5">
+        <button
+          aria-label="Back"
+          className="-ml-2 mt-5 flex h-10 w-10 items-center justify-center rounded-full"
+          style={{ color: "var(--prep-text-2)" }}
+          onClick={() => nav("/host")}
+        >
+          <IconArrowLeft size={20} />
+        </button>
+        <h1 className="mt-3 font-display text-[32px] leading-tight" style={{ fontWeight: 500 }}>
+          Set up your session
+        </h1>
 
         {/* badge preview — how you'll appear */}
-        <div className="card mt-4 flex items-center justify-between p-3.5">
-          <span className="text-[13px]" style={{ color: "var(--prep-text-2)" }}>
+        <div
+          className="mt-5 flex items-center justify-between border-b pb-4"
+          style={{ borderColor: "var(--prep-line)" }}
+        >
+          <span className="text-[14px]" style={{ color: "var(--prep-text-2)" }}>
             You'll appear as
           </span>
           <Badge state={verified ? (verification.state as "verified-role" | "verified-school") : "unverified"} />
         </div>
 
         {/* section */}
-        <h2 className="mt-6 font-display text-[14px] font-semibold">Which booth?</h2>
-        <div className="mt-2.5 flex flex-wrap gap-2">
+        <div className="overline mt-8">Booth</div>
+        <div className="mt-3 flex flex-wrap gap-2">
           {SECTIONS.map((s) => (
             <button
               key={s.id}
@@ -69,34 +72,34 @@ export default function GoLiveWizard() {
         </div>
 
         {/* title */}
-        <h2 className="mt-6 font-display text-[14px] font-semibold">Session title</h2>
+        <div className="overline mt-8">Title</div>
         <input
-          className="input mt-2.5"
-          placeholder={'Specific beats broad — "Superday prep for juniors"'}
+          className="input mt-3"
+          placeholder="Specific beats broad"
           maxLength={80}
           value={draft.title}
           onChange={(e) => setHostDraft({ title: e.target.value })}
         />
 
         {/* timing */}
-        <h2 className="mt-6 font-display text-[14px] font-semibold">When?</h2>
-        <div className="mt-2.5 flex gap-2">
+        <div className="overline mt-8">When</div>
+        <div className="mt-3 flex gap-2">
           <button
-            className={`chip flex-1 justify-center !py-2.5 ${draft.mode === "now" ? "chip-active" : ""}`}
+            className={`chip flex-1 justify-center !py-3 ${draft.mode === "now" ? "chip-active" : ""}`}
             onClick={() => setHostDraft({ mode: "now" })}
           >
-            <IconMic size={14} /> Go live now
+            <IconMic size={14} /> Now
           </button>
           <button
-            className={`chip flex-1 justify-center !py-2.5 ${draft.mode === "scheduled" ? "chip-active" : ""}`}
+            className={`chip flex-1 justify-center !py-3 ${draft.mode === "scheduled" ? "chip-active" : ""}`}
             onClick={() => setHostDraft({ mode: "scheduled" })}
           >
-            Schedule it
+            Schedule
           </button>
         </div>
         {draft.mode === "scheduled" && (
           <select
-            className="input mt-2.5"
+            className="input mt-3"
             value={draft.when}
             onChange={(e) => setHostDraft({ when: e.target.value })}
           >
@@ -107,35 +110,35 @@ export default function GoLiveWizard() {
         )}
 
         {/* room settings */}
-        <h2 className="mt-6 font-display text-[14px] font-semibold">Room settings</h2>
-        <div className="card mt-2.5 divide-y" style={{ borderColor: "var(--prep-line)" }}>
-          <label className="flex items-center justify-between gap-3 p-4">
-            <span className="flex items-center gap-2 text-[13.5px]">
+        <div className="overline mt-8">Room</div>
+        <div className="card mt-3 divide-y" style={{ borderColor: "var(--prep-line)" }}>
+          <label className="flex items-center justify-between gap-3 p-4.5 px-5 py-4">
+            <span className="flex items-center gap-2.5 text-[15px]">
               <IconHand size={15} /> Hand raises
             </span>
             <input
               type="checkbox"
-              className="h-5 w-5 accent-[#FFB547]"
+              className="h-5 w-5 accent-[#191712]"
               checked={draft.handRaise}
               onChange={(e) => setHostDraft({ handRaise: e.target.checked })}
             />
           </label>
-          <label className="flex items-center justify-between gap-3 p-4" style={{ borderColor: "var(--prep-line)" }}>
-            <span className="text-[13.5px]">Slow-mode chat</span>
+          <label className="flex items-center justify-between gap-3 px-5 py-4" style={{ borderColor: "var(--prep-line)" }}>
+            <span className="text-[15px]">Slow-mode chat</span>
             <input
               type="checkbox"
-              className="h-5 w-5 accent-[#FFB547]"
+              className="h-5 w-5 accent-[#191712]"
               checked={draft.slowMode}
               onChange={(e) => setHostDraft({ slowMode: e.target.checked })}
             />
           </label>
-          <div className="p-4" style={{ borderColor: "var(--prep-line)" }}>
+          <div className="px-5 py-4" style={{ borderColor: "var(--prep-line)" }}>
             <div className="flex items-center justify-between gap-3">
-              <span className="text-[13.5px]">Breakout rate (optional)</span>
+              <span className="text-[15px]">Breakout rate</span>
               <div className="flex items-center gap-1.5">
                 <span style={{ color: "var(--prep-text-3)" }}>$</span>
                 <input
-                  className="input !w-20 !px-2.5 !py-1.5 text-center"
+                  className="input !w-20 !px-2.5 !py-1.5 text-center tabular-nums"
                   type="number"
                   min={0}
                   max={500}
@@ -147,14 +150,14 @@ export default function GoLiveWizard() {
                 />
               </div>
             </div>
-            <div className="mt-1.5 text-[11.5px] leading-snug" style={{ color: "var(--prep-text-3)" }}>
-              Per 15-minute private breakout. Pays for your time — it never
-              affects your placement on the floor.
+            <div className="mt-2 text-[12.5px] leading-snug" style={{ color: "var(--prep-text-3)" }}>
+              Per 15-minute breakout. Optional. Pays for your time — never for
+              placement on the floor.
             </div>
           </div>
         </div>
 
-        <button className="btn btn-primary mt-6 w-full" disabled={!ready} onClick={submit}>
+        <button className="btn btn-primary mt-8 w-full !py-4" disabled={!ready} onClick={submit}>
           {draft.mode === "now" ? "Go live" : `Schedule for ${draft.when}`}
         </button>
       </main>

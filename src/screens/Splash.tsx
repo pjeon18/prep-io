@@ -16,54 +16,56 @@ export default function Splash() {
   };
 
   return (
-    <div className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden px-6">
+    <div className="mx-auto flex min-h-dvh max-w-md flex-col px-7 pb-12 pt-10">
       <motion.div
-        className="absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(90% 60% at 50% 110%, rgba(255,181,71,0.22) 0%, rgba(255,181,71,0.05) 45%, transparent 70%)",
-        }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 1.4 }}
-      />
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ ...springs.calm, delay: 0.15 }}
+        transition={{ duration: 0.6 }}
       >
-        <Wordmark size={40} />
+        <Wordmark />
       </motion.div>
-      <motion.h1
-        className="mt-6 max-w-sm text-center font-display text-[26px] font-semibold leading-snug"
-        initial={{ opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ ...springs.calm, delay: 0.35 }}
-      >
-        Live office hours with people who have the job you want.
-      </motion.h1>
-      <motion.p
-        className="mt-4 max-w-xs text-center text-[15px] leading-relaxed"
-        style={{ color: "var(--prep-text-2)" }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.6, duration: 0.5 }}
-      >
-        Wander the fair. Lurk in the crowd. Raise your hand when you're ready —
-        everyone learns from every question.
-      </motion.p>
+
+      <div className="flex flex-1 flex-col justify-center">
+        <motion.h1
+          className="font-display text-[46px] leading-[1.08]"
+          style={{ fontWeight: 500, letterSpacing: "-0.02em" }}
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ...springs.calm, delay: 0.15 }}
+        >
+          Office hours with people who have the job you want.
+        </motion.h1>
+
+        <motion.p
+          className="mt-7 max-w-[30ch] text-[17px] leading-relaxed"
+          style={{ color: "var(--prep-text-2)" }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.5 }}
+        >
+          Live, drop-in, and verified. Watch from the crowd, or raise your
+          hand and ask.
+        </motion.p>
+      </div>
+
       <motion.div
-        className="mt-10 flex flex-col items-center gap-3"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ ...springs.calm, delay: 0.8 }}
+        transition={{ ...springs.calm, delay: 0.7 }}
       >
-        <button className="btn btn-primary px-8" onClick={enter}>
+        <div
+          className="mb-7 h-px w-full"
+          style={{ background: "var(--prep-line)" }}
+        />
+        <button className="btn btn-primary w-full !py-4 text-[16px]" onClick={enter}>
           Walk the fair
         </button>
-        <span className="text-[12px]" style={{ color: "var(--prep-text-3)" }}>
+        <div
+          className="mt-4 text-center text-[13.5px]"
+          style={{ color: "var(--prep-text-3)" }}
+        >
           No account needed to watch
-        </span>
+        </div>
       </motion.div>
     </div>
   );

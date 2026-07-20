@@ -54,14 +54,20 @@ React 18 + TypeScript + Vite + Tailwind + Zustand + Framer Motion.
 
 ## Design direction (PINNED — revise deliberately in `src/styles/tokens.css`)
 
-Campus-at-night: page `--prep-bg #0E1626`, surfaces `#141E33` / raised
-`#1C2942`, hairlines `#2A3A5C`, chalk-warm text `#F2EEE6` / `#C9C3B4` /
-`#8E8A7E`. One confident amber `#FFB547` for the live/primary element only.
-**Green `#43DD9A` is reserved for VERIFIED** — nothing else may be green.
-Danger `#FF6B5E`. Poppins (display) / Inter (body). Radii 16/14px cards,
-99px pills. No emoji in UI chrome — the stroke icon set lives in
-`src/components/icons.tsx`; add glyphs there. Mocked video = ambient avatar
-+ waveform stage (CONCEPT.md D7).
+**"Financial editorial"** (CONCEPT.md D8, replaced campus-at-night 2026-07-20):
+warm paper `#FAF8F4` + ink `#191712` shell for every browse surface; the
+live rooms (viewer, host, breakout) are the one dark place — the `.theater`
+CSS scope flips the same tokens to warm near-black `#171512`. Exactly three
+color roles, all semantic: **ink** = primary actions (black buttons),
+**crimson `#B0402D`** = LIVE/on-air/end only, **green `#1C5C41` reserved for
+VERIFIED** — nothing else gets color. Type: Newsreader (editorial serif
+display + italic wordmark) / Inter (UI, body 15px). Overline labels via the
+`.overline` class (Tailwind's `overline` utility is neutralized there).
+Large type and negative space are the aesthetic — headers 24–32px serif,
+whitespace over boxes. Copy voice: factual and confident, never winking;
+"has the floor," not exclamation points. No emoji in UI chrome — the stroke
+icon set lives in `src/components/icons.tsx`; add glyphs there. Mocked
+video = ambient avatar + waveform stage (CONCEPT.md D7).
 
 ## Build order
 

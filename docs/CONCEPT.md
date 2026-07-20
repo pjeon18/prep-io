@@ -106,6 +106,17 @@ about being a mock (PRD open question 1, resolved). The same waveform
 grammar carries through the breakout room (host amber, you gray) and the VOD
 player (muted gray = not live).
 
+**D8 — Design language: "financial editorial", replacing campus-at-night.**
+(2026-07-20, Paul's direction after reviewing the first build.) The navy +
+amber dark UI read as generated and generic. New system: warm paper + ink
+for all browse surfaces (the commercial register of Mercury/Ramp/LinkedIn —
+right for a finance/STEM/corporate audience), with live rooms as the one
+dark "theater" scope. Serif display (Newsreader) + Inter; three semantic
+color roles only (ink actions, broadcast-crimson LIVE, racing-green
+verified); large type and generous negative space; copy stripped of cute
+AI-isms. The old "one confident amber" rule is superseded by "ink acts,
+crimson is live, green is verified."
+
 ## 6. Open questions
 
 Tracked in PRD §14; raise new ones here first, promote when decided.

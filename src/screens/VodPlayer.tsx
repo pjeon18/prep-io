@@ -10,8 +10,9 @@ import { HOSTS, SESSIONS } from "../data/seedData";
 import { fadeUp, springs, stagger } from "../lib/motion";
 import { fmtCount, usePrepStore } from "../store/usePrepStore";
 
-/** The compounding layer: a past session, CLEARLY an archive (never fake-live),
- *  chaptered by hot-seat question so the library is searchable (D3). */
+/** The compounding layer: a past session, CLEARLY a recording (never
+ *  fake-live), chaptered by hot-seat question so the library is
+ *  searchable (D3). The player is the one dark card on the page. */
 export default function VodPlayer() {
   const { vodId } = useParams();
   const nav = useNavigate();
@@ -28,7 +29,7 @@ export default function VodPlayer() {
     return (
       <div className="flex min-h-dvh flex-col items-center justify-center px-6 text-center">
         <div style={{ color: "var(--prep-text-2)" }}>That recording doesn't exist.</div>
-        <Link to="/fair" className="mt-3 text-[13px] underline" style={{ color: "var(--prep-text-3)" }}>
+        <Link to="/fair" className="mt-4 text-[14px] underline" style={{ color: "var(--prep-text-3)" }}>
           Back to the fair
         </Link>
       </div>
@@ -38,63 +39,55 @@ export default function VodPlayer() {
   const chapters = sesh.vod.chapters;
 
   return (
-    <div className="min-h-dvh pb-16">
+    <div className="min-h-dvh pb-20">
       <TopNav />
-      <main className="mx-auto max-w-md px-4">
-        <div className="mt-4 flex items-center gap-2">
+      <main className="mx-auto max-w-md px-5">
+        <div className="mt-5 flex items-center gap-2">
           <button
             aria-label="Back"
-            className="flex h-9 w-9 items-center justify-center rounded-full"
+            className="-ml-2 flex h-10 w-10 items-center justify-center rounded-full"
             style={{ color: "var(--prep-text-2)" }}
             onClick={() => nav(-1)}
           >
             <IconArrowLeft size={20} />
           </button>
-          <span
-            className="rounded-pill border px-2.5 py-1 font-display text-[11px] font-bold tracking-wider"
-            style={{ color: "var(--prep-text-3)", borderColor: "var(--prep-line)" }}
-          >
-            ARCHIVE · {sesh.vod.recordedOn}
-          </span>
+          <span className="overline">Recorded {sesh.vod.recordedOn}</span>
         </div>
 
-        {/* mock player */}
+        {/* mock player — the one dark surface on a light page */}
         <motion.div
-          className="card mt-4 overflow-hidden"
+          className="theater mt-4 overflow-hidden rounded-card"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={springs.calm}
         >
-          <div
-            className="relative flex flex-col items-center px-4 pb-5 pt-7"
-            style={{
-              background: `radial-gradient(120% 90% at 50% 0%, hsl(${host?.hue ?? 220} 30% 20%) 0%, var(--prep-surface) 75%)`,
-            }}
-          >
+          <div className="relative flex flex-col items-center px-4 pb-6 pt-8">
             {host ? (
               <Avatar hue={host.hue} initials={host.initials} size={72} />
             ) : (
               <Avatar hue={36} initials="Y" size={72} />
             )}
             <button
-              className="btn btn-primary mt-4 !px-5 !py-2.5 text-[13px]"
+              className="btn btn-primary mt-5 !px-6 !py-2.5 text-[14px]"
               onClick={() => setPlaying((p) => !p)}
             >
-              <IconPlay size={15} /> {playing ? "Playing chapter…" : "Play"}
+              <IconPlay size={15} /> {playing ? "Playing" : "Play"}
             </button>
-            <div className="mt-3">
-              <Waveform active={playing} color="var(--prep-text-3)" height={20} />
+            <div className="mt-4">
+              <Waveform active={playing} height={20} />
             </div>
             {playing && (
-              <div className="mt-2 text-[12px]" style={{ color: "var(--prep-text-3)" }}>
-                mock playback — from {chapters[activeChapter]?.t ?? "00:00"}
+              <div className="mt-2 text-[12.5px] tabular-nums" style={{ color: "var(--prep-text-3)" }}>
+                mock playback from {chapters[activeChapter]?.t ?? "00:00"}
               </div>
             )}
           </div>
         </motion.div>
 
-        <h1 className="mt-4 font-display text-[18px] font-semibold leading-snug">{sesh.title}</h1>
-        <div className="mt-1.5 flex items-center gap-2 text-[13px]" style={{ color: "var(--prep-text-2)" }}>
+        <h1 className="mt-6 font-display text-[26px] leading-snug" style={{ fontWeight: 500 }}>
+          {sesh.title}
+        </h1>
+        <div className="mt-2 flex items-center gap-2.5 text-[14px]" style={{ color: "var(--prep-text-2)" }}>
           {isYours ? (
             <span>Hosted by you</span>
           ) : (
@@ -104,25 +97,25 @@ export default function VodPlayer() {
               </Link>
             )
           )}
-          <span style={{ color: "var(--prep-text-3)" }}>
+          <span className="tabular-nums" style={{ color: "var(--prep-text-3)" }}>
             {sesh.vod.durationLabel} · {fmtCount(sesh.vod.views)} views
           </span>
         </div>
 
-        <h2 className="mt-6 font-display text-[15px] font-semibold">
-          Questions answered ({chapters.length})
+        <h2 className="mt-10 font-display text-[24px]" style={{ fontWeight: 500 }}>
+          Questions answered
         </h2>
-        <div className="mt-1 text-[12px]" style={{ color: "var(--prep-text-3)" }}>
-          Every hot seat becomes a chapter — jump straight to yours
+        <div className="mt-1 text-[13.5px]" style={{ color: "var(--prep-text-3)" }}>
+          Every hot seat becomes a chapter
         </div>
-        <div className="mt-3 flex flex-col gap-2">
+        <div className="mt-4 flex flex-col gap-2">
           {chapters.map((ch, i) => (
             <motion.button
               key={i}
-              className="card flex w-full items-start gap-3 p-3.5 text-left"
+              className="card flex w-full items-start gap-4 p-4 text-left"
               style={
                 activeChapter === i && playing
-                  ? { borderColor: "var(--prep-amber)" }
+                  ? { borderColor: "var(--prep-text)" }
                   : undefined
               }
               {...fadeUp}
@@ -133,21 +126,21 @@ export default function VodPlayer() {
               }}
             >
               <span
-                className="mt-0.5 shrink-0 font-display text-[12px] font-semibold"
-                style={{ color: "var(--prep-amber)" }}
+                className="mt-0.5 shrink-0 text-[13px] font-medium tabular-nums"
+                style={{ color: "var(--prep-text-3)" }}
               >
                 {ch.t}
               </span>
               <span className="flex-1">
-                <span className="block text-[13.5px] leading-snug">“{ch.question}”</span>
-                <span className="mt-0.5 block text-[12px]" style={{ color: "var(--prep-text-3)" }}>
+                <span className="block text-[15px] leading-snug">“{ch.question}”</span>
+                <span className="mt-1 block text-[13px]" style={{ color: "var(--prep-text-3)" }}>
                   asked by {ch.askedBy}
                 </span>
               </span>
             </motion.button>
           ))}
           {chapters.length === 0 && (
-            <div className="card p-4 text-[13px]" style={{ color: "var(--prep-text-3)" }}>
+            <div className="card p-5 text-[14px]" style={{ color: "var(--prep-text-3)" }}>
               No questions were answered in this session.
             </div>
           )}
