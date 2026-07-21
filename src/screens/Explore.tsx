@@ -137,7 +137,7 @@ export default function Explore() {
                 <div className="text-[12.5px]" style={{ color: "var(--prep-text-3)" }}>
                   because you're targeting {whyLabel}
                 </div>
-                <div className="lg:mt-4 lg:grid lg:grid-cols-3 lg:gap-5 lg:[&>button]:mt-0 xl:grid-cols-4">
+                <div className="lg:mt-4 lg:grid lg:grid-cols-3 lg:items-start lg:gap-5 lg:[&>button]:mt-0 xl:grid-cols-4">
                 {liveForYou.map((sesh) => {
                   const host = HOSTS.find((h) => h.id === sesh.hostId)!;
                   return (
@@ -213,7 +213,7 @@ export default function Explore() {
                 <h2 className="mt-10 font-display text-[22px]" style={{ fontWeight: 500 }}>
                   From the library
                 </h2>
-                <div className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-4">
+                <div className="mt-3 grid grid-cols-2 items-start gap-3 lg:grid-cols-4">
                   {recordingsForYou.map((sesh) => {
                     const host = HOSTS.find((h) => h.id === sesh.hostId)!;
                     return (

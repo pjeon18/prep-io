@@ -188,7 +188,7 @@ export default function HostProfile() {
                 No recordings yet.
               </div>
             )}
-            <div className="lg:mt-5 lg:grid lg:grid-cols-3 lg:gap-5 lg:[&>button]:mt-0">
+            <div className="lg:mt-5 lg:grid lg:grid-cols-3 lg:items-start lg:gap-5 lg:[&>button]:mt-0">
             {vods.map((sesh) => (
               <button key={sesh.id} className="mt-5 w-full text-left" onClick={() => nav(`/vod/${sesh.id}`)}>
                 <Thumb
@@ -217,7 +217,7 @@ export default function HostProfile() {
                 No shorts yet.
               </div>
             ) : (
-              <div className="mt-5 grid grid-cols-3 gap-2.5 lg:grid-cols-6">
+              <div className="mt-5 grid grid-cols-3 items-start gap-2.5 lg:grid-cols-6">
                 {clips.map((clip) => (
                   <button key={clip.id} className="text-left" onClick={() => nav(`/shorts/${clip.id}`)}>
                     <Thumb hue={clip.hue} initials={host.initials} duration={clip.durationLabel} height={150} />

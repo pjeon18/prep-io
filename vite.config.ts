@@ -62,6 +62,9 @@ export default defineConfig(({ mode }) => {
     // GitHub Pages serves project sites from /<repo>/ — CI sets BASE_PATH.
     // Locally the base stays "/" so nothing changes for dev.
     base: env.BASE_PATH || "/",
+    // Honor a harness-assigned port (PORT env) so multiple sessions can
+    // run dev servers side by side without hardcoded --port flags.
+    server: env.PORT ? { port: Number(env.PORT), strictPort: true } : undefined,
     plugins: [react(), crowdProxy(env.ANTHROPIC_API_KEY)],
   };
 });

@@ -40,7 +40,7 @@ export default function Fair() {
         <h2 className="mt-8 font-display text-[26px]" style={{ fontWeight: 500 }}>
           Live now
         </h2>
-        <div className="mt-4 flex flex-col gap-4 lg:grid lg:grid-cols-3 lg:gap-x-5 lg:gap-y-9 xl:grid-cols-4">
+        <div className="mt-4 flex flex-col gap-4 lg:grid lg:grid-cols-3 lg:items-start lg:gap-x-5 lg:gap-y-9 xl:grid-cols-4">
           {liveSessions.map((sesh, i) => {
             const host = HOSTS.find((h) => h.id === sesh.hostId)!;
             const count = floorCounts[sesh.id];
@@ -84,7 +84,7 @@ export default function Fair() {
         <div className="mt-1 text-[13px]" style={{ color: "var(--prep-text-3)" }}>
           Small rooms, real seats — first come, first served
         </div>
-        <div className="lg:mt-3 lg:grid lg:grid-cols-2 lg:gap-3 lg:[&>button]:mt-0 xl:grid-cols-3">
+        <div className="lg:mt-3 lg:grid lg:grid-cols-2 lg:items-start lg:gap-3 lg:[&>button]:mt-0 xl:grid-cols-3">
         {events.map((sesh) => {
           const host = HOSTS.find((h) => h.id === sesh.hostId)!;
           const left = sesh.ticket!.capacity - sesh.ticket!.seedTaken;
@@ -162,7 +162,7 @@ export default function Fair() {
         <h2 className={h2} style={{ fontWeight: 500 }}>
           The floor
         </h2>
-        <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div className="mt-4 grid grid-cols-2 items-start gap-3 lg:grid-cols-4">
           {SECTIONS.map((section, i) => {
             const live = SESSIONS.filter(
               (x) => x.sectionId === section.id && x.kind === "live",
