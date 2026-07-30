@@ -16,6 +16,9 @@ import type {
   Ticket,
 } from "../lib/types";
 import { HOSTS, SESSIONS } from "../data/seedData";
+// campus sessions live in a separate seed island; anything that resolves an
+// id has to look across both (see lib/campus.ts)
+import { ALL_SESSIONS, findPerson, findSession } from "../lib/campus";
 
 /* ------------------------------------------------------------------ */
 /* THE STORE — invariants are enforced HERE, not in the UI.            */
@@ -76,7 +79,15 @@ interface DebugState {
   fastTrackYou: boolean;
 }
 
+/** Which of the two audiences the app is framed for (D17). Careers = the
+ *  original office-hours-for-your-career product. Campus = teachers and TAs
+ *  running live office hours and section for their courses. */
+export type AppMode = "careers" | "campus";
+export type ThemeChoice = "light" | "dark" | "system";
+
 interface PrepState {
+  theme: ThemeChoice;
+  mode: AppMode;
   seenSplash: boolean;
   follows: { hosts: string[]; sections: SectionId[] };
   notifications: Notification[];
@@ -101,6 +112,9 @@ interface PrepState {
   goals: CareerGoals;
   linkedin: { connected: boolean };
 
+  setTheme: (t: ThemeChoice) => void;
+  toggleTheme: () => void;
+  setMode: (m: AppMode) => void;
   markSplashSeen: () => void;
   toast: (text: string) => void;
   dismissToast: (id: number) => void;
@@ -184,6 +198,8 @@ const emptyDraft: GoLiveDraft = {
 export const usePrepStore = create<PrepState>()(
   persist(
     (set, get) => ({
+      theme: "system",
+      mode: "careers",
       seenSplash: false,
       follows: { hosts: [], sections: [] },
       notifications: [],
@@ -207,6 +223,12 @@ export const usePrepStore = create<PrepState>()(
       goals: { sections: [], companyIds: [] },
       linkedin: { connected: false },
 
+      setTheme: (t) => set({ theme: t }),
+      // Toggle resolves "system" first, so the first tap always visibly flips
+      // rather than appearing to do nothing when system already matches.
+      toggleTheme: () =>
+        set((s) => ({ theme: resolveTheme(s.theme) === "dark" ? "light" : "dark" })),
+      setMode: (m) => set({ mode: m }),
       markSplashSeen: () => set({ seenSplash: true }),
 
       toast: (text) => {
@@ -222,7 +244,7 @@ export const usePrepStore = create<PrepState>()(
 
       initFloor: () => {
         const counts = { ...get().floorCounts };
-        for (const sesh of SESSIONS) {
+        for (const sesh of ALL_SESSIONS) {
           if (sesh.kind === "live" && counts[sesh.id] === undefined) {
             counts[sesh.id] = sesh.seedViewers ?? 10;
           }
@@ -247,9 +269,10 @@ export const usePrepStore = create<PrepState>()(
       joinRoom: (sessionId) => {
         const { room } = get();
         if (room) return room.sessionId === sessionId;
-        const sesh = SESSIONS.find((x) => x.id === sessionId);
+        const sesh = findSession(sessionId);
         if (!sesh || sesh.kind !== "live") return false; // recordings never open live
-        const host = HOSTS.find((h) => h.id === sesh.hostId)!;
+        const host = findPerson(sesh.hostId);
+        if (!host) return false;
         const seed = get().floorCounts[sessionId] ?? sesh.seedViewers ?? 10;
         get().recordHistory({
           id: sessionId,
@@ -807,6 +830,8 @@ export const usePrepStore = create<PrepState>()(
       // Live room state is ephemeral by design — persisting a "live" room
       // would resurrect fake liveness on reload (Principle 5).
       partialize: (s) => ({
+        theme: s.theme,
+        mode: s.mode,
         seenSplash: s.seenSplash,
         follows: s.follows,
         notifications: s.notifications,
@@ -828,6 +853,38 @@ export const usePrepStore = create<PrepState>()(
 );
 
 // Dev-only handle for debugging/driving the store from the console.
+/* ------------------------------------------------------------------ */
+/* Theme: ONE writer, at the bottom of the store.                      */
+/*                                                                     */
+/* Deliberately not a component effect. A component effect races        */
+/* persist rehydration — the first paint uses the default, then the     */
+/* rehydrated value lands and the page visibly flips. Subscribing here  */
+/* means the store is the only thing that ever touches the DOM          */
+/* attribute, and it fires once on load with the real value.            */
+/* ------------------------------------------------------------------ */
+
+export function resolveTheme(choice: ThemeChoice): "light" | "dark" {
+  if (choice !== "system") return choice;
+  if (typeof window === "undefined") return "light";
+  return window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
+function applyTheme(choice: ThemeChoice) {
+  if (typeof document === "undefined") return;
+  document.documentElement.dataset.theme = resolveTheme(choice);
+}
+
+applyTheme(usePrepStore.getState().theme);
+usePrepStore.subscribe((s, prev) => {
+  if (s.theme !== prev.theme) applyTheme(s.theme);
+});
+// "system" has to keep tracking the OS after load, or the choice is a lie.
+if (typeof window !== "undefined") {
+  window.matchMedia?.("(prefers-color-scheme: dark)").addEventListener("change", () => {
+    if (usePrepStore.getState().theme === "system") applyTheme("system");
+  });
+}
+
 if (import.meta.env.DEV) {
   (window as unknown as Record<string, unknown>).prepStore = usePrepStore;
 }

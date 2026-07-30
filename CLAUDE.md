@@ -1,5 +1,11 @@
 # CLAUDE.md — Prep.io
 
+> **This document is a guide, not a lock.** When a decision here is superseded
+> by a better idea, edit this file as part of making that change and say what
+> changed. Don't recite stale constraints back at Paul as if they were fixed.
+> The exception is the product principles: they are the product's identity, so
+> raise a change rather than making it unilaterally.
+
 You (Claude) are building a **high-fidelity front-end prototype** of Prep.io — a
 live streaming platform shaped like a college club fair, where verified
 professionals hold drop-in "office hours" about their careers. Read this fully at
@@ -17,6 +23,24 @@ session start.
 **Model split (Paul's decision):** Prep.io sessions — design and build — run on
 **Fable**. Sonnet is only for mechanical data-labor chores, of which this project
 has essentially none.
+
+## Two audiences (D17)
+
+Prep.io serves **two** audiences behind one `mode` in the store
+(`careers | campus`), switched from the top bar:
+
+- **Careers** — the original product. Verified professionals hold drop-in
+  office hours about their work; the fair floor, companies, events, premium.
+- **Campus** — teachers and TAs running live office hours, section, and
+  review for a course. A course is ONE channel (live now + this week + every
+  past session chaptered by question + clips), which is the argument against
+  today's Canvas + Zoom + calendar + Panopto split.
+
+Campus data is a SEPARATE seed island (`src/data/campusData.ts`) so course
+sessions can't leak into the fair floor or careers search; anything that
+resolves an id goes through `src/lib/campus.ts` (`findSession`, `findPerson`).
+The live room, crowd simulation, hand-raise funnel, and recording player are
+shared unchanged — office hours ARE the hot-seat mechanic.
 
 ## THE NON-NEGOTIABLE PRINCIPLES (short form — full text PRD §5, amended by CONCEPT D9–D14)
 
@@ -56,7 +80,46 @@ React 18 + TypeScript + Vite + Tailwind + Zustand + Framer Motion.
   from `BASE_URL`; GitHub Pages deploy with repo-scoped base path (a working
   workflow exists at `../iso-prototype/.github/workflows/deploy.yml`).
 
-## Design direction (PINNED — revise deliberately in `src/styles/tokens.css`)
+## Design direction (D16 — revise deliberately in `src/styles/tokens.css`)
+
+**Palette (unchanged from D15):** plain white page, black ink, exactly two
+semantic colors — crimson `#B0402D` = LIVE/on-air, green `#1C5C41` =
+VERIFIED. Nothing else gets hue.
+
+**Dark theme** is a real theme, not an inversion: neutral graphite
+(`#0C0C0D`) because any hue cast fights thumbnails, surfaces step up in
+luminance rather than gaining borders, and both semantic colors lift
+(`#E0563C` / `#45C98C`) because the light values go muddy on near-black.
+Owned by `theme` in the store (`light | dark | system`) and written to
+`documentElement.dataset.theme` by ONE writer at the bottom of the store —
+never from a component effect, which races persist rehydration and flashes
+the wrong theme. Toggle lives in the top bar. `.theater` (live rooms,
+players) stays dark in BOTH themes.
+
+**Liquid Glass** (`src/styles/glass.css`, from `ui-toolbox/tools/`) is
+**chrome only** — top bar, dock, sheets, control pills. Content stays opaque
+so it can be read. Glass over a flat fill renders as nothing, which is why
+`<AmbientField>` ships with it. **Read the variants comment before styling
+glass with Tailwind**: `.glass` sets `position` and `border-radius` itself
+and beats utilities because the file loads after Tailwind — use
+`.glass-abs/.glass-fixed/.glass-sticky/.glass-pill/.glass-round`. The
+`position` version of that mistake fails as a silent layout collapse.
+
+**Motion** all comes from named presets in `src/lib/motion.ts` (springs
+snap/standard/calm/gentle/bouncy/drag). Ad-hoc easing is an audit failure.
+Springs for anything the user caused, durations only for ambient motion.
+
+**The component kit** (`src/components/ui/`) implements the
+watermelon-style micro-interactions in our own stack — `Pressable` (the ONE
+place tap physics lives; every clickable wraps it), `Glass`, `SpotlightCard`
+(pointer light + ≤5° tilt), `Dock` (pointer-magnified glass nav),
+`SegmentedSwitch` (one `layoutId` pill that travels), `AnimatedNumber`
+(odometer for live counts), `ThemeToggle`, `AmbientField`, `Skeleton`.
+
+**Type:** Newsreader (editorial serif, display + the italic wordmark) /
+Inter (UI, 15px body). `.overline` for small-caps labels.
+
+## Superseded design notes (kept for context)
 
 **"Financial editorial"** (CONCEPT.md D8, palette revised by D15 2026-07-20):
 plain white `#FFFFFF` + black `#000000` shell for every browse surface; the

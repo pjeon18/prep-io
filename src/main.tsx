@@ -10,6 +10,9 @@ import "@fontsource/newsreader/600.css";
 import "@fontsource/newsreader/400-italic.css";
 import "@fontsource/newsreader/500-italic.css";
 import "./styles/tokens.css";
+// after tokens.css (which holds @tailwind utilities) so .glass wins its
+// position/border-radius battles against Tailwind — see glass.css
+import "./styles/glass.css";
 import App from "./App";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

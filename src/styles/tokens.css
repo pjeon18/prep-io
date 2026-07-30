@@ -3,37 +3,41 @@
 @tailwind utilities;
 
 /* ------------------------------------------------------------------ */
-/* Prep.io design tokens — "financial editorial"                       */
+/* Prep.io design tokens                                               */
 /*                                                                     */
-/* Paper-and-ink shell for every browse surface; the live room is the  */
-/* one dark place (the theater — lights down when someone's on).       */
+/* Palette (D15, unchanged): plain white page, black ink, exactly two   */
+/* semantic colors — crimson = LIVE/on-air, green = VERIFIED. Nothing   */
+/* else gets hue.                                                      */
 /*                                                                     */
-/* Exactly three color roles, all semantic:                            */
-/*   ink      — primary actions, emphasis                              */
-/*   live     — muted broadcast crimson, LIVE + on-air + end only      */
-/*   verified — racing green, credential badges ONLY                   */
-/* Nothing else gets color. Revise here, never ad hoc in components.   */
+/* D16 adds: a real dark theme (neutral, not an inversion), the Liquid  */
+/* Glass material for chrome (glass.css), and a spring-based motion     */
+/* system. Theme is owned by `theme` in the store and written to        */
+/* documentElement.dataset.theme by ONE writer at the bottom of the     */
+/* store — never from a component effect, which fights persist          */
+/* rehydration and flashes the wrong theme on load.                    */
 /* ------------------------------------------------------------------ */
 
 :root {
-  --prep-bg: #ffffff;          /* plain white */
-  --prep-surface: #ffffff;     /* cards */
-  --prep-surface-2: #f4f4f4;   /* wells, inputs, hover */
-  --prep-line: #e6e6e6;        /* hairlines */
+  color-scheme: light;
 
-  --prep-text: #000000;        /* plain black */
-  --prep-text-2: #4d4d4d;      /* secondary */
-  --prep-text-3: #8c8c8c;      /* captions, overlines */
+  --prep-bg: #ffffff;
+  --prep-surface: #ffffff;
+  --prep-surface-2: #f4f4f5;
+  --prep-line: #e6e6e6;
 
-  --prep-live: #b0402d;        /* broadcast crimson — LIVE, on-air, end */
+  --prep-text: #000000;
+  --prep-text-2: #4d4d4d;
+  --prep-text-3: #8c8c8c;
+
+  --prep-live: #b0402d;
   --prep-live-tint: rgba(176, 64, 45, 0.08);
 
-  --prep-verified: #1c5c41;    /* verified ONLY */
+  --prep-verified: #1c5c41;
   --prep-verified-tint: rgba(28, 92, 65, 0.09);
 
-  --prep-danger: #b0402d;      /* same family as live — ending things */
+  --prep-danger: #b0402d;
 
-  /* action tokens let the theater invert buttons cleanly */
+  /* action tokens let dark/theater scopes invert buttons cleanly */
   --prep-action-bg: #000000;
   --prep-action-fg: #ffffff;
 
@@ -42,10 +46,60 @@
   --radius-pill: 99px;
 
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04);
+  /* lifted elevation for hover states — springy cards need somewhere to go */
+  --shadow-lift: 0 18px 40px -18px rgba(0, 0, 0, 0.28), 0 4px 12px -6px rgba(0, 0, 0, 0.12);
+
+  /* ambient field: what the glass refracts. Near-invisible on a white
+     page by design — it exists so chrome has something to bend. */
+  --prep-amb-1: rgba(176, 64, 45, 0.07);
+  --prep-amb-2: rgba(28, 92, 65, 0.06);
+  --prep-amb-3: rgba(0, 0, 0, 0.04);
 }
 
-/* The theater: live rooms only. Lights down, same discipline. */
+/* ---- Dark theme: neutral graphite ----
+ * Not an inversion. The page is a true neutral near-black (the product is
+ * a video platform — any hue cast would fight thumbnails), surfaces step
+ * up in luminance rather than gaining a border, and both semantic colors
+ * lift because #B0402D and #1C5C41 go muddy on near-black. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --prep-bg: #0c0c0d;
+  --prep-surface: #161618;
+  --prep-surface-2: #1f1f22;
+  --prep-line: #2c2c30;
+
+  --prep-text: #f5f5f6;
+  --prep-text-2: #b0b0b4;
+  --prep-text-3: #7c7c82;
+
+  --prep-live: #e0563c;
+  --prep-live-tint: rgba(224, 86, 60, 0.14);
+
+  --prep-verified: #45c98c;
+  --prep-verified-tint: rgba(69, 201, 140, 0.13);
+
+  --prep-danger: #e0563c;
+
+  --prep-action-bg: #f5f5f6;
+  --prep-action-fg: #0c0c0d;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-lift: 0 20px 44px -18px rgba(0, 0, 0, 0.8), 0 6px 14px -6px rgba(0, 0, 0, 0.6);
+
+  /* dialed down after review: at 0.16 these read as coloured smudges behind
+     the thumbnails instead of light for the glass to bend */
+  --prep-amb-1: rgba(224, 86, 60, 0.07);
+  --prep-amb-2: rgba(69, 201, 140, 0.05);
+  --prep-amb-3: rgba(120, 130, 190, 0.05);
+}
+
+/* The theater: live rooms and players. Dark in BOTH themes — a stream
+ * plays with the lights down. In dark mode it sits a touch below the page
+ * so the stage still reads as a distinct surface. */
 .theater {
+  color-scheme: dark;
+
   --prep-bg: #0f0f0f;
   --prep-surface: #1a1a1a;
   --prep-surface-2: #262626;
@@ -67,9 +121,18 @@
   --prep-action-fg: #0f0f0f;
 
   --shadow-card: none;
+  --shadow-lift: 0 20px 44px -18px rgba(0, 0, 0, 0.7);
+
+  --prep-amb-1: rgba(211, 87, 63, 0.18);
+  --prep-amb-2: rgba(76, 175, 130, 0.12);
+  --prep-amb-3: rgba(140, 150, 210, 0.12);
 
   background: var(--prep-bg);
   color: var(--prep-text);
+}
+:root[data-theme="dark"] .theater {
+  --prep-bg: #08080a;
+  --prep-surface: #131315;
 }
 
 html,
@@ -85,6 +148,8 @@ body {
   font-size: 15px;
   -webkit-font-smoothing: antialiased;
   overscroll-behavior-y: none;
+  /* theme swaps shouldn't strobe */
+  transition: background-color 260ms ease, color 260ms ease;
 }
 
 /* Editorial serif for display. .font-display maps to Newsreader. */
@@ -93,7 +158,7 @@ h1, h2, h3, h4, .font-display {
   letter-spacing: -0.01em;
 }
 
-/* Overline labels — the app's small-caps voice (replaces tiny bold sans).
+/* Overline labels — the app's small-caps voice.
    text-decoration: none guards against Tailwind's `overline` utility. */
 .overline {
   font-family: Inter, system-ui, sans-serif;
@@ -120,9 +185,10 @@ h1, h2, h3, h4, .font-display {
   border-radius: var(--radius-pill);
   padding: 13px 24px;
   font-size: 15px;
-  transition: transform 120ms ease, opacity 120ms ease, background-color 120ms ease;
+  /* motion lives in <Pressable>/motion components; this is the no-JS floor */
+  transition: opacity 140ms ease, background-color 140ms ease, border-color 140ms ease;
+  -webkit-tap-highlight-color: transparent;
 }
-.btn:active { transform: scale(0.98); }
 
 .btn-primary {
   background: var(--prep-action-bg);
@@ -153,7 +219,8 @@ h1, h2, h3, h4, .font-display {
   background: transparent;
   border: 1px solid var(--prep-line);
   color: var(--prep-text-2);
-  transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
+  transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease;
+  -webkit-tap-highlight-color: transparent;
 }
 .chip-active {
   border-color: var(--prep-text);
@@ -169,12 +236,66 @@ h1, h2, h3, h4, .font-display {
   border-radius: var(--radius-tile);
   padding: 13px 15px;
   color: var(--prep-text);
+  transition: border-color 140ms ease, box-shadow 140ms ease;
 }
 .input::placeholder { color: var(--prep-text-3); }
-.input:focus { border-color: var(--prep-text-2); }
+.input:focus {
+  border-color: var(--prep-text-2);
+  box-shadow: 0 0 0 3px var(--prep-surface-2);
+}
 
 .theater .input { background: var(--prep-surface-2); }
 
 /* thin scrollbars for rails */
 .rail::-webkit-scrollbar { height: 0; width: 0; }
 .rail { scrollbar-width: none; }
+
+/* ---- Keyboard focus: visible, never the default blue ---- */
+:focus-visible {
+  outline: 2.5px solid var(--prep-text-2);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+[role="dialog"]:focus,
+[role="dialog"]:focus-visible { outline: none; }
+
+/* ---- Shimmer (skeletons) ---- */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+  background: var(--prep-surface-2);
+}
+.shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(from var(--prep-text) r g b / 0.06) 50%,
+    transparent 100%
+  );
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+@keyframes shimmer {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+/* ---- Odometer digit entrance (AnimatedNumber) ----
+   Mount-only, replayed by remounting on change, so there is no exit to
+   leave a stale digit behind. */
+.odo-in {
+  display: inline-block;
+  animation: odo-in 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes odo-in {
+  from { opacity: 0; transform: translateY(-0.34em); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shimmer::after,
+  .odo-in { animation: none; }
+  body { transition: none; }
+}

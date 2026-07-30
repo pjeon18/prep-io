@@ -5,6 +5,9 @@ import { Avatar } from "../components/Avatar";
 import { Badge } from "../components/Badge";
 import { Thumb } from "../components/Thumb";
 import { AppShell } from "../components/AppShell";
+import { AnimatedNumber } from "../components/ui/AnimatedNumber";
+import { Pressable } from "../components/ui/Pressable";
+import { SpotlightCard } from "../components/ui/SpotlightCard";
 import { IconEye, IconTicket } from "../components/icons";
 import { CLIPS, HOSTS, SECTIONS, SESSIONS } from "../data/seedData";
 import { fadeUp, springs, stagger } from "../lib/motion";
@@ -45,13 +48,15 @@ export default function Fair() {
             const host = HOSTS.find((h) => h.id === sesh.hostId)!;
             const count = floorCounts[sesh.id];
             return (
-              <motion.button
+              <motion.div
                 key={sesh.id}
-                className="w-full text-left"
                 {...fadeUp}
                 transition={{ ...springs.standard, ...stagger(i) }}
-                onClick={() => nav(`/room/${sesh.id}`)}
               >
+                <SpotlightCard
+                  onClick={() => nav(`/room/${sesh.id}`)}
+                  className="w-full cursor-pointer rounded-tile text-left"
+                >
                 <Thumb hue={host.hue} initials={host.initials} live video={sesh.video} height={168} />
                 <div className="mt-2.5 flex items-start gap-3">
                   <Avatar hue={host.hue} initials={host.initials} size={34} />
@@ -64,7 +69,7 @@ export default function Fair() {
                       <Badge state={host.badge} compact />
                       <span className="inline-flex items-center gap-1" style={{ color: "var(--prep-text-3)" }}>
                         <IconEye size={13} />
-                        {count !== undefined ? fmtCount(count) : "…"}
+                        {count !== undefined ? <AnimatedNumber value={count} /> : "…"}
                       </span>
                       <span style={{ color: "var(--prep-text-3)" }}>
                         {SECTIONS.find((x) => x.id === sesh.sectionId)?.name}
@@ -72,7 +77,8 @@ export default function Fair() {
                     </div>
                   </div>
                 </div>
-              </motion.button>
+                </SpotlightCard>
+              </motion.div>
             );
           })}
         </div>
@@ -89,7 +95,7 @@ export default function Fair() {
           const host = HOSTS.find((h) => h.id === sesh.hostId)!;
           const left = sesh.ticket!.capacity - sesh.ticket!.seedTaken;
           return (
-            <button
+            <Pressable
               key={sesh.id}
               className="card mt-3 flex w-full items-center gap-4 p-4 text-left"
               onClick={() => nav(`/event/${sesh.id}`)}
@@ -107,7 +113,7 @@ export default function Fair() {
                   </span>
                 </div>
               </div>
-            </button>
+            </Pressable>
           );
         })}
         </div>
@@ -150,10 +156,10 @@ export default function Fair() {
           {CLIPS.slice(0, 6).map((clip) => {
             const host = HOSTS.find((h) => h.id === clip.hostId)!;
             return (
-              <button key={clip.id} className="w-[120px] shrink-0 text-left" onClick={() => nav(`/shorts/${clip.id}`)}>
+              <Pressable key={clip.id} className="w-[120px] shrink-0 text-left" onClick={() => nav(`/shorts/${clip.id}`)}>
                 <Thumb hue={clip.hue} initials={host.initials} duration={clip.durationLabel} height={180} />
                 <div className="mt-1.5 line-clamp-2 text-[12.5px] font-medium leading-snug">{clip.title}</div>
-              </button>
+              </Pressable>
             );
           })}
         </div>
@@ -175,11 +181,11 @@ export default function Fair() {
               0,
             );
             return (
-              <motion.button
+              <Pressable
                 key={section.id}
-                className="card relative p-4 pb-5 text-left"
-                {...fadeUp}
-                transition={{ ...springs.standard, ...stagger(i, 0.03) }}
+                as="div"
+                lift
+                className="card relative cursor-pointer p-4 pb-5 text-left"
                 onClick={() => nav(`/section/${section.id}`)}
               >
                 {live.length > 0 && (
@@ -201,7 +207,7 @@ export default function Fair() {
                       ? `Next ${sched[0].when}`
                       : "Quiet right now"}
                 </div>
-              </motion.button>
+              </Pressable>
             );
           })}
         </div>

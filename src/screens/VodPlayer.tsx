@@ -15,7 +15,7 @@ import {
   IconPlay,
   IconPlus,
 } from "../components/icons";
-import { HOSTS, SESSIONS } from "../data/seedData";
+import { findPerson, findSession } from "../lib/campus";
 import { fadeUp, springs, stagger } from "../lib/motion";
 import { downloadTranscript } from "../lib/transcript";
 import { fmtCount, usePrepStore } from "../store/usePrepStore";
@@ -36,10 +36,11 @@ export default function VodPlayer() {
   const addToPlaylist = usePrepStore((s) => s.addToPlaylist);
   const toast = usePrepStore((s) => s.toast);
 
+  const found = findSession(vodId);
   const sesh =
-    SESSIONS.find((x) => x.id === vodId && x.kind === "vod") ??
+    (found && found.kind === "vod" ? found : undefined) ??
     userVods.find((x) => x.id === vodId);
-  const host = sesh ? HOSTS.find((h) => h.id === sesh.hostId) : undefined;
+  const host = findPerson(sesh?.hostId);
   const isYours = sesh?.hostId === "you";
   const [activeChapter, setActiveChapter] = useState(0);
   const [playing, setPlaying] = useState(false);

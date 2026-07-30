@@ -172,6 +172,33 @@ right), and the Twitch split in live rooms (stage left, chat rail right).
 Mobile keeps the bottom-tab shell. The serif display and semantic color
 discipline carry over — the shell is conventional, the voice stays ours.
 
+**D16 — Liquid Glass + a spring motion system + a real dark theme.**
+(2026-07-30, Paul: "use liquid glass and the new animated components and
+principles... add a dark theme.") The D15 palette is KEPT (white page, black
+ink, crimson live, green verified); what changes is material and physics.
+Glass is chrome-only and neutral, because a video platform's thumbnails are
+the content and tinted chrome fights them. Dark mode is neutral graphite for
+the same reason. Every clickable now routes its tap physics through one
+`Pressable` component, and all motion comes from named spring presets — the
+only way 40+ screens read as one product. The reference library Paul named
+(ui.watermelon.sh) is a component library, not a palette; per the UI toolbox
+rule we implemented its mechanisms (dock magnification, layoutId segmented
+pill, spotlight cards, odometer numbers, copy-confirm-style feedback) rather
+than copying its source.
+
+**D17 — A second audience: Campus (teachers and TAs).** (2026-07-30, Paul.)
+Same platform, second world, switched by a top-bar mode toggle. Students get
+"my courses"; instructors and TAs get a Teach hub that goes live to the
+course channel. The wedge against the status quo is consolidation, not video:
+today a course is Canvas + Zoom + a calendar + Panopto and none of them know
+about each other, so a course here is one channel — what's live now, what's
+this week, every past session chaptered by the question that was asked, and
+clips cut from them, joinable from the web with no meeting id. The existing
+consent-gated hand-raise needed no changes, because "raise your hand and get
+called on" is what office hours already are. Implementation keeps campus as a
+separate data island so it cannot leak into careers discovery, and campus
+mode gets its own search index for the same reason.
+
 ## 6. Open questions
 
 Tracked in PRD §14; raise new ones here first, promote when decided.

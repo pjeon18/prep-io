@@ -15,7 +15,7 @@ import {
   IconVideo,
   IconX,
 } from "../components/icons";
-import { HOSTS, SESSIONS } from "../data/seedData";
+import { findPerson, findSession, isCourseSession } from "../lib/campus";
 import { startCrowd, stopCrowd } from "../lib/crowd/engine";
 import { springs } from "../lib/motion";
 import { fmtClock, fmtCount, usePrepStore } from "../store/usePrepStore";
@@ -39,8 +39,9 @@ export default function LiveRoom() {
   const toggleFollowHost = usePrepStore((s) => s.toggleFollowHost);
   const points = usePrepStore((s) => s.points);
 
-  const sesh = SESSIONS.find((x) => x.id === sessionId);
-  const host = sesh ? HOSTS.find((h) => h.id === sesh.hostId) : undefined;
+  const sesh = findSession(sessionId);
+  const host = findPerson(sesh?.hostId);
+  const isCourse = isCourseSession(sessionId);
 
   const [handSheet, setHandSheet] = useState(false);
   const [question, setQuestion] = useState("");
@@ -129,7 +130,7 @@ export default function LiveRoom() {
         <div className="px-4">
           {room.video ? (
             <div
-              className="relative flex aspect-video flex-col items-center justify-center overflow-hidden rounded-card"
+              className="relative flex aspect-video max-h-[52vh] flex-col items-center justify-center overflow-hidden rounded-card"
               style={{
                 background: `radial-gradient(110% 130% at 50% 0%, hsl(${host.hue} 18% 18%) 0%, #141414 70%)`,
               }}
@@ -372,6 +373,11 @@ function ChatLog() {
   }, [chat?.length]);
   return (
     <div ref={ref} className="rail mt-2.5 flex-1 overflow-y-auto px-5 py-1">
+      {chat?.length === 0 && (
+        <div className="py-6 text-center text-[12.5px]" style={{ color: "var(--prep-text-3)" }}>
+          Chat is quiet. Say hello, or raise your hand to ask.
+        </div>
+      )}
       {chat?.map((m) => (
         <div key={m.id} className="py-[5px] text-[14px] leading-snug">
           {m.isSystem ? (

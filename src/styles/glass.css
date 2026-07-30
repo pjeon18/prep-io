@@ -1,0 +1,206 @@
+/**
+ * Prep.io glass material — Liquid Glass, neutral.
+ *
+ * From the UI toolbox (tools/liquid-glass-material.md), tuned for this
+ * product: Prep.io is a video platform, so the glass is NEUTRAL. Any brand
+ * tint in the chrome would fight the thumbnails, which are the content and
+ * the point.
+ *
+ * Layer order (matters): base tint → backdrop-filter → sheen → edge → float.
+ *
+ * CHROME ONLY. Nav, headers, docks, composers, control pills, sheets.
+ * Content surfaces stay opaque (.card in tokens.css) so they can be read.
+ *
+ * Glass needs something behind it to bend or it renders as nothing. On the
+ * light theme the page is white, so <AmbientField> supplies a whisper of
+ * drifting light for it to refract; over thumbnails and the theater it has
+ * plenty to work with on its own.
+ */
+
+:root {
+  --glass-blur: 26px;
+  --glass-saturate: 180%;
+  --glass-radius: 24px;
+  --glass-tint: 255 255 255;
+  --glass-alpha: 0.62;
+  --glass-sheen: 255 255 255;
+  --glass-shadow: 0 0 0;
+}
+
+.glass {
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--glass-radius);
+  background: rgb(var(--glass-tint) / var(--glass-alpha));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid rgb(var(--glass-shadow) / 0.08);
+  box-shadow:
+    /* top specular highlight — the single most important "glass" cue */
+    inset 0 1px 1.5px rgb(var(--glass-sheen) / 0.9),
+    inset 0 -1px 1px rgb(var(--glass-shadow) / 0.03),
+    /* float */
+    0 12px 32px -12px rgb(var(--glass-shadow) / 0.18),
+    0 3px 10px -5px rgb(var(--glass-shadow) / 0.1);
+}
+
+/* diagonal sheen: above the glass base, beneath the content */
+.glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgb(var(--glass-sheen) / 0.5) 0%,
+    rgb(var(--glass-sheen) / 0) 46%
+  );
+  pointer-events: none;
+}
+
+/* ---- Variants ----
+   READ THIS BEFORE STYLING GLASS WITH TAILWIND.
+   This file loads after Tailwind's utilities, so any property `.glass` sets
+   itself WINS against an equal-specificity utility. Two properties bite:
+
+     border-radius  →  `rounded-full` is ignored. Use .glass-pill/.glass-round.
+     position       →  `absolute`/`fixed`/`sticky` are ignored and the element
+                       stays relative. Nastier, because it fails as a silent
+                       layout collapse rather than a visible style bug.
+                       Use .glass-abs/.glass-fixed/.glass-sticky, or keep the
+                       positioning on a plain wrapper and let the glass fill it.
+
+   `.glass` needs `position` at all only so its ::before sheen has a
+   positioned ancestor — any positioned value works, hence these variants. */
+.glass-pill { --glass-radius: 999px; }
+.glass-round { --glass-radius: 50%; }
+.glass-abs { position: absolute; }
+.glass-fixed { position: fixed; }
+.glass-sticky { position: sticky; }
+.glass-bar {
+  --glass-radius: 0px;
+  --glass-alpha: 0.72; /* spans an edge over scrolling content: needs body */
+}
+.glass-sheet {
+  --glass-radius: 26px 26px 0 0;
+  --glass-alpha: 0.86; /* text-bearing */
+}
+.glass-panel {
+  --glass-radius: 22px;
+  --glass-alpha: 0.8;
+}
+/* the floating dock — reads as a distinct hovering object */
+.glass-dock {
+  --glass-radius: 999px;
+  /* over a dark thumbnail a white glass at 0.7 goes milky-grey; less tint +
+     more blur keeps it reading as glass rather than a plastic slab */
+  --glass-alpha: 0.58;
+  --glass-blur: 34px;
+  box-shadow:
+    inset 0 1px 1.5px rgb(var(--glass-sheen) / 0.95),
+    inset 0 -1px 1px rgb(var(--glass-shadow) / 0.04),
+    0 18px 40px -14px rgb(var(--glass-shadow) / 0.26),
+    0 4px 12px -5px rgb(var(--glass-shadow) / 0.14);
+}
+/* live glass — crimson, for on-air chrome only */
+.glass-live {
+  --glass-tint: 176 64 45;
+  --glass-alpha: 0.9;
+  --glass-sheen: 255 214 205;
+  color: #fff;
+  border-color: rgb(255 220 212 / 0.45);
+  box-shadow:
+    inset 0 1.5px 2px rgb(255 226 218 / 0.55),
+    inset 0 -2px 3px rgb(90 24 14 / 0.3),
+    0 14px 34px -12px rgb(176 64 45 / 0.4),
+    0 3px 10px -5px rgb(0 0 0 / 0.16);
+}
+
+/* ---- Dark glass (dark theme + the theater) ----
+ * Dark glass is not light glass with a different tint. Three inversions:
+ *   1. the base tint goes near-black and needs MORE opacity, because dark
+ *      translucency over dark content loses its edges entirely;
+ *   2. the specular highlight drops to a whisper — a bright bevel on dark
+ *      glass reads as cheap plastic;
+ *   3. the float shadow stops doing the work (no contrast against a dark
+ *      page), so elevation comes from the hairline border instead. */
+:root[data-theme="dark"] .glass,
+.theater .glass {
+  --glass-tint: 30 30 34;
+  --glass-alpha: 0.66;
+  --glass-sheen: 255 255 255;
+  color: var(--prep-text);
+  border-color: rgb(255 255 255 / 0.1);
+  box-shadow:
+    inset 0 1px 1px rgb(255 255 255 / 0.12),
+    inset 0 -1px 1px rgb(0 0 0 / 0.34),
+    0 16px 38px -14px rgb(0 0 0 / 0.7),
+    0 3px 10px -5px rgb(0 0 0 / 0.5);
+}
+:root[data-theme="dark"] .glass::before,
+.theater .glass::before {
+  background: linear-gradient(
+    135deg,
+    rgb(255 255 255 / 0.09) 0%,
+    rgb(255 255 255 / 0) 46%
+  );
+}
+:root[data-theme="dark"] .glass-sheet,
+:root[data-theme="dark"] .glass-panel,
+:root[data-theme="dark"] .glass-bar,
+.theater .glass-sheet,
+.theater .glass-panel,
+.theater .glass-bar {
+  --glass-alpha: 0.84; /* text-bearing surfaces need more body in the dark */
+}
+:root[data-theme="dark"] .glass-dock,
+.theater .glass-dock {
+  --glass-alpha: 0.74;
+  box-shadow:
+    inset 0 1px 1px rgb(255 255 255 / 0.14),
+    0 20px 44px -16px rgb(0 0 0 / 0.8),
+    0 4px 12px -5px rgb(0 0 0 / 0.6);
+}
+/* live stays loud, dark or light */
+:root[data-theme="dark"] .glass-live,
+.theater .glass-live {
+  --glass-tint: 224 86 60;
+  --glass-alpha: 0.94;
+  color: #17100e;
+  border-color: rgb(255 210 200 / 0.4);
+}
+
+/* ---- Accessibility: no transparency → solid and legible ---- */
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: #ffffff;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border-color: var(--prep-line);
+  }
+  .glass::before { display: none; }
+  .glass-live { background: var(--prep-live); }
+  /* without this, opting out of transparency in the dark paints every piece
+     of chrome near-white on a near-black page */
+  :root[data-theme="dark"] .glass,
+  .theater .glass {
+    background: #18181b;
+    border-color: rgb(255 255 255 / 0.12);
+  }
+}
+
+/* ---- The ambient field the glass refracts ---- */
+.ambient {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.ambient-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(52px);
+  will-change: transform;
+}

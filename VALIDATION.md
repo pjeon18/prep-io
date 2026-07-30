@@ -133,3 +133,45 @@ Verified in-browser on mobile viewport, `tsc -b` + `npm run build` clean:
   split (stage left, 360px chat rail right with its own composer).
 - Mobile (375×812) re-verified: single column, bottom tabs, no sidebar.
 - `tsc -b` + `npm run build` clean.
+
+## V3 additions (2026-07-30): glass, motion, dark theme, Campus mode (D16–D17)
+
+Verified with headless Playwright at 1440×950 and 400×860, both themes, both
+modes; `npx tsc -b` and `npm run build` clean, zero console/page errors.
+
+- **Dark theme** — neutral graphite, applied by the store's single writer;
+  no flash on reload, `system` keeps tracking the OS after load. Verified on
+  fair, campus, course channel, search, splash.
+- **Liquid Glass** — top bar, floating dock, sheets, toasts, control pills.
+  Content surfaces stay opaque. `prefers-reduced-transparency` falls back to
+  solid in both themes.
+- **Motion** — one `Pressable` carries every tap (dip / optional lift /
+  magnetic / ripple); `SpotlightCard` adds pointer light and ≤5° tilt;
+  `Dock` magnifies on pointer distance; `SegmentedSwitch` and the sidebar
+  share a travelling `layoutId` pill; live viewer counts animate per changed
+  digit. All from `lib/motion.ts` presets.
+- **Campus mode** — mode switch reframes sidebar, dock, search placeholder,
+  and search index. Course channel tabs (live & upcoming / recordings /
+  clips / staff), Teach hub goes live to the course channel, and a course
+  office-hours room reuses the live room + crowd sim + hand-raise funnel
+  unchanged. Campus rooms draw student-flavored chat and questions.
+- **Isolation held** — no course session appears on the fair floor or in
+  careers search, and no career session appears in campus surfaces.
+
+### Fixed during self-review (before ship)
+- Ambient field was 0.16 alpha in dark and read as coloured smudges behind
+  the thumbnails; dialed to 0.05–0.07.
+- Glass dock at 0.58 alpha + 34px blur (0.70 went milky-grey over a dark
+  thumbnail).
+- Sidebar course chips truncated to "CS5"/"STA"/"EC1"; now letters-only
+  (CS / STAT / EC).
+- A wrapped meta line could orphan a leading "·" on This week cards.
+- Campus-mode search returned careers results; now has its own index.
+- Campus rooms used careers chat lines (recruiting talk in a CS50 room).
+- Live-room stage capped (`max-h-[52vh]`) and chat has an empty state.
+
+### Known, deliberate
+- Entrance animations gate content visibility, so a browser pane that
+  suspends rAF (occluded/background) renders text at opacity 0 until it is
+  focused. Real users are unaffected; captures must use a visible renderer.
+- The desktop live-room left column is sparse until hands are raised.

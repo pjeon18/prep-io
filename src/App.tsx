@@ -2,6 +2,9 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { DebugPanel } from "./components/DebugPanel";
 import { Toasts } from "./components/Toasts";
 import Breakout from "./screens/Breakout";
+import CampusHome from "./screens/campus/CampusHome";
+import CourseChannel from "./screens/campus/CourseChannel";
+import TeachHub from "./screens/campus/TeachHub";
 import Company from "./screens/Company";
 import EventDetail from "./screens/EventDetail";
 import Explore from "./screens/Explore";
@@ -31,6 +34,10 @@ export default function App() {
         <Route path="/" element={<Splash />} />
         <Route path="/fair" element={<Fair />} />
         <Route path="/explore" element={<Explore />} />
+        {/* Campus: the second audience (D17) */}
+        <Route path="/campus" element={<CampusHome />} />
+        <Route path="/campus/course/:courseId" element={<CourseChannel />} />
+        <Route path="/campus/teach" element={<TeachHub />} />
         <Route path="/library" element={<Library />} />
         <Route path="/playlist/:playlistId" element={<PlaylistDetail />} />
         <Route path="/search" element={<Search />} />

@@ -6,6 +6,8 @@ import {
   PERSONAS,
   PERSONA_QUESTIONS,
 } from "../../data/seedData";
+import { CAMPUS_CHAT_LINES, CAMPUS_QUESTIONS } from "../../data/campusData";
+import { isCourseSession } from "../campus";
 import { usePrepStore } from "../../store/usePrepStore";
 import { fetchCrowdLines } from "./llm";
 
@@ -60,9 +62,17 @@ export function startCrowd(role: Role) {
 
   const host = HOSTS.find((h) => h.id === room.hostId);
   const finance = room.sectionId === "finance";
-  const linePool = finance ? [...CHAT_LINES, ...CHAT_LINES_FINANCE] : CHAT_LINES;
-  const questionPool =
-    PERSONA_QUESTIONS[finance ? "finance" : "generic"] ?? PERSONA_QUESTIONS.generic;
+  // A course room is a classroom, not a careers room: students ask about the
+  // problem set and the exam, so the pools swap wholesale.
+  const campus = isCourseSession(room.sessionId);
+  const linePool = campus
+    ? CAMPUS_CHAT_LINES
+    : finance
+      ? [...CHAT_LINES, ...CHAT_LINES_FINANCE]
+      : CHAT_LINES;
+  const questionPool = campus
+    ? CAMPUS_QUESTIONS
+    : (PERSONA_QUESTIONS[finance ? "finance" : "generic"] ?? PERSONA_QUESTIONS.generic);
 
   // Optional LLM chatter: prefetch a buffer; silent fallback to scripted.
   if (store().debug.llmCrowd) {

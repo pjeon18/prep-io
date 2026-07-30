@@ -8,6 +8,8 @@ import { AppShell } from "../components/AppShell";
 import { IconBuilding, IconSearch, IconTicket } from "../components/icons";
 import { COMPANIES, HOSTS } from "../data/seedData";
 import { search } from "../lib/search";
+import { searchCampus, findCourse, findPerson } from "../lib/campus";
+import { CAMPUS_KIND_LABEL } from "../data/campusData";
 import { fmtCount, usePrepStore } from "../store/usePrepStore";
 
 /** Search — user-initiated discovery across companies, people, streams,
@@ -20,6 +22,7 @@ export default function Search() {
   const floorCounts = usePrepStore((s) => s.floorCounts);
   const initFloor = usePrepStore((s) => s.initFloor);
   const premium = usePrepStore((s) => s.premium);
+  const mode = usePrepStore((s) => s.mode);
 
   useEffect(() => {
     initFloor();
@@ -30,6 +33,11 @@ export default function Search() {
     const t = setTimeout(() => setParams(q ? { q } : {}, { replace: true }), 250);
     return () => clearTimeout(t);
   }, [q, setParams]);
+
+  const cr = searchCampus(q);
+  const campusHas =
+    cr.courses.length + cr.staff.length + cr.live.length + cr.upcoming.length +
+    cr.recordings.length + cr.clips.length > 0;
 
   const r = search(q);
   const hasResults =
@@ -49,13 +57,145 @@ export default function Search() {
           <input
             ref={inputRef}
             className="input !rounded-pill !py-3.5 !pl-11"
-            placeholder="Companies, people, streams — try “BCG”"
+            placeholder={mode === "careers" ? "Companies, people, streams — try “BCG”" : "Courses, staff, recordings — try “CS50”"}
             value={q}
             onChange={(e) => setQ(e.target.value)}
           />
         </div>
 
-        {q.trim().length < 2 && (
+        {/* ---- Campus mode results ---- */}
+        {mode === "campus" && q.trim().length < 2 && (
+          <>
+            <div className="overline mt-8">Your courses</div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {cr.courses.length === 0 &&
+                ["CS50", "STAT 110", "EC 10"].map((c) => (
+                  <button key={c} className="chip" onClick={() => setQ(c)}>
+                    {c}
+                  </button>
+                ))}
+            </div>
+          </>
+        )}
+
+        {mode === "campus" && q.trim().length >= 2 && !campusHas && (
+          <div className="mt-16 text-center text-[15px]" style={{ color: "var(--prep-text-3)" }}>
+            Nothing in your courses for “{q}”.
+          </div>
+        )}
+
+        {mode === "campus" && (
+          <>
+            {cr.courses.length > 0 && (
+              <>
+                <h2 className={h2} style={{ fontWeight: 500 }}>Courses</h2>
+                {cr.courses.map((c) => (
+                  <button
+                    key={c.id}
+                    className="card mt-3 flex w-full items-center gap-3.5 p-4 text-left"
+                    onClick={() => nav(`/campus/course/${c.id}`)}
+                  >
+                    <span
+                      className="flex h-10 w-10 items-center justify-center rounded-tile text-[11px] font-semibold"
+                      style={{ background: `hsl(${c.hue} 40% 94%)`, color: `hsl(${c.hue} 45% 28%)` }}
+                    >
+                      {c.code.replace(/[^A-Z]/g, "").slice(0, 4)}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-[15px] font-medium">{c.code}</div>
+                      <div className="truncate text-[13px]" style={{ color: "var(--prep-text-2)" }}>
+                        {c.title}
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </>
+            )}
+
+            {cr.staff.length > 0 && (
+              <>
+                <h2 className={h2} style={{ fontWeight: 500 }}>Course staff</h2>
+                {cr.staff.map((p) => (
+                  <Link key={p.id} to={`/profile/${p.id}`} className="card mt-3 flex items-center gap-3.5 p-4">
+                    <Avatar hue={p.hue} initials={p.initials} size={40} />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 text-[15px] font-medium">
+                        {p.name} <Badge state={p.badge} compact />
+                      </div>
+                      <div className="truncate text-[13px]" style={{ color: "var(--prep-text-2)" }}>
+                        {p.headline}
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </>
+            )}
+
+            {cr.live.length > 0 && (
+              <>
+                <h2 className={h2} style={{ fontWeight: 500 }}>Live now</h2>
+                {cr.live.map((s2) => {
+                  const p = findPerson(s2.hostId)!;
+                  return (
+                    <button key={s2.id} className="card mt-3 flex w-full items-center gap-3 p-3 text-left" onClick={() => nav(`/room/${s2.id}`)}>
+                      <div className="w-[124px] shrink-0">
+                        <Thumb hue={p.hue} initials={p.initials} live height={70} />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="line-clamp-2 text-[14px] font-medium leading-snug">{s2.title}</div>
+                        <div className="mt-1 text-[12.5px]" style={{ color: "var(--prep-text-3)" }}>
+                          {findCourse(s2.courseId)?.code} · {p.name}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </>
+            )}
+
+            {cr.upcoming.length > 0 && (
+              <>
+                <h2 className={h2} style={{ fontWeight: 500 }}>Upcoming</h2>
+                {cr.upcoming.map((s2) => (
+                  <button key={s2.id} className="card mt-3 flex w-full items-center gap-4 p-4 text-left" onClick={() => nav(`/campus/course/${s2.courseId}`)}>
+                    <div className="overline w-[74px] shrink-0 !leading-snug">{s2.when}</div>
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate text-[14px] font-medium">{s2.title}</div>
+                      <div className="mt-0.5 text-[12.5px]" style={{ color: "var(--prep-text-3)" }}>
+                        {findCourse(s2.courseId)?.code} · {CAMPUS_KIND_LABEL[s2.campusKind]}
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </>
+            )}
+
+            {cr.recordings.length > 0 && (
+              <>
+                <h2 className={h2} style={{ fontWeight: 500 }}>Recordings</h2>
+                {cr.recordings.map((s2) => {
+                  const p = findPerson(s2.hostId)!;
+                  return (
+                    <button key={s2.id} className="card mt-3 flex w-full items-center gap-3 p-3 text-left" onClick={() => nav(`/vod/${s2.id}`)}>
+                      <div className="w-[124px] shrink-0">
+                        <Thumb hue={p.hue} initials={p.initials} duration={s2.vod!.durationLabel} height={70} />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="line-clamp-2 text-[14px] font-medium leading-snug">{s2.title}</div>
+                        <div className="mt-1 text-[12.5px]" style={{ color: "var(--prep-text-3)" }}>
+                          {findCourse(s2.courseId)?.code} · {s2.vod!.chapters.length} questions
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </>
+            )}
+          </>
+        )}
+
+        {/* ---- Careers mode results ---- */}
+        {mode === "careers" && q.trim().length < 2 && (
           <>
             <div className="overline mt-8">Browse companies</div>
             <div className="mt-3 flex flex-wrap gap-2">
@@ -68,13 +208,13 @@ export default function Search() {
           </>
         )}
 
-        {q.trim().length >= 2 && !hasResults && (
+        {mode === "careers" && q.trim().length >= 2 && !hasResults && (
           <div className="mt-16 text-center text-[15px]" style={{ color: "var(--prep-text-3)" }}>
             Nothing for “{q}” yet.
           </div>
         )}
 
-        {r.companies.length > 0 && (
+        {mode === "careers" && r.companies.length > 0 && (
           <>
             <h2 className={h2} style={{ fontWeight: 500 }}>Companies</h2>
             {r.companies.map((c) => (
@@ -89,7 +229,7 @@ export default function Search() {
           </>
         )}
 
-        {r.hosts.length > 0 && (
+        {mode === "careers" && r.hosts.length > 0 && (
           <>
             <h2 className={h2} style={{ fontWeight: 500 }}>People</h2>
             {r.hosts.map((host) => (
@@ -108,7 +248,7 @@ export default function Search() {
           </>
         )}
 
-        {r.live.length > 0 && (
+        {mode === "careers" && r.live.length > 0 && (
           <>
             <h2 className={h2} style={{ fontWeight: 500 }}>Live now</h2>
             {r.live.map((sesh) => {
@@ -130,7 +270,7 @@ export default function Search() {
           </>
         )}
 
-        {r.upcoming.length > 0 && (
+        {mode === "careers" && r.upcoming.length > 0 && (
           <>
             <h2 className={h2} style={{ fontWeight: 500 }}>Upcoming</h2>
             {r.upcoming.map((sesh) => {
@@ -156,7 +296,7 @@ export default function Search() {
           </>
         )}
 
-        {r.recordings.length > 0 && (
+        {mode === "careers" && r.recordings.length > 0 && (
           <>
             <h2 className={h2} style={{ fontWeight: 500 }}>Recordings</h2>
             {r.recordings.map((sesh) => {
@@ -184,7 +324,7 @@ export default function Search() {
           </>
         )}
 
-        {r.clips.length > 0 && (
+        {mode === "careers" && r.clips.length > 0 && (
           <>
             <h2 className={h2} style={{ fontWeight: 500 }}>Shorts</h2>
             <div className="rail -mx-5 mt-3 flex gap-3 overflow-x-auto px-5">
