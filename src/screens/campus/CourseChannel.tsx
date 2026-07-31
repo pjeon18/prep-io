@@ -11,10 +11,13 @@ import { AnimatedNumber } from "../../components/ui/AnimatedNumber";
 import { Pressable } from "../../components/ui/Pressable";
 import { SegmentedSwitch } from "../../components/ui/SegmentedSwitch";
 import { SpotlightCard } from "../../components/ui/SpotlightCard";
+import { CopyConfirm } from "../../components/ui/watermelon/CopyConfirm";
+import { ExpandDetails } from "../../components/ui/watermelon/ExpandDetails";
 import { CAMPUS_KIND_LABEL } from "../../data/campusData";
 import { courseClips, courseSessions, courseStaff, findCourse, findPerson } from "../../lib/campus";
 import { fadeUp, springs, stagger } from "../../lib/motion";
 import { fmtCount, usePrepStore } from "../../store/usePrepStore";
+import { useSyncMode } from "../../store/useSyncMode";
 
 /* The course channel — the whole argument for Campus mode in one screen.
  *
@@ -27,6 +30,7 @@ import { fmtCount, usePrepStore } from "../../store/usePrepStore";
 type Tab = "live" | "recordings" | "clips" | "staff";
 
 export default function CourseChannel() {
+  useSyncMode("campus");
   const { courseId } = useParams();
   const nav = useNavigate();
   const [tab, setTab] = useState<Tab>("live");
@@ -104,6 +108,28 @@ export default function CourseChannel() {
         <p className="mt-4 max-w-[62ch] text-[15px] leading-relaxed" style={{ color: "var(--prep-text-2)" }}>
           {course.blurb}
         </p>
+
+        {/* The join link IS the pitch: one address for the course, no meeting
+            id, nothing to install. */}
+        <div className="mt-5 flex flex-wrap items-center gap-3">
+          <CopyConfirm
+            value={`https://prep.io/campus/course/${course.id}`}
+            copyText="Copy join link"
+          />
+          <ExpandDetails
+            label="Course details"
+            rows={[
+              { label: "Instructor", value: findPerson(course.instructorId)?.name ?? "—", wide: true },
+              { label: "Term", value: course.term },
+              { label: "Enrolled", value: String(course.enrolled) },
+              {
+                label: "Teaching staff",
+                value: course.taIds.length ? String(course.taIds.length) : "None",
+              },
+              { label: "Recordings", value: String(recordings.length) },
+            ]}
+          />
+        </div>
 
         <div className="mt-6">
           <SegmentedSwitch

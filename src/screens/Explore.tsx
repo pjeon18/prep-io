@@ -8,6 +8,7 @@ import { IconEye, IconTicket } from "../components/icons";
 import { CLIPS, COMPANIES, HOSTS, SECTIONS, SESSIONS } from "../data/seedData";
 import type { SectionId } from "../lib/types";
 import { fmtCount, usePrepStore } from "../store/usePrepStore";
+import { useSyncMode } from "../store/useSyncMode";
 
 /* Explore — recommendations WITHOUT a feed (D10). You state your goals
  * (sections + target companies); everything below is a finite, transparent
@@ -15,6 +16,7 @@ import { fmtCount, usePrepStore } from "../store/usePrepStore";
  * shelf says why it's there. */
 
 export default function Explore() {
+  useSyncMode("careers");
   const nav = useNavigate();
   const goals = usePrepStore((s) => s.goals);
   const setGoals = usePrepStore((s) => s.setGoals);

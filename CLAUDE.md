@@ -116,6 +116,17 @@ place tap physics lives; every clickable wraps it), `Glass`, `SpotlightCard`
 `SegmentedSwitch` (one `layoutId` pill that travels), `AnimatedNumber`
 (odometer for live counts), `ThemeToggle`, `AmbientField`, `Skeleton`.
 
+Two components are **Watermelon's own source**, installed from
+`registry.watermelon.sh` and adapted to our tokens/icons — they live apart in
+`src/components/ui/watermelon/` (`CopyConfirm`, `ExpandDetails`) with the
+install command and a what-changed note in each header. Keep that folder for
+upstream code so it stays obvious what is ours to freely rewrite (D18).
+
+**Mode follows the route** (`store/useSyncMode.ts`): campus screens and
+careers-only screens declare their mode so a deep link can't render one
+audience's content inside the other's navigation. Mode-neutral screens
+(Library, Search, Settings) deliberately don't call it.
+
 **Type:** Newsreader (editorial serif, display + the italic wordmark) /
 Inter (UI, 15px body). `.overline` for small-caps labels.
 

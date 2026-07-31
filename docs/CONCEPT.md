@@ -199,6 +199,39 @@ called on" is what office hours already are. Implementation keeps campus as a
 separate data island so it cannot leak into careers discovery, and campus
 mode gets its own search index for the same reason.
 
+### D18 — Two Watermelon components are used as source, not as inspiration (2026-07-31)
+
+Everything in `src/components/ui/` up to now was watermelon-*style*: our own
+implementation of the same micro-interaction ideas. Two of their components
+are good enough to take directly, and they are distributed for that purpose
+through a shadcn registry (`registry.watermelon.sh/r/<slug>.json`), so they
+now live in `src/components/ui/watermelon/` with the install command in the
+file header:
+
+- **CopyConfirm** — the icon does a blur/scale swap and the label morphs
+  per character from "Copy join link" to "Copied". Used where the join link
+  IS the product argument: the course channel and the Teach hub. One address
+  per course, no meeting id, so the copy affordance carries weight.
+- **ExpandDetails** — width and height animate on separate springs with
+  mirrored delays (widen → grow tall opening; shorten → narrow closing), and
+  the content arrives blurred 0.3s behind. Reads as one object unfolding
+  rather than a box being resized. Used for "Course details" so the header
+  stays a headline instead of a metadata block.
+
+Adapted, not pasted: lucide icons → our stroke set, zinc/green literals →
+our tokens, their demo shells removed, and `ExpandDetails` starts closed and
+takes width props (an auto-expanded disclosure on a real page is just a
+card). `react-use-measure` came in as a real dependency — you cannot spring
+to `height: auto`, so the inner content is measured and the outer animates
+to that number.
+
+Also fixed here, because integrating these exposed it: **mode now follows the
+route** (`store/useSyncMode.ts`). Arriving at a campus URL from a careers
+session — a bookmark, a shared link, the deployed root — used to render
+course content inside careers navigation. Campus screens and the
+careers-only screens declare their mode; Library, Search, and Settings
+deliberately don't, because they belong to both.
+
 ## 6. Open questions
 
 Tracked in PRD §14; raise new ones here first, promote when decided.

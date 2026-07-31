@@ -175,3 +175,28 @@ modes; `npx tsc -b` and `npm run build` clean, zero console/page errors.
   suspends rAF (occluded/background) renders text at opacity 0 until it is
   focused. Real users are unaffected; captures must use a visible renderer.
 - The desktop live-room left column is sparse until hands are raised.
+
+## Watermelon components + route-driven mode (2026-07-31)
+
+Verified against the production build (`vite preview`), headless Chromium at
+1440×900, cold storage:
+
+- `CopyConfirm` in the CS50 channel writes
+  `https://prep.io/campus/course/cs50` to the clipboard, swaps link → check,
+  and morphs the label per character. Same component in Teach reads "Copy the
+  class link."
+- `ExpandDetails` opens and closes with the mirrored width/height
+  choreography; captured mid-animation frames show the container widening
+  before it grows tall. Rows resolve live data — Prof. David Chen / Fall 2026
+  / 742 / 1 / 2.
+- Deep-linking to `/campus/course/cs50` with `mode` persisted as `careers`
+  now renders campus navigation (My courses · Library · Teach · CS50 · STAT
+  110 · EC 10). Before the fix it rendered the careers sidebar around course
+  content.
+- No console errors or page errors in any stage. `npx tsc -b` and
+  `npm run build` clean (494.62 kB JS / 143.40 kB gzip).
+
+Note: an "invalid hook call" seen once during interactive testing was a
+stale-HMR artifact from editing component files mid-session — `npm ls react`
+shows a single deduped 18.3.1, and the production build is clean across
+repeated runs.

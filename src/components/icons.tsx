@@ -160,6 +160,19 @@ export const IconDollar = (p: IconProps) => (
   </svg>
 );
 
+export const IconChevronDown = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="m5.5 9 6.5 6.5L18.5 9" />
+  </svg>
+);
+
+export const IconLink2 = (p: IconProps) => (
+  <svg {...base(p)}>
+    <rect x="9" y="9" width="11" height="11" rx="2.4" />
+    <path d="M15 5.5A2.5 2.5 0 0 0 12.5 3h-7A2.5 2.5 0 0 0 3 5.5v7A2.5 2.5 0 0 0 5.5 15" />
+  </svg>
+);
+
 export const IconSearch = (p: IconProps) => (
   <svg {...base(p)}>
     <circle cx="10.5" cy="10.5" r="6.5" />

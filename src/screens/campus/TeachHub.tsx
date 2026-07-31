@@ -5,10 +5,12 @@ import { Badge } from "../../components/Badge";
 import { IconHand, IconMic, IconUsers, IconVideo } from "../../components/icons";
 import { Pressable } from "../../components/ui/Pressable";
 import { SegmentedSwitch } from "../../components/ui/SegmentedSwitch";
+import { CopyConfirm } from "../../components/ui/watermelon/CopyConfirm";
 import { CAMPUS_KIND_LABEL, TEACHING_COURSE_ID } from "../../data/campusData";
 import type { CampusKind } from "../../data/campusData";
 import { courseSessions, findCourse, findPerson } from "../../lib/campus";
 import { usePrepStore } from "../../store/usePrepStore";
+import { useSyncMode } from "../../store/useSyncMode";
 
 /* Teach — the staff side of Campus.
  *
@@ -27,6 +29,7 @@ const KINDS: { value: CampusKind; label: string }[] = [
 ];
 
 export default function TeachHub() {
+  useSyncMode("campus");
   const nav = useNavigate();
   const draft = usePrepStore((s) => s.hostDraft);
   const setHostDraft = usePrepStore((s) => s.setHostDraft);
@@ -78,6 +81,16 @@ export default function TeachHub() {
             </div>
           </div>
           <Badge state="verified-school" compact />
+        </div>
+
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <CopyConfirm
+            value={`https://prep.io/campus/course/${course.id}`}
+            copyText="Copy the class link"
+          />
+          <span className="text-[12.5px]" style={{ color: "var(--prep-text-3)" }}>
+            Same link every session. Post it once.
+          </span>
         </div>
 
         <div className="overline mt-8">Session type</div>

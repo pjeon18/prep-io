@@ -12,12 +12,14 @@ import { IconEye, IconTicket } from "../components/icons";
 import { CLIPS, HOSTS, SECTIONS, SESSIONS } from "../data/seedData";
 import { fadeUp, springs, stagger } from "../lib/motion";
 import { fmtCount, usePrepStore } from "../store/usePrepStore";
+import { useSyncMode } from "../store/useSyncMode";
 
 /* Home — the fair floor + calendar. Discovery is the floor, the calendar,
  * and search; never a feed (Principle 3). Live rooms sort by section order,
  * booths are the fixed floor plan. */
 
 export default function Fair() {
+  useSyncMode("careers");
   const nav = useNavigate();
   const floorCounts = usePrepStore((s) => s.floorCounts);
   const initFloor = usePrepStore((s) => s.initFloor);

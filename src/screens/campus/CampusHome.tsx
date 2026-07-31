@@ -20,12 +20,14 @@ import {
 } from "../../lib/campus";
 import { fadeUp, springs, stagger } from "../../lib/motion";
 import { usePrepStore } from "../../store/usePrepStore";
+import { useSyncMode } from "../../store/useSyncMode";
 import { COURSE_CLIPS } from "../../data/campusData";
 
 /* Campus home — one place for everything a student currently hunts for
  * across Canvas, Zoom, a calendar, and Panopto: what's live right now,
  * what's on this week, and the clips worth two minutes. */
 export default function CampusHome() {
+  useSyncMode("campus");
   const nav = useNavigate();
   const floorCounts = usePrepStore((s) => s.floorCounts);
   const initFloor = usePrepStore((s) => s.initFloor);
