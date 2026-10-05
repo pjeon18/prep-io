@@ -315,6 +315,34 @@ copy.
   typed, upvoted, and answered, a quicker grid of companies with one Follow,
   and the logo again. No overlaid slogans and no pop-ups.
 
+### D21 — V6: forest green, big type, motion (2026-10-05)
+
+Paul liked the dark green the case study used and asked for the app itself to
+feel less templated and more human: big type, positioning, motion,
+transitions, responsiveness, inertia, minimal balance. V6 keeps V5's product
+(D20) and rebuilds the interface around it.
+
+- **Look:** warm white page (`#fbfaf6`) and forest green (`#0f5c3b`) for
+  actions, selection and the verified badge, with mint (`#9fd8b5`) in the logo
+  dot. Red stays for LIVE only. No cards around content; hierarchy comes from
+  size and space. Body text is 17–18px and headings run up to 84px.
+- **Home** leads with one live room at full width: a swipeable stage with the
+  title rising word by word, auto-advancing every 9s with a ring on the next
+  button, paused while you look at it. Then live rooms, a starting-soon list
+  with big times, recordings, and companies.
+- **Motion:** the clicked picture becomes the next page's stage (View
+  Transitions), counts roll instead of jumping, Follow and Remind flip their
+  label, tabs and segmented controls slide on springs, and live thumbnails come
+  alive on hover.
+- **Room:** questions first. The question being answered pins to the top with
+  a speaking indicator, your own question joins the list, Enter asks. On
+  phones the conversation sits right under the stage.
+- **Go live:** the title is typed at headline size and appears on the preview
+  as you type; going live runs a 3-2-1 countdown; the host picks a question to
+  answer and it shows on stage.
+- **Search** is a keyboard panel (⌘K or /).
+- Removed: `Player`, `SessionCard`, `kit` (replaced by `Stage`, `Cards`, `ui`).
+
 ## 6. Open questions
 
 Tracked in PRD §14; raise new ones here first, promote when decided.

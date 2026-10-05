@@ -1,190 +1,240 @@
-import { AnimatePresence, motion } from "framer-motion";
-import { useMemo, useState } from "react";
+import { AnimatePresence, motion, type PanInfo } from "framer-motion";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { COMPANIES, FIELDS, SESSIONS, companyOf, findHost, type Field } from "../data/seed";
+import { COMPANIES, SESSIONS, companyOf, findHost, type Session } from "../data/seed";
 import { useStore } from "../store/useStore";
-import { Player } from "../components/Player";
-import { SessionCard, SessionRow, hrefFor, useCaptionLoop } from "../components/SessionCard";
+import { Stage } from "../components/Stage";
+import { FollowButton, RemindButton, SessionCard, useCaptionLoop } from "../components/Cards";
 import { Avatar, CompanyLogo } from "../components/people";
-import { Button, Card, Chip, Name } from "../components/kit";
-import { Bell, BellFill, Check, Plus } from "../components/icons";
-import { clock, dayLabel, startsAt } from "../lib/format";
-import { spring } from "../lib/motion";
+import { Button, Count, LiveBadge, Name, Reveal, SectionHead, Segmented, Words, useStageNav } from "../components/ui";
+import { hrefFor, pageIn } from "../components/Nav";
+import { ChevronLeft, ChevronRight } from "../components/icons";
+import { clock, dayLabel, startsAt, useNow } from "../lib/format";
+import { spring, ease } from "../lib/motion";
 
 const LIVE = SESSIONS.filter((s) => s.status === "live");
+const SOON = SESSIONS.filter((s) => s.status === "scheduled").sort((a, b) => a.offsetMin - b.offsetMin);
+const RECORDED = SESSIONS.filter((s) => s.status === "recorded");
+const AUTO_MS = 9000;
 
-function ProfileCard() {
-  const following = useStore((s) => s.following);
-  const reminders = useStore((s) => s.reminders);
-  const saved = useStore((s) => s.savedRoles);
-  return (
-    <Card pad={false} className="overflow-hidden">
-      <div className="h-[58px] bg-gradient-to-r from-[#cfdcff] via-[#e3ebff] to-[#fff0cf]" />
-      <div className="-mt-9 px-4 pb-4 text-center">
-        <div className="inline-block rounded-full border-2 border-white"><Avatar who="alex" size={68} /></div>
-        <p className="mt-2 text-[17px] font-bold text-ink">Alex Morgan</p>
-        <p className="text-[13.5px] text-ink-2">Economics student, Class of 2027</p>
-      </div>
-      <div className="border-t border-line py-3 text-[13.5px]">
-        {[
-          ["Companies you follow", following.length],
-          ["Session reminders", reminders.length],
-          ["Saved jobs", saved.length],
-        ].map(([k, v]) => (
-          <div key={k as string} className="flex justify-between px-4 py-1">
-            <span className="text-ink-2">{k}</span>
-            <span className="font-semibold text-brand">{v}</span>
-          </div>
-        ))}
-      </div>
-    </Card>
-  );
-}
+/* ---------------- the room in front of you ---------------- */
 
 function Featured() {
-  const viewers = useStore((s) => s.viewers);
-  const s = LIVE[0];
+  const viewers = useStore((x) => x.viewers);
+  // most watched first, decided once so the order does not reshuffle under you
+  const order = useMemo(() => [...LIVE].sort((a, b) => (viewers[b.id] ?? 0) - (viewers[a.id] ?? 0)), []); // eslint-disable-line react-hooks/exhaustive-deps
+  const [[i, dir], setI] = useState<[number, number]>([0, 1]);
+  const [paused, setPaused] = useState(false);
+  const s = order[i];
   const host = findHost(s.hostId);
-  const c = companyOf(s);
   const caption = useCaptionLoop(s);
+  const go = useStageNav();
+  const stageEl = useRef<HTMLDivElement>(null);
+  const step = (d: number) => setI(([x]) => [(x + d + order.length) % order.length, d]);
+
+  // auto-advance unless you are looking at it
+  useEffect(() => {
+    if (paused) return;
+    const t = setTimeout(() => step(1), AUTO_MS);
+    return () => clearTimeout(t);
+  }, [i, paused]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    const key = (e: KeyboardEvent) => {
+      if ((e.target as HTMLElement)?.closest("input, textarea")) return;
+      if (window.scrollY > 500) return;
+      if (e.key === "ArrowRight") step(1);
+      if (e.key === "ArrowLeft") step(-1);
+    };
+    window.addEventListener("keydown", key);
+    return () => window.removeEventListener("keydown", key);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const onDragEnd = (_: unknown, info: PanInfo) => {
+    const swipe = info.offset.x + info.velocity.x * 0.2;
+    if (swipe < -80) step(1);
+    else if (swipe > 80) step(-1);
+  };
+
   return (
-    <Card pad={false} className="overflow-hidden">
-      <Link to={hrefFor(s)} className="block">
-        <Player session={s} caption={caption} viewers={viewers[s.id]} />
-      </Link>
-      <div className="flex items-start gap-3 p-4">
-        <Avatar who={host.id} size={48} />
-        <div className="min-w-0 flex-1">
-          <Link to={hrefFor(s)} className="text-[18px] font-bold leading-snug text-ink hover:text-brand">{s.title}</Link>
-          <p className="mt-0.5 text-[14px] font-semibold text-ink"><Name host={host} /></p>
-          <p className="text-[13.5px] text-ink-2">{host.title} at {c.name}</p>
+    <section className="wrap pt-6 md:pt-10" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+      <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.32fr)_minmax(0,1fr)] lg:gap-16">
+        <div className="relative">
+          <div className="relative overflow-hidden rounded-[28px] shadow-stage">
+            <AnimatePresence initial={false} custom={dir} mode="popLayout">
+              <motion.div
+                key={s.id}
+                custom={dir}
+                variants={{
+                  enter: (d: number) => ({ x: `${d * 18}%`, opacity: 0, scale: 1.04 }),
+                  center: { x: 0, opacity: 1, scale: 1 },
+                  exit: (d: number) => ({ x: `${d * -12}%`, opacity: 0, scale: 0.98 }),
+                }}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ x: spring.glide, opacity: { duration: 0.35 }, scale: spring.glide }}
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.35}
+                onDragEnd={onDragEnd}
+                className="cursor-grab active:cursor-grabbing"
+              >
+                <div ref={stageEl}>
+                  <Stage session={s} caption={caption} viewers={viewers[s.id]} rounded={false} badges={false} />
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </div>
-        <Link to={hrefFor(s)} className="shrink-0">
-          <Button variant="primary" size="sm">Watch</Button>
-        </Link>
+
+        <div className="min-w-0">
+          <div className="flex items-center gap-3">
+            <LiveBadge />
+            <span className="text-[17px] font-semibold text-ink-2"><Count value={viewers[s.id] ?? 0} /> watching</span>
+          </div>
+          <div className="mt-6 min-h-[3.2em] text-ink" style={{ fontSize: "clamp(34px, 3.6vw, 54px)" }}>
+            <Words text={s.title} k={s.id} className="font-[650] leading-[1.02] tracking-[-0.03em]" />
+          </div>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div key={s.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.4, ease: ease.out, delay: 0.12 }} className="mt-7 flex items-center gap-4">
+              <Avatar who={host.id} size={56} />
+              <div className="min-w-0">
+                <p className="text-[19px] font-semibold text-ink"><Name host={host} /></p>
+                <p className="t-meta">{host.title.split(",")[0]} at {companyOf(s).name}</p>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+          <div className="mt-9 flex flex-wrap items-center gap-3">
+            <Button variant="primary" size="lg" className="whitespace-nowrap max-sm:!px-6" onClick={() => go(hrefFor(s), stageEl.current)}>Join the room</Button>
+            <Button variant="outline" size="lg" className="!w-14 !px-0" aria-label="Previous room" onClick={() => step(-1)}><ChevronLeft size={22} /></Button>
+            <Button variant="outline" size="lg" className="relative !w-14 !px-0" aria-label="Next room" onClick={() => step(1)}>
+              <ChevronRight size={22} />
+              {/* the ring fills as the next room approaches */}
+              <svg className="pointer-events-none absolute -inset-[1.5px] h-[calc(100%+3px)] w-[calc(100%+3px)] -rotate-90" viewBox="0 0 60 60">
+                <motion.circle key={`${i}-${paused}`} cx="30" cy="30" r="28.5" fill="none" stroke="var(--brand)" strokeWidth="2" initial={{ pathLength: 0 }} animate={{ pathLength: paused ? 0 : 1 }} transition={{ duration: paused ? 0.3 : AUTO_MS / 1000, ease: "linear" }} />
+              </svg>
+            </Button>
+            <span className="ml-2 text-[17px] font-semibold tabular-nums text-ink-3 max-sm:hidden">{i + 1} of {order.length}</span>
+          </div>
+        </div>
       </div>
-    </Card>
+    </section>
   );
 }
 
-function ComingUp() {
-  const reminders = useStore((s) => s.reminders);
-  const toggle = useStore((s) => s.toggleReminder);
-  const soon = SESSIONS.filter((s) => s.status === "scheduled").sort((a, b) => a.offsetMin - b.offsetMin).slice(0, 4);
+/* ---------------- everything that is live ---------------- */
+
+function LiveNow() {
+  const [kind, setKind] = useState<"all" | "hiring" | "inside">("all");
+  // six rooms make two full rows; the seventh is always one step away in the room above
+  const list = LIVE.filter((s) => kind === "all" || s.kind === kind).slice(0, 6);
   return (
-    <Card>
-      <h2 className="text-[16px] font-bold text-ink">Coming up</h2>
-      <div className="mt-3 space-y-4">
-        {soon.map((s) => {
+    <section className="wrap mt-28 md:mt-36">
+      <Reveal>
+        <SectionHead
+          title="Live now"
+          action={<Segmented id="kind" value={kind} onChange={setKind} options={[{ id: "all", label: "All" }, { id: "hiring", label: "Recruiters" }, { id: "inside", label: "In the job" }]} className="max-sm:hidden" />}
+        />
+      </Reveal>
+      <motion.div layout className="grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+        <AnimatePresence mode="popLayout">
+          {list.map((s, k) => (
+            <motion.div key={s.id} layout initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96 }} transition={{ ...spring.glide, delay: k * 0.04 }}>
+              <SessionCard s={s} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </motion.div>
+    </section>
+  );
+}
+
+/* ---------------- what is about to start ---------------- */
+
+function StartingSoon() {
+  const now = useNow(30000);
+  return (
+    <section className="wrap mt-28 md:mt-36">
+      <Reveal><SectionHead title="Starting soon" action={<Link to="/events" className="text-[17px] font-semibold text-brand hover:underline">Full schedule</Link>} /></Reveal>
+      <div className="border-t border-line">
+        {SOON.slice(0, 4).map((s, k) => {
           const d = startsAt(s);
-          const on = reminders.includes(s.id);
+          const mins = Math.max(1, Math.round((d.getTime() - now) / 60000));
+          const host = findHost(s.hostId);
           return (
-            <div key={s.id} className="flex gap-3">
-              <div className="grid h-12 w-12 shrink-0 place-items-center rounded-lg bg-brand-soft text-center leading-none">
-                <span className="text-[11px] font-bold uppercase text-brand">{d.toLocaleDateString("en-US", { month: "short" })}</span>
-                <span className="-mt-3 text-[18px] font-bold text-ink">{d.getDate()}</span>
-              </div>
-              <div className="min-w-0 flex-1">
-                <Link to={hrefFor(s)} className="line-clamp-2 text-[14px] font-semibold leading-snug text-ink hover:text-brand">{s.title}</Link>
-                <p className="mt-0.5 truncate text-[12.5px] text-ink-3">{dayLabel(d)} at {clock(d)}, {companyOf(s).name}</p>
-                <Button variant={on ? "soft" : "outline"} size="sm" className="mt-2 !h-7 !px-3 !text-[13px]" onClick={() => toggle(s.id)}>
-                  {on ? <BellFill size={14} /> : <Bell size={14} />} {on ? "Reminder set" : "Remind me"}
-                </Button>
-              </div>
-            </div>
+            <Reveal key={s.id} delay={k * 0.06} y={16}>
+              <Link to={hrefFor(s)} className="group grid items-center gap-x-10 gap-y-4 border-b border-line py-8 md:grid-cols-[200px_minmax(0,1fr)_auto]">
+                <p className="text-ink">
+                  <span className="block text-[34px] font-[650] leading-none tracking-[-0.03em] tabular-nums">{mins < 60 ? `${mins} min` : clock(d)}</span>
+                  <span className="mt-2 block text-[16px] text-ink-2">{mins < 60 ? "from now" : dayLabel(d)}</span>
+                </p>
+                <div className="flex min-w-0 items-center gap-4">
+                  <Avatar who={host.id} size={52} />
+                  <div className="min-w-0">
+                    <h3 className="t-h3 text-ink transition-colors group-hover:text-brand">{s.title}</h3>
+                    <p className="t-meta mt-1">{host.name} at {companyOf(s).name}</p>
+                  </div>
+                </div>
+                <RemindButton id={s.id} />
+              </Link>
+            </Reveal>
           );
         })}
       </div>
-      <Link to="/events" className="mt-4 block border-t border-line pt-3 text-center text-[14px] font-semibold text-ink-2 hover:text-brand">See all events</Link>
-    </Card>
+    </section>
   );
 }
+
+/* ---------------- what already happened ---------------- */
+
+function Recordings() {
+  return (
+    <section className="wrap mt-28 md:mt-36">
+      <Reveal><SectionHead title="Recordings" /></Reveal>
+      <div className="grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+        {RECORDED.slice(0, 6).map((s, k) => (
+          <Reveal key={s.id} delay={(k % 3) * 0.06}>
+            <SessionCard s={s} />
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- who hosts ---------------- */
 
 function Companies() {
-  const following = useStore((s) => s.following);
-  const toggle = useStore((s) => s.toggleFollow);
   return (
-    <Card>
-      <h2 className="text-[16px] font-bold text-ink">Companies on Prep.io</h2>
-      <div className="mt-3 space-y-3.5">
-        {COMPANIES.slice(0, 5).map((c) => {
-          const on = following.includes(c.id);
-          return (
-            <div key={c.id} className="flex items-center gap-3">
-              <CompanyLogo c={c} size={40} />
-              <Link to={`/company/${c.id}`} className="min-w-0 flex-1">
-                <span className="block text-[14.5px] font-semibold text-ink hover:text-brand">{c.name}</span>
-                <span className="block text-[12.5px] text-ink-3">{c.roles.length} open roles</span>
-              </Link>
-              <Button variant={on ? "ghost" : "outline"} size="sm" className="!h-8 !px-3" onClick={() => toggle(c.id)}>
-                {on ? <Check size={15} /> : <Plus size={15} />} {on ? "Following" : "Follow"}
-              </Button>
-            </div>
-          );
-        })}
+    <section className="wrap mb-40 mt-28 md:mt-36">
+      <Reveal><SectionHead title="Companies on Prep.io" action={<Link to="/companies" className="text-[17px] font-semibold text-brand hover:underline">See all</Link>} /></Reveal>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {COMPANIES.slice(0, 8).map((c, k) => (
+          <Reveal key={c.id} delay={(k % 4) * 0.05} y={16}>
+            <Link to={`/company/${c.id}`} className="group flex h-full flex-col rounded-[24px] border-[1.5px] border-line bg-white p-6 transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:border-transparent hover:shadow-lift">
+              <CompanyLogo c={c} size={56} />
+              <p className="mt-6 text-[22px] font-[650] tracking-[-0.02em] text-ink">{c.name}</p>
+              <p className="t-meta mt-1">{c.roles.length} open roles</p>
+              <div className="mt-6"><FollowButton id={c.id} /></div>
+            </Link>
+          </Reveal>
+        ))}
       </div>
-      <Link to="/companies" className="mt-4 block border-t border-line pt-3 text-center text-[14px] font-semibold text-ink-2 hover:text-brand">See all companies</Link>
-    </Card>
+    </section>
   );
 }
 
 export default function Home() {
-  const [who, setWho] = useState<"all" | "recruiter" | "employee">("all");
-  const [field, setField] = useState<Field | null>(null);
-  const rest = useMemo(
-    () => LIVE.slice(1).filter((s) => (who === "all" || findHost(s.hostId).kind === who) && (!field || s.field === field)),
-    [who, field],
-  );
-  const recorded = SESSIONS.filter((s) => s.status === "recorded");
-
   return (
-    <div className="mx-auto grid max-w-[1200px] gap-6 px-4 py-6 lg:grid-cols-[230px_minmax(0,1fr)_300px]">
-      <aside className="hidden space-y-4 lg:block">
-        <ProfileCard />
-      </aside>
-
-      <main className="min-w-0 space-y-4">
-        <div className="flex items-baseline justify-between px-1">
-          <h1 className="text-[22px] font-bold text-ink">Live now</h1>
-          <span className="text-[14px] text-ink-2">{LIVE.length} sessions</span>
-        </div>
-        <Featured />
-
-        <Card>
-          <div className="flex gap-2 overflow-x-auto no-scrollbar">
-            <Chip on={who === "all" && !field} onClick={() => (setWho("all"), setField(null))}>All</Chip>
-            <Chip on={who === "recruiter"} onClick={() => setWho(who === "recruiter" ? "all" : "recruiter")}>Recruiters</Chip>
-            <Chip on={who === "employee"} onClick={() => setWho(who === "employee" ? "all" : "employee")}>Employees</Chip>
-            <span className="mx-1 w-px shrink-0 bg-line" />
-            {FIELDS.map((f) => (
-              <Chip key={f.id} on={field === f.id} onClick={() => setField(field === f.id ? null : f.id)}>{f.label}</Chip>
-            ))}
-          </div>
-          <motion.div layout className="mt-5 grid gap-x-5 gap-y-7 sm:grid-cols-2">
-            <AnimatePresence mode="popLayout">
-              {rest.map((s) => (
-                <motion.div key={s.id} layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={spring.glide}>
-                  <SessionCard s={s} />
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </motion.div>
-          {rest.length === 0 && <p className="py-10 text-center text-[15px] text-ink-2">No live sessions match these filters right now.</p>}
-        </Card>
-
-        <Card>
-          <h2 className="text-[18px] font-bold text-ink">Recordings</h2>
-          <p className="text-[14px] text-ink-2">Watch past sessions, organized by the questions people asked.</p>
-          <div className="mt-2 divide-y divide-line">
-            {recorded.map((s) => <SessionRow key={s.id} s={s} />)}
-          </div>
-        </Card>
-      </main>
-
-      <aside className="space-y-4">
-        <ComingUp />
-        <Companies />
-      </aside>
-    </div>
+    <motion.main {...pageIn} className="pb-24">
+      <Featured />
+      <LiveNow />
+      <StartingSoon />
+      <Recordings />
+      <Companies />
+    </motion.main>
   );
 }
+
+export type { Session };

@@ -2,23 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Prep.io, V5 (CONCEPT D20). Light, clean, friendly.
-   Warm grey page, white cards, one brand blue. Red only for LIVE,
-   green only for answered/verified states. */
+/* Prep.io, V6 (CONCEPT D21). Light and calm. Warm white page, forest
+   green for actions and selection, red only for LIVE. Hierarchy comes
+   from size and space, not from boxes, labels or grey metadata. */
 
 :root {
-  --page: #f4f2ee;
-  --card: #ffffff;
-  --line: #e3e0da;
-  --ink: #1d1d1f;
-  --ink-2: #56565a;
-  --ink-3: #8a8a8e;
-  --brand: #1f5bff;
-  --brand-ink: #1748d1;
-  --brand-soft: #e9efff;
-  --sun: #ffb61e;
+  --page: #fbfaf6;
+  --line: #e8e5dd;
+  --ink: #0e1c15;
+  --ink-2: #47544c;
+  --ink-3: #75807a;
+  --brand: #0f5c3b;
+  --brand-ink: #0a4a2f;
+  --brand-soft: #e6f1ea;
+  --mint: #9fd8b5;
   --live: #e5484d;
-  --ok: #12a06a;
+  --gutter: clamp(20px, 4vw, 40px);
   color-scheme: light;
 }
 
@@ -31,48 +30,41 @@ body,
 
 body {
   font-family: "Figtree Variable", -apple-system, "Segoe UI", system-ui, sans-serif;
-  font-size: 15px;
+  font-size: 17px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-.card {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-}
+/* ---------- type scale: big where it matters, nothing tiny ---------- */
+.t-display { font-size: clamp(40px, 5.6vw, 84px); line-height: 0.98; letter-spacing: -0.035em; font-weight: 650; text-wrap: balance; }
+.t-h1 { font-size: clamp(34px, 4.2vw, 60px); line-height: 1.02; letter-spacing: -0.03em; font-weight: 650; text-wrap: balance; }
+.t-h2 { font-size: clamp(26px, 2.6vw, 36px); line-height: 1.1; letter-spacing: -0.022em; font-weight: 650; }
+.t-h3 { font-size: clamp(19px, 1.6vw, 22px); line-height: 1.25; letter-spacing: -0.012em; font-weight: 600; }
+.t-body { font-size: 18px; line-height: 1.5; color: var(--ink-2); }
+.t-meta { font-size: 15.5px; line-height: 1.4; color: var(--ink-2); }
+
+.wrap { max-width: 1280px; margin-left: auto; margin-right: auto; padding-left: var(--gutter); padding-right: var(--gutter); }
 
 .field {
   width: 100%;
   background: #fff;
-  border: 1px solid #cfcbc3;
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-size: 15px;
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  padding: 14px 18px;
+  font-size: 17px;
   color: var(--ink);
   outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
-.field::placeholder {
-  color: var(--ink-3);
-}
-.field:focus {
-  border-color: var(--brand);
-  box-shadow: 0 0 0 3px var(--brand-soft);
-}
+.field::placeholder { color: var(--ink-3); }
+.field:focus { border-color: var(--brand); box-shadow: 0 0 0 4px var(--brand-soft); }
 
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  scrollbar-width: none;
-}
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
 
-:focus-visible {
-  outline: 2px solid var(--brand);
-  outline-offset: 2px;
-}
+:focus-visible { outline: 2.5px solid var(--brand); outline-offset: 3px; border-radius: 8px; }
 
 .live-dot {
   width: 7px;
@@ -80,4 +72,22 @@ body {
   border-radius: 99px;
   background: #fff;
   display: inline-block;
+  animation: live-pulse 1.6s ease-in-out infinite;
+}
+@keyframes live-pulse { 50% { opacity: 0.35; } }
+
+/* ---------- route changes: the clicked thumbnail becomes the stage ---------- */
+::view-transition-old(root),
+::view-transition-new(root) { animation-duration: 0.42s; animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1); }
+::view-transition-old(root) { animation-name: vt-out; }
+::view-transition-new(root) { animation-name: vt-in; }
+@keyframes vt-out { to { opacity: 0; transform: translateY(-10px); } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(14px); } }
+::view-transition-group(stage) { animation-duration: 0.6s; animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
+::view-transition-image-pair(stage) { isolation: auto; }
+::view-transition-old(stage), ::view-transition-new(stage) { animation: none; mix-blend-mode: normal; height: 100%; object-fit: cover; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }

@@ -543,7 +543,7 @@ export const ANSWER_LINES = [
 export const CHAT_HANDLES = [
   "maya.k", "devon", "sofia_r", "jt2027", "ananya", "ben.w", "grace", "omar.h", "hana", "leo",
   "priyanka", "chris.m", "nikhil", "emma.g", "iris", "wei", "laura", "kofi", "jess", "raj.p",
-  "mia", "alex.t", "tom", "ana.s", "noah", "zara", "eli", "ruby", "kai", "nora",
+  "mia", "andre", "tom", "ana.s", "noah", "zara", "eli", "ruby", "kai", "nora",
 ];
 
 export const CHAT_LINES = [

@@ -1,55 +1,55 @@
+import { motion } from "framer-motion";
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { SESSIONS, companyOf, findHost } from "../data/seed";
-import { useStore } from "../store/useStore";
-import { Thumb, hrefFor } from "../components/SessionCard";
-import { Button, Card, Chip, Name } from "../components/kit";
-import { Bell, BellFill } from "../components/icons";
+import { RemindButton, Thumb } from "../components/Cards";
+import { Reveal, Segmented, Words, useStageNav } from "../components/ui";
+import { hrefFor, pageIn } from "../components/Nav";
 import { clock, dayLabel, duration, startsAt } from "../lib/format";
 
 export default function Events() {
   const [who, setWho] = useState<"all" | "recruiter" | "employee">("all");
-  const reminders = useStore((s) => s.reminders);
-  const toggle = useStore((s) => s.toggleReminder);
+  const go = useStageNav();
   const list = SESSIONS.filter((s) => s.status === "scheduled" && (who === "all" || findHost(s.hostId).kind === who)).sort((a, b) => a.offsetMin - b.offsetMin);
   const days = list.reduce<Record<string, typeof list>>((acc, s) => ((acc[dayLabel(startsAt(s))] ??= []).push(s), acc), {});
 
   return (
-    <div className="mx-auto max-w-[820px] px-4 py-6">
-      <Card>
-        <h1 className="text-[22px] font-bold text-ink">Upcoming events</h1>
-        <p className="text-[15px] text-ink-2">Live sessions scheduled by recruiters and employees. Set a reminder and we'll let you know when it starts.</p>
-        <div className="mt-4 flex gap-2">
-          <Chip on={who === "all"} onClick={() => setWho("all")}>All</Chip>
-          <Chip on={who === "recruiter"} onClick={() => setWho("recruiter")}>Recruiters</Chip>
-          <Chip on={who === "employee"} onClick={() => setWho("employee")}>Employees</Chip>
-        </div>
-      </Card>
+    <motion.main {...pageIn} className="wrap pb-40 pt-10 md:pt-16">
+      <Words text="Schedule" className="t-display text-ink" />
+      <div className="mt-10 flex flex-wrap items-center justify-between gap-6">
+        <p className="t-body max-w-[560px]">Set a reminder and you’ll get a notification when the room opens.</p>
+        <Segmented id="who" value={who} onChange={setWho} options={[{ id: "all", label: "All" }, { id: "recruiter", label: "Recruiters" }, { id: "employee", label: "In the job" }]} />
+      </div>
 
       {Object.entries(days).map(([day, ss]) => (
-        <Card key={day} className="mt-4">
-          <h2 className="text-[17px] font-bold text-ink">{day}</h2>
-          <div className="mt-1 divide-y divide-line">
-            {ss.map((s) => {
+        <section key={`${day}-${who}`} className="mt-20">
+          <Reveal><h2 className="t-h1 text-ink">{day}</h2></Reveal>
+          <div className="mt-8 border-t border-line">
+            {ss.map((s, k) => {
               const h = findHost(s.hostId);
-              const on = reminders.includes(s.id);
               return (
-                <div key={s.id} className="flex flex-col gap-4 py-4 sm:flex-row sm:items-center">
-                  <Link to={hrefFor(s)} className="sm:w-[200px] sm:shrink-0"><Thumb s={s} /></Link>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[14px] font-semibold text-live">{clock(startsAt(s))}, {duration(s.durationMin)}</p>
-                    <Link to={hrefFor(s)} className="mt-0.5 block text-[17px] font-semibold leading-snug text-ink hover:text-brand">{s.title}</Link>
-                    <p className="mt-1 text-[14px] text-ink-2"><Name host={h} className="font-semibold text-ink" /> <span className="text-ink-3">{h.title} at {companyOf(s).name}</span></p>
-                  </div>
-                  <Button variant={on ? "soft" : "outline"} size="sm" onClick={() => toggle(s.id)}>
-                    {on ? <BellFill size={15} /> : <Bell size={15} />} {on ? "Reminder set" : "Remind me"}
-                  </Button>
-                </div>
+                <Reveal key={s.id} delay={k * 0.05} y={16}>
+                  <a
+                    href={hrefFor(s)}
+                    onClick={(e) => (e.preventDefault(), go(hrefFor(s), e.currentTarget.querySelector<HTMLElement>("[data-pic]")))}
+                    className="group grid items-center gap-x-10 gap-y-5 border-b border-line py-8 md:grid-cols-[150px_240px_minmax(0,1fr)_auto]"
+                  >
+                    <p>
+                      <span className="block text-[32px] font-[650] leading-none tracking-[-0.03em] tabular-nums text-ink">{clock(startsAt(s))}</span>
+                      <span className="mt-2 block text-[16px] text-ink-2">{duration(s.durationMin)}</span>
+                    </p>
+                    <div data-pic className="overflow-hidden rounded-[18px] max-md:hidden"><Thumb s={s} when={false} /></div>
+                    <div className="min-w-0">
+                      <h3 className="t-h3 text-ink transition-colors group-hover:text-brand">{s.title}</h3>
+                      <p className="t-meta mt-1.5">{h.name}, {h.title.split(",")[0]} at {companyOf(s).name}</p>
+                    </div>
+                    <RemindButton id={s.id} />
+                  </a>
+                </Reveal>
               );
             })}
           </div>
-        </Card>
+        </section>
       ))}
-    </div>
+    </motion.main>
   );
 }

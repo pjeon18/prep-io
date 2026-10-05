@@ -40,10 +40,10 @@ export const Gear = ({ size, ...p }: P) => <svg {...b(size)} {...p}><circle cx="
 export const Briefcase = ({ size, ...p }: P) => <svg {...b(size)} {...p}><rect x="3" y="7" width="18" height="13" rx="2.5" /><path d="M8.5 7V5.5A1.5 1.5 0 0 1 10 4h4a1.5 1.5 0 0 1 1.5 1.5V7M3 12.5h18" /></svg>;
 export const Chat = ({ size, ...p }: P) => <svg {...b(size)} {...p}><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4.1A8 8 0 1 1 20 12Z" /></svg>;
 
-/** Verified: the familiar filled blue badge. */
+/** Verified: a filled badge in the brand green. */
 export const VerifiedBadge = ({ size = 16 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" aria-label="Verified">
-    <path fill="#1f5bff" d="M12 1.8 14.6 4l3.4-.3.9 3.3 3 1.7-1.3 3.2 1.3 3.2-3 1.7-.9 3.3-3.4-.3L12 22.2 9.4 20l-3.4.3-.9-3.3-3-1.7 1.3-3.2-1.3-3.2 3-1.7.9-3.3 3.4.3L12 1.8Z" />
+    <path fill="#0f5c3b" d="M12 1.8 14.6 4l3.4-.3.9 3.3 3 1.7-1.3 3.2 1.3 3.2-3 1.7-.9 3.3-3.4-.3L12 22.2 9.4 20l-3.4.3-.9-3.3-3-1.7 1.3-3.2-1.3-3.2 3-1.7.9-3.3 3.4.3L12 1.8Z" />
     <path d="m8 12.3 2.7 2.7L16.2 9.4" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );

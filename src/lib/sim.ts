@@ -9,6 +9,15 @@ const rand = (lo: number, hi: number) => lo + Math.random() * (hi - lo);
 const pick = <T>(a: T[]): T => a[Math.floor(Math.random() * a.length)];
 export const readMs = (text: string) => 1300 + text.split(" ").length * 300;
 const cap = (h: string) => h.charAt(0).toUpperCase() + h.slice(1).split(/[._]/)[0];
+/** a chat line nobody in the room said recently, from someone who did not just speak */
+const recent: string[] = [];
+const fresh = (): { who: string; text: string } => {
+  let text = pick(CHAT_LINES);
+  for (let k = 0; k < 12 && recent.includes(text); k++) text = pick(CHAT_LINES);
+  recent.push(text);
+  if (recent.length > 14) recent.shift();
+  return { who: cap(pick(CHAT_HANDLES)), text };
+};
 
 /* ---------------- every live session's viewer count ---------------- */
 
@@ -106,14 +115,14 @@ export function startRoom(sessionId: string) {
   used = new Set();
 
   patch({
-    chat: Array.from({ length: 12 }, () => ({ id: nextId(), who: cap(pick(CHAT_HANDLES)), text: pick(CHAT_LINES) })),
+    chat: Array.from({ length: 6 }, () => ({ id: nextId(), ...fresh() })),
     questions: [crowdQuestion(), crowdQuestion()].filter(Boolean),
   });
 
   speakNext();
-  loop(1200, 3200, () => {
+  loop(2200, 5200, () => {
     const r = room();
-    if (r) patch({ chat: [...r.chat, { id: nextId(), who: cap(pick(CHAT_HANDLES)), text: pick(CHAT_LINES) }].slice(-120) });
+    if (r) patch({ chat: [...r.chat, { id: nextId(), ...fresh() }].slice(-120) });
   });
   loop(9000, 15000, () => {
     const q = crowdQuestion();
@@ -181,7 +190,7 @@ export function startStudio() {
   });
   tick(1200, 3000, () => {
     const s = st();
-    if (s?.phase === "live" && s.viewers > 3) set({ chat: [...s.chat, { id: nextId(), who: cap(pick(CHAT_HANDLES)), text: pick(CHAT_LINES) }].slice(-80) });
+    if (s?.phase === "live" && s.viewers > 3) set({ chat: [...s.chat, { id: nextId(), ...fresh() }].slice(-80) });
   });
   tick(4000, 8000, () => {
     const s = st();
