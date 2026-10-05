@@ -66,5 +66,7 @@ export default defineConfig(({ mode }) => {
     // run dev servers side by side without hardcoded --port flags.
     server: env.PORT ? { port: Number(env.PORT), strictPort: true } : undefined,
     plugins: [react(), crowdProxy(env.ANTHROPIC_API_KEY)],
+    // the launch film is a second page: /launch/
+    build: { rollupOptions: { input: { main: "index.html", launch: "launch/index.html" } } },
   };
 });

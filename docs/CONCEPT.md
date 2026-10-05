@@ -232,6 +232,89 @@ course content inside careers navigation. Campus screens and the
 careers-only screens declare their mode; Library, Search, and Settings
 deliberately don't, because they belong to both.
 
+### D19 — V4 "On Air": rebuilt around the core idea only (2026-09-30)
+
+Paul: completely upgrade the UI/UX, keep only the core idea (a live video
+platform for recruiters, employees, and people applying to jobs), make it slick
+and not AI-looking, no extras. The source was rebuilt from scratch on branch
+`v4-on-air`.
+
+**Scope, cut to the core.** Two kinds of room are the whole product:
+*Hiring* (a recruiter on process and what they screen for, with open roles
+pinned) and *Inside* (someone doing the job). Kept: live rooms, chat,
+question queue with upvotes, the consent-gated hot seat, recordings chaptered
+by question, a schedule, company pages, a host Studio (go live → console →
+recap), ⌘K search, `?debug`. **Removed:** Campus mode (D17), premium/membership
+tiers (D11, D13), boosts/points (D9), ticketed events + $1 commitment (D12),
+shorts, playlists, goal-driven Explore (D10), LinkedIn stub, light theme,
+Liquid Glass (D16), the Watermelon source components (D18), and the LLM crowd
+client (the dev proxy in `vite.config.ts` is still there if it comes back).
+Without any monetization surface, Principle 1 is trivially held.
+
+**Design language.** A live network, so it uses broadcast grammar: black studio
+(`#090909`), white type, lower-thirds, timecode, a LIVE bug. **One hue only:**
+tally red `#FF3B24`, the light on a camera that means you're on air, used for
+live and the hot seat and nothing else. Verified is a mono check mark, not a
+color. Company tones appear only as stage *lighting* (content, not chrome).
+Type: **Archivo** variable, using its width axis. Expanded (`.wide`, 125%) for
+display, condensed (`.cond`) for lower-thirds, normal for body at 15px, plus
+**JetBrains Mono** for timecodes and labels. Newsreader and Inter are gone.
+
+**The stage (replaces D7's avatar + waveform).** No fake faces. Live captions
+are the picture: the host's words arrive word by word at speaking pace, with
+speaker tiles showing who has the floor, a lower-third naming them, and film
+grain plus company-tone lighting. It is honest about being a mock, and it reads
+with the sound off, which matters for people watching career content at work.
+The stage is container-query sized (`cqw`), so the same component serves the
+home hero, the room, the Studio preview, and the launch film.
+
+**Home is a channel guide**, not a feed. The hero stage flips through live
+rooms with ← →, a guide list sits beside it, and a real-time "starting soon"
+strip shows the next five hours with a NOW line. It is finite, with nothing
+inferred.
+
+**Launch film.** `launch/` is a second Vite page: a 24.5s, 1920×1080
+composition in which every frame is a pure function of `t`, cut to a 120 BPM
+grid. `launch/render.mjs` seeks it frame by frame in headless Chromium and pipes
+the frames into ffmpeg, producing `launch/prep-io-launch.mp4` (60fps). It ships
+silent; the cuts land on beats so a track drops in.
+
+### D20 — V5: light, LinkedIn-style, friendly; D19's "On Air" is scrapped (2026-09-30)
+
+Paul rejected V4 outright: the dark broadcast look, the hot seat, the slogan copy,
+and the fast launch film. New direction: model the product on LinkedIn (with
+Instagram/Duolingo friendliness), so it feels clean, corporate, and happy. It
+should never be dark or scary, and there should be no AI tells in the UI or the
+copy.
+
+- **Look:** LinkedIn's warm grey page (`#f4f2ee`), white cards, 12px radii, and
+  one friendly brand blue (`#1f5bff`) for actions and selection. Sunny yellow
+  (`#ffb61e`) appears only in the logo dot. Red is used only for the LIVE badge,
+  and green only for "Answered." Type is Figtree, a friendly, clean sans. The
+  verified mark is the familiar blue badge.
+- **Brand:** a blue rounded-square mark with a white "p" and a yellow dot, next
+  to the "Prep.io" wordmark.
+- **People:** flat, friendly illustrated busts (`components/people.tsx`) for
+  every host and viewer. Each host has a bright home-office "room" (shelf,
+  window, or wall art), which is the video stand-in, with captions like
+  YouTube's. Deterministic looks come from `lookFor(name)`.
+- **Mechanics:** the hot seat is gone. Viewers chat, post questions in Q&A, and
+  upvote; the host reads the top question aloud (the caption shows "Question
+  from Maya") and answers it; the question then shows as Answered. Other
+  features are ordinary and recognizable: Follow, Remind me, Apply, Save job.
+- **Structure:** a LinkedIn top nav (Home, Events, Companies, Go live, Me). Home
+  has three columns: profile card, live now + recordings, and coming up +
+  companies. The session page handles live, upcoming, and recorded states;
+  recordings list "Questions in this video." There are company pages with
+  Sessions/Jobs/People tabs, an Events list, and Go live (setup, host Q&A
+  console, summary).
+- **Copy:** plain, sentence-case product language. No slogans, no monospace
+  small-caps labels, no "·"-joined metadata.
+- **Film:** 32s, light, one focus per shot: the logo, the home page with a
+  cursor clicking Watch, a seamless zoom into the live session, a question
+  typed, upvoted, and answered, a quicker grid of companies with one Follow,
+  and the logo again. No overlaid slogans and no pop-ups.
+
 ## 6. Open questions
 
 Tracked in PRD §14; raise new ones here first, promote when decided.

@@ -1,65 +1,30 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { useEffect } from "react";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { Nav } from "./components/Nav";
 import { DebugPanel } from "./components/DebugPanel";
-import { Toasts } from "./components/Toasts";
-import Breakout from "./screens/Breakout";
-import CampusHome from "./screens/campus/CampusHome";
-import CourseChannel from "./screens/campus/CourseChannel";
-import TeachHub from "./screens/campus/TeachHub";
-import Company from "./screens/Company";
-import EventDetail from "./screens/EventDetail";
-import Explore from "./screens/Explore";
-import Fair from "./screens/Fair";
-import Follows from "./screens/Follows";
-import HostProfile from "./screens/HostProfile";
-import Library from "./screens/Library";
-import LiveRoom from "./screens/LiveRoom";
-import PlaylistDetail from "./screens/PlaylistDetail";
-import Premium from "./screens/Premium";
-import Search from "./screens/Search";
-import SectionView from "./screens/SectionView";
-import Settings from "./screens/Settings";
-import Shorts from "./screens/Shorts";
-import Splash from "./screens/Splash";
-import VodPlayer from "./screens/VodPlayer";
-import GoLiveWizard from "./screens/host/GoLiveWizard";
-import HostHub from "./screens/host/HostHub";
-import HostRoom from "./screens/host/HostRoom";
-import Recap from "./screens/host/Recap";
-import Verify from "./screens/host/Verify";
+import { startFloor } from "./lib/sim";
+import Home from "./screens/Home";
+import SessionPage from "./screens/Session";
+import Events from "./screens/Events";
+import { Companies, Company } from "./screens/Companies";
+import GoLive from "./screens/GoLive";
 
 export default function App() {
+  const loc = useLocation();
+  useEffect(() => startFloor(), []);
+  useEffect(() => window.scrollTo(0, 0), [loc.pathname]);
   return (
     <>
+      <Nav />
       <Routes>
-        <Route path="/" element={<Splash />} />
-        <Route path="/fair" element={<Fair />} />
-        <Route path="/explore" element={<Explore />} />
-        {/* Campus: the second audience (D17) */}
-        <Route path="/campus" element={<CampusHome />} />
-        <Route path="/campus/course/:courseId" element={<CourseChannel />} />
-        <Route path="/campus/teach" element={<TeachHub />} />
-        <Route path="/library" element={<Library />} />
-        <Route path="/playlist/:playlistId" element={<PlaylistDetail />} />
-        <Route path="/search" element={<Search />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/session/:id" element={<SessionPage />} />
+        <Route path="/events" element={<Events />} />
+        <Route path="/companies" element={<Companies />} />
         <Route path="/company/:id" element={<Company />} />
-        <Route path="/section/:id" element={<SectionView />} />
-        <Route path="/room/:sessionId" element={<LiveRoom />} />
-        <Route path="/vod/:vodId" element={<VodPlayer />} />
-        <Route path="/shorts/:clipId" element={<Shorts />} />
-        <Route path="/event/:eventId" element={<EventDetail />} />
-        <Route path="/profile/:hostId" element={<HostProfile />} />
-        <Route path="/premium" element={<Premium />} />
-        <Route path="/breakout" element={<Breakout />} />
-        <Route path="/follows" element={<Follows />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/host" element={<HostHub />} />
-        <Route path="/host/verify" element={<Verify />} />
-        <Route path="/host/golive" element={<GoLiveWizard />} />
-        <Route path="/host/live" element={<HostRoom />} />
-        <Route path="/host/recap" element={<Recap />} />
-        <Route path="*" element={<Navigate to="/fair" replace />} />
+        <Route path="/go-live" element={<GoLive />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-      <Toasts />
       <DebugPanel />
     </>
   );

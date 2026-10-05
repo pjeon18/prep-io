@@ -1,181 +1,84 @@
 # CLAUDE.md — Prep.io
 
-> **This document is a guide, not a lock.** When a decision here is superseded
-> by a better idea, edit this file as part of making that change and say what
-> changed. Don't recite stale constraints back at Paul as if they were fixed.
-> The exception is the product principles: they are the product's identity, so
-> raise a change rather than making it unilaterally.
+> **This document is a guide, not a lock.** When a decision here is superseded,
+> edit this file as part of the change and say what changed. The product
+> principles are the exception: raise a change rather than making it alone.
 
-You (Claude) are building a **high-fidelity front-end prototype** of Prep.io — a
-live streaming platform shaped like a college club fair, where verified
-professionals hold drop-in "office hours" about their careers. Read this fully at
-session start.
+Prep.io is a **high-fidelity front-end prototype** of a live video platform
+where **recruiters and employees host live sessions** and **people applying to
+jobs** watch, chat, and ask questions. Everything is mocked. The current version
+is V5 (CONCEPT D20, 2026-09-30): light and LinkedIn-style.
 
-## Authoritative docs (read before building)
+## Paul's standing direction for this project (D20)
 
-1. `docs/PREP_PRD.md` — **source of truth for product behavior**: personas,
-   principles (§5 — non-negotiable), experience spec, screens, prototype tiers,
-   acceptance criteria.
-2. `docs/CONCEPT.md` — market research + decision log D1–D6. Don't re-litigate
-   settled decisions (mocked prototype not real infra; scheduled-events-first;
-   the funnel; the name). Conflicts → flag, don't build.
+- Clean, corporate, **happy**. Model it on LinkedIn, with Instagram/Duolingo
+  friendliness. **Never dark.**
+- No AI tells: no slogans or punchy one-liners, no monospace small-caps labels,
+  no "·"-joined metadata strings, no gimmick mechanics (the old "hot seat" is
+  banned). Use plain sentence-case product language.
+- Video/film: one thing in focus per shot, slow when it should be, no pop-ups.
 
-**Model split (Paul's decision):** Prep.io sessions — design and build — run on
-**Fable**. Sonnet is only for mechanical data-labor chores, of which this project
-has essentially none.
+## Docs
 
-## Two audiences (D17)
+`docs/CONCEPT.md` is the decision log (D1–D20). D19, the dark "On Air" version,
+was rejected; D20 is current. `docs/PREP_PRD.md` predates both, so D20 wins on
+scope and look.
 
-Prep.io serves **two** audiences behind one `mode` in the store
-(`careers | campus`), switched from the top bar:
+## Principles (short form)
 
-- **Careers** — the original product. Verified professionals hold drop-in
-  office hours about their work; the fair floor, companies, events, premium.
-- **Campus** — teachers and TAs running live office hours, section, and
-  review for a course. A course is ONE channel (live now + this week + every
-  past session chaptered by question + clips), which is the argument against
-  today's Canvas + Zoom + calendar + Panopto split.
+1. **Honest liveness.** Every viewer count, chat line, question, and vote comes
+   from `lib/sim.ts`. Never hardcode a live number.
+2. **Verified means verified.** A blue badge for verified hosts; unverified hosts
+   get a plain note ("hasn't verified their employer yet").
+3. **No feed, no ranking of people.** Home is finite; companies are alphabetical.
+4. **No DMs.** Public chat and Q&A only.
+5. Nothing is for sale in the prototype.
 
-Campus data is a SEPARATE seed island (`src/data/campusData.ts`) so course
-sessions can't leak into the fair floor or careers search; anything that
-resolves an id goes through `src/lib/campus.ts` (`findSession`, `findPerson`).
-The live room, crowd simulation, hand-raise funnel, and recording player are
-shared unchanged — office hours ARE the hot-seat mechanic.
+## Architecture
 
-## THE NON-NEGOTIABLE PRINCIPLES (short form — full text PRD §5, amended by CONCEPT D9–D14)
+React 18 + TS + Vite + Tailwind + Zustand + Framer Motion. Font: Figtree.
 
-Violating one is a failure even if the feature works. Flag instead of building.
+- `store/useStore.ts` holds a single store. Only name, reminders, savedRoles,
+  and following persist (key `prep-io-v5`). `window.prepStore` in dev.
+- `lib/sim.ts`: the viewer-count ticker; the room engine (captions, chat, Q&A,
+  upvotes, and the host taking the top question and answering it); and the
+  Go-live engine.
+- `data/seed.ts`: 8 companies, 14 hosts (one unverified), 7 live, 8 scheduled,
+  and 6 recorded sessions.
+- `components/people.tsx`: `Bust`, `Avatar`, `Room` (the illustrated home-office
+  "video"), `CompanyLogo`, and `lookFor(name)`.
+- `components/Player.tsx` (room, LIVE badge, viewers, captions, controls);
+  `SessionCard.tsx`; `Nav.tsx` (LinkedIn top nav, `Logo`, `Wordmark`, search);
+  `kit.tsx` (`Button` is the one home for tap physics, plus `Card`, `Chip`,
+  `Tabs`, `LiveBadge`, `Name`).
+- Screens: `Home` (3 columns), `Session` (live / upcoming / recorded),
+  `Companies` + `Company`, `Events`, `GoLive` (setup, console, summary).
 
-1. **Monetize the host's time/tools — never visibility.** Nothing in discovery
-   reads a payment flag. (D9 amendment: boosts may buy the HOST's attention —
-   pinned in the host's queue view — never a place on stage or in discovery.
-   D11: premium gates RECORDINGS, never live rooms.)
-2. **Verified means verified.** Unverified hosts clearly marked, everywhere.
-3. **No feed.** Discovery = fair floor + calendar + user-initiated search +
-   goal-driven Explore (D10: explicit goals, finite labeled shelves, nothing
-   inferred, no infinite scroll). No algorithmic engagement loop.
-4. **Lurking is first-class.** No signup wall on public rooms.
-5. **Honest liveness — enforced in the store.** Viewer counts, chat, and queue
-   derive from the crowd simulation; hardcoded inflated numbers are forbidden.
-   Non-live rooms are labeled archives.
-6. **Funnel ascends only by consent.** Crowd → hand → hot seat → breakout: each
-   step explicit opt-in by both sides. No cold pulls on stage.
-7. **No DMs / inbox.** Follow-ups are scheduled sessions or breakouts only.
+Tokens: page `#f4f2ee`, card white, line `#e3e0da`, ink `#1d1d1f`, brand
+`#1f5bff`, sun `#ffb61e` (logo dot only), live `#e5484d` (LIVE only), ok
+`#12a06a` (Answered only).
 
-## Stack & architecture
+## Launch film
 
-React 18 + TypeScript + Vite + Tailwind + Zustand + Framer Motion.
+`launch/film.tsx` is a 32s, 1920×1080 composition in which every frame is a pure
+function of `t`. Preview it at `/launch/` (`?t=12` to jump). Render with the dev
+server running: `node launch/render.mjs http://localhost:<port> 60`, which writes
+`launch/prep-io-launch.mp4`. It uses `launch/shots/home.png` (a 2× capture of
+the real home page). Recapture that after home changes, and keep the dive
+framing in `HomeShot` matched to the live scene's player.
 
-- **One Zustand store** (`store/usePrepStore.ts`), persisted; invariants live in
-  the actions (e.g. hot-seat promotion requires a queued, consenting hand).
-- **Crowd simulation engine** (`lib/crowd/`) — the prototype's technical heart:
-  scripted chat personas with typing rhythms, arrivals/departures driving the real
-  viewer count, hand-raise events. Optional **LLM personas** via a Vite dev proxy
-  (a working scripted/LLM engine with silent fallback exists at
-  `../iso-prototype/src/lib/partner/` + its `vite.config.ts` proxy — lift the
-  pattern; env key only, never in browser code, no proxy on Pages = scripted there).
-- **Mocked video:** no real streams — ambient looping avatar/waveform treatment
-  (PRD open question 1; decide in the Tier 1 design pass).
-- Base-path-safe public asset URLs via an `asset()` helper; router `basename`
-  from `BASE_URL`; GitHub Pages deploy with repo-scoped base path (a working
-  workflow exists at `../iso-prototype/.github/workflows/deploy.yml`).
+## Commands
 
-## Design direction (D16 — revise deliberately in `src/styles/tokens.css`)
+`npm install` · `npm run dev` (+ `?debug`: more viewers, host answers my
+question next, reset) · `npm run build`
 
-**Palette (unchanged from D15):** plain white page, black ink, exactly two
-semantic colors — crimson `#B0402D` = LIVE/on-air, green `#1C5C41` =
-VERIFIED. Nothing else gets hue.
+## Gotchas
 
-**Dark theme** is a real theme, not an inversion: neutral graphite
-(`#0C0C0D`) because any hue cast fights thumbnails, surfaces step up in
-luminance rather than gaining borders, and both semantic colors lift
-(`#E0563C` / `#45C98C`) because the light values go muddy on near-black.
-Owned by `theme` in the store (`light | dark | system`) and written to
-`documentElement.dataset.theme` by ONE writer at the bottom of the store —
-never from a component effect, which races persist rehydration and flashes
-the wrong theme. Toggle lives in the top bar. `.theater` (live rooms,
-players) stays dark in BOTH themes.
-
-**Liquid Glass** (`src/styles/glass.css`, from `ui-toolbox/tools/`) is
-**chrome only** — top bar, dock, sheets, control pills. Content stays opaque
-so it can be read. Glass over a flat fill renders as nothing, which is why
-`<AmbientField>` ships with it. **Read the variants comment before styling
-glass with Tailwind**: `.glass` sets `position` and `border-radius` itself
-and beats utilities because the file loads after Tailwind — use
-`.glass-abs/.glass-fixed/.glass-sticky/.glass-pill/.glass-round`. The
-`position` version of that mistake fails as a silent layout collapse.
-
-**Motion** all comes from named presets in `src/lib/motion.ts` (springs
-snap/standard/calm/gentle/bouncy/drag). Ad-hoc easing is an audit failure.
-Springs for anything the user caused, durations only for ambient motion.
-
-**The component kit** (`src/components/ui/`) implements the
-watermelon-style micro-interactions in our own stack — `Pressable` (the ONE
-place tap physics lives; every clickable wraps it), `Glass`, `SpotlightCard`
-(pointer light + ≤5° tilt), `Dock` (pointer-magnified glass nav),
-`SegmentedSwitch` (one `layoutId` pill that travels), `AnimatedNumber`
-(odometer for live counts), `ThemeToggle`, `AmbientField`, `Skeleton`.
-
-Two components are **Watermelon's own source**, installed from
-`registry.watermelon.sh` and adapted to our tokens/icons — they live apart in
-`src/components/ui/watermelon/` (`CopyConfirm`, `ExpandDetails`) with the
-install command and a what-changed note in each header. Keep that folder for
-upstream code so it stays obvious what is ours to freely rewrite (D18).
-
-**Mode follows the route** (`store/useSyncMode.ts`): campus screens and
-careers-only screens declare their mode so a deep link can't render one
-audience's content inside the other's navigation. Mode-neutral screens
-(Library, Search, Settings) deliberately don't call it.
-
-**Type:** Newsreader (editorial serif, display + the italic wordmark) /
-Inter (UI, 15px body). `.overline` for small-caps labels.
-
-## Superseded design notes (kept for context)
-
-**"Financial editorial"** (CONCEPT.md D8, palette revised by D15 2026-07-20):
-plain white `#FFFFFF` + black `#000000` shell for every browse surface; the
-live rooms (viewer, host, breakout) are the one dark place — the `.theater`
-CSS scope flips the same tokens to neutral near-black `#0F0F0F`. Desktop
-(lg+) uses the YouTube/Twitch chrome via `components/AppShell.tsx`
-(sidebar + centered search + grids; Twitch stage/chat split in rooms);
-mobile keeps the bottom-tab shell. Exactly three
-color roles, all semantic: **ink** = primary actions (black buttons),
-**crimson `#B0402D`** = LIVE/on-air/end only, **green `#1C5C41` reserved for
-VERIFIED** — nothing else gets color. Type: Newsreader (editorial serif
-display + italic wordmark) / Inter (UI, body 15px). Overline labels via the
-`.overline` class (Tailwind's `overline` utility is neutralized there).
-Large type and negative space are the aesthetic — headers 24–32px serif,
-whitespace over boxes. Copy voice: factual and confident, never winking;
-"has the floor," not exclamation points. No emoji in UI chrome — the stroke
-icon set lives in `src/components/icons.tsx`; add glyphs there. Mocked
-video = ambient avatar + waveform stage (CONCEPT.md D7).
-
-## Build order
-
-Prototype tiers from PRD §12 — Tier 1 (fair → live room → raise hand → hot seat
-loop with simulated crowd) is the demo and comes first. Plan-then-build before
-each tier; confirm the plan against the PRD. The **hot-seat promotion** is the
-signature motion beat — budget polish time for it.
-
-## Commands (keep current as they materialize)
-
-- `npm install` · `npm run dev` (+ `?debug`) · `npm run build` · `npm run preview`
-- `.env` ← `.env.example` with `ANTHROPIC_API_KEY` for LLM crowd (optional,
-  never committed, never in browser code).
-
-## `?debug` panel (required, all tiers)
-
-Force viewer surge · pick section/persona set · promote yourself to hot seat ·
-toggle LLM crowd · simulate host verification states · reset state.
-
-## Gotchas & working style
-
-- Dev-only console handle: `window.prepStore` (the Zustand store) — drive
-  any flow from the console when testing.
-- Paul reviews by looking at the running app — verify visually (screenshots)
-  before declaring done; he communicates in feel ("gentler," "feels cheap") —
-  translate to tokenized changes, don't ask for pixel values.
-- Before declaring done: `npx tsc -b`, `npm run build`, browser verification;
-  keep a `VALIDATION.md` traced to PRD §13.
-- The demo story is one section rich (likely Finance) + seven sparse — that's
-  honest to the cold-start strategy, not a content gap to "fix."
+- `postcss.config.js` and `tailwind.config.js` use absolute paths. The preview
+  harness can start Vite from the parent folder, and relative Tailwind paths
+  then produce an unstyled page. PostCSS config is cached per server process, so
+  restart the server after editing either file.
+- The Claude browser pane runs occluded. Take screenshots with headless
+  Playwright (`../iso-prototype/node_modules/playwright`).
+- Don't run the film render in parallel with other headless tests; it
+  crashed once from contention.

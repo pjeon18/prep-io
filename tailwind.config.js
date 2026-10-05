@@ -1,28 +1,25 @@
+// Absolute globs: Tailwind resolves content relative to the process cwd otherwise.
+const dir = decodeURIComponent(new URL(".", import.meta.url).pathname);
+
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./index.html", "./src/**/*.{ts,tsx}"],
+  content: [`${dir}index.html`, `${dir}launch/**/*.{html,ts,tsx}`, `${dir}src/**/*.{ts,tsx}`],
   theme: {
     extend: {
       colors: {
-        "prep-bg": "var(--prep-bg)",
-        "prep-surface": "var(--prep-surface)",
-        "prep-surface-2": "var(--prep-surface-2)",
-        "prep-line": "var(--prep-line)",
-        "prep-text": "var(--prep-text)",
-        "prep-text-2": "var(--prep-text-2)",
-        "prep-text-3": "var(--prep-text-3)",
-        "prep-live": "var(--prep-live)",
-        "prep-verified": "var(--prep-verified)",
-        "prep-danger": "var(--prep-danger)",
+        page: "#f4f2ee",
+        line: "#e3e0da",
+        ink: { DEFAULT: "#1d1d1f", 2: "#56565a", 3: "#8a8a8e" },
+        brand: { DEFAULT: "#1f5bff", ink: "#1748d1", soft: "#e9efff" },
+        sun: "#ffb61e",
+        live: "#e5484d",
+        ok: "#12a06a",
       },
       fontFamily: {
-        display: ["Newsreader", "Georgia", "serif"],
-        body: ["Inter", "system-ui", "sans-serif"],
+        sans: ['"Figtree Variable"', "-apple-system", '"Segoe UI"', "system-ui", "sans-serif"],
       },
-      borderRadius: {
-        card: "14px",
-        tile: "10px",
-        pill: "99px",
+      boxShadow: {
+        lift: "0 1px 2px rgba(0,0,0,.04), 0 8px 24px -8px rgba(0,0,0,.12)",
       },
     },
   },

@@ -1,62 +1,35 @@
-# Prep.io — prototype
+# Prep.io
 
-A high-fidelity, interactive front-end prototype of **Prep.io** — a live
-streaming platform shaped like a college club fair, where verified
-professionals hold drop-in "office hours" about their careers and viewers
-move from lurking in the crowd, to the hot seat, to 1:1 help.
+Live sessions with recruiters and employees. Watch, chat, ask questions in
+Q&A, follow companies, and save the jobs they mention.
 
-Everything is mocked: the crowd is a simulation (scripted personas driving
-real viewer counts, chat, and hand-raises), video is an ambient
-avatar-and-waveform stage, payments and verification are stubbed. The point
-is the product thinking made visible in the interface — the fair, the
-one-to-many-to-one funnel, honest liveness, verified context.
+This is a front-end prototype. Everything is mocked: the audience is simulated,
+and hosts are shown as illustrated people in their home offices.
 
-**Docs:** [`docs/PREP_PRD.md`](docs/PREP_PRD.md) (product spec) ·
-[`docs/CONCEPT.md`](docs/CONCEPT.md) (research + decision log) ·
-[`VALIDATION.md`](VALIDATION.md) (acceptance-criteria trace).
+**Docs:** [`docs/CONCEPT.md`](docs/CONCEPT.md) (decision log; the current version is D20) ·
+[`VALIDATION.md`](VALIDATION.md)
 
-## Run it
+## Run
 
 ```bash
 npm install
-npm run dev        # → http://localhost:5173
-npm run dev:host   # exposed on the LAN for phone testing
-npm run build      # tsc -b + vite build → dist/
-npm run preview    # serve the production build
+npm run dev        # add ?debug for demo controls
+npm run build
 ```
 
-Node 20+.
+## Try it
 
-## Demo controls
+1. Home shows what's live, what's coming up, and companies to follow.
+2. Open *What we actually screen for in a new-grad resume*.
+3. Go to Q&A, ask a question, and watch the host pick it up and answer it.
+4. Open a recording and jump between the questions in it.
+5. Go live: set up a session, answer viewer questions, and end it.
 
-Append **`?debug`** to any URL, then tap the gear (bottom-right):
-force a viewer surge, fast-track yourself to the hot seat, toggle the LLM
-crowd, set verification states, jump between live rooms, reset all state.
+## Launch film
 
-## The demo path
-
-1. Splash → **Walk the fair** — live rooms with real (simulated) counts,
-   the calendar rail, eight booths (Finance rich, the rest honestly sparse).
-2. Join *"Superday week"* — lurk; chat and viewers move on their own.
-3. **Raise your hand** with a question → watch the queue → the hot seat.
-4. After your answer, the host may offer a **private breakout** ($, stubbed).
-5. Tap **Host** → verify (stubbed review) → go-live wizard → run your own
-   room: bring hands up, answer, end → **recap** → your session becomes a
-   chaptered archive in your library.
-
-## Optional: LLM-driven crowd (dev only)
+`/launch/` plays the 32-second film in the browser. To render the MP4 (needs
+Playwright and ffmpeg, with the dev server running):
 
 ```bash
-cp .env.example .env   # set ANTHROPIC_API_KEY
+node launch/render.mjs http://localhost:5173 60
 ```
-
-The Vite dev server proxies `/api/crowd` to the Anthropic API, injecting the
-key server-side — it never reaches browser code. Without a key (and always
-on the static Pages build) the crowd falls back to scripted personas,
-silently. Never commit a real `.env`.
-
-## Stack
-
-React 18 · TypeScript · Vite · Tailwind · Zustand (one store, invariants in
-the actions) · Framer Motion. Deployed to GitHub Pages by
-`.github/workflows/deploy.yml` on push to `main`.

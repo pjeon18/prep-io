@@ -2,300 +2,82 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ------------------------------------------------------------------ */
-/* Prep.io design tokens                                               */
-/*                                                                     */
-/* Palette (D15, unchanged): plain white page, black ink, exactly two   */
-/* semantic colors — crimson = LIVE/on-air, green = VERIFIED. Nothing   */
-/* else gets hue.                                                      */
-/*                                                                     */
-/* D16 adds: a real dark theme (neutral, not an inversion), the Liquid  */
-/* Glass material for chrome (glass.css), and a spring-based motion     */
-/* system. Theme is owned by `theme` in the store and written to        */
-/* documentElement.dataset.theme by ONE writer at the bottom of the     */
-/* store — never from a component effect, which fights persist          */
-/* rehydration and flashes the wrong theme on load.                    */
-/* ------------------------------------------------------------------ */
+/* Prep.io, V5 (CONCEPT D20). Light, clean, friendly.
+   Warm grey page, white cards, one brand blue. Red only for LIVE,
+   green only for answered/verified states. */
 
 :root {
+  --page: #f4f2ee;
+  --card: #ffffff;
+  --line: #e3e0da;
+  --ink: #1d1d1f;
+  --ink-2: #56565a;
+  --ink-3: #8a8a8e;
+  --brand: #1f5bff;
+  --brand-ink: #1748d1;
+  --brand-soft: #e9efff;
+  --sun: #ffb61e;
+  --live: #e5484d;
+  --ok: #12a06a;
   color-scheme: light;
-
-  --prep-bg: #ffffff;
-  --prep-surface: #ffffff;
-  --prep-surface-2: #f4f4f5;
-  --prep-line: #e6e6e6;
-
-  --prep-text: #000000;
-  --prep-text-2: #4d4d4d;
-  --prep-text-3: #8c8c8c;
-
-  --prep-live: #b0402d;
-  --prep-live-tint: rgba(176, 64, 45, 0.08);
-
-  --prep-verified: #1c5c41;
-  --prep-verified-tint: rgba(28, 92, 65, 0.09);
-
-  --prep-danger: #b0402d;
-
-  /* action tokens let dark/theater scopes invert buttons cleanly */
-  --prep-action-bg: #000000;
-  --prep-action-fg: #ffffff;
-
-  --radius-card: 14px;
-  --radius-tile: 10px;
-  --radius-pill: 99px;
-
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04);
-  /* lifted elevation for hover states — springy cards need somewhere to go */
-  --shadow-lift: 0 18px 40px -18px rgba(0, 0, 0, 0.28), 0 4px 12px -6px rgba(0, 0, 0, 0.12);
-
-  /* ambient field: what the glass refracts. Near-invisible on a white
-     page by design — it exists so chrome has something to bend. */
-  --prep-amb-1: rgba(176, 64, 45, 0.07);
-  --prep-amb-2: rgba(28, 92, 65, 0.06);
-  --prep-amb-3: rgba(0, 0, 0, 0.04);
-}
-
-/* ---- Dark theme: neutral graphite ----
- * Not an inversion. The page is a true neutral near-black (the product is
- * a video platform — any hue cast would fight thumbnails), surfaces step
- * up in luminance rather than gaining a border, and both semantic colors
- * lift because #B0402D and #1C5C41 go muddy on near-black. */
-:root[data-theme="dark"] {
-  color-scheme: dark;
-
-  --prep-bg: #0c0c0d;
-  --prep-surface: #161618;
-  --prep-surface-2: #1f1f22;
-  --prep-line: #2c2c30;
-
-  --prep-text: #f5f5f6;
-  --prep-text-2: #b0b0b4;
-  --prep-text-3: #7c7c82;
-
-  --prep-live: #e0563c;
-  --prep-live-tint: rgba(224, 86, 60, 0.14);
-
-  --prep-verified: #45c98c;
-  --prep-verified-tint: rgba(69, 201, 140, 0.13);
-
-  --prep-danger: #e0563c;
-
-  --prep-action-bg: #f5f5f6;
-  --prep-action-fg: #0c0c0d;
-
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5);
-  --shadow-lift: 0 20px 44px -18px rgba(0, 0, 0, 0.8), 0 6px 14px -6px rgba(0, 0, 0, 0.6);
-
-  /* dialed down after review: at 0.16 these read as coloured smudges behind
-     the thumbnails instead of light for the glass to bend */
-  --prep-amb-1: rgba(224, 86, 60, 0.07);
-  --prep-amb-2: rgba(69, 201, 140, 0.05);
-  --prep-amb-3: rgba(120, 130, 190, 0.05);
-}
-
-/* The theater: live rooms and players. Dark in BOTH themes — a stream
- * plays with the lights down. In dark mode it sits a touch below the page
- * so the stage still reads as a distinct surface. */
-.theater {
-  color-scheme: dark;
-
-  --prep-bg: #0f0f0f;
-  --prep-surface: #1a1a1a;
-  --prep-surface-2: #262626;
-  --prep-line: #333333;
-
-  --prep-text: #ffffff;
-  --prep-text-2: #b3b3b3;
-  --prep-text-3: #7a7a7a;
-
-  --prep-live: #d3573f;
-  --prep-live-tint: rgba(211, 87, 63, 0.13);
-
-  --prep-verified: #4caf82;
-  --prep-verified-tint: rgba(76, 175, 130, 0.12);
-
-  --prep-danger: #d3573f;
-
-  --prep-action-bg: #ffffff;
-  --prep-action-fg: #0f0f0f;
-
-  --shadow-card: none;
-  --shadow-lift: 0 20px 44px -18px rgba(0, 0, 0, 0.7);
-
-  --prep-amb-1: rgba(211, 87, 63, 0.18);
-  --prep-amb-2: rgba(76, 175, 130, 0.12);
-  --prep-amb-3: rgba(140, 150, 210, 0.12);
-
-  background: var(--prep-bg);
-  color: var(--prep-text);
-}
-:root[data-theme="dark"] .theater {
-  --prep-bg: #08080a;
-  --prep-surface: #131315;
 }
 
 html,
 body,
 #root {
-  height: 100%;
+  background: var(--page);
+  color: var(--ink);
 }
 
 body {
-  background: var(--prep-bg);
-  color: var(--prep-text);
-  font-family: Inter, system-ui, sans-serif;
+  font-family: "Figtree Variable", -apple-system, "Segoe UI", system-ui, sans-serif;
   font-size: 15px;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  overscroll-behavior-y: none;
-  /* theme swaps shouldn't strobe */
-  transition: background-color 260ms ease, color 260ms ease;
+  -moz-osx-font-smoothing: grayscale;
 }
-
-/* Editorial serif for display. .font-display maps to Newsreader. */
-h1, h2, h3, h4, .font-display {
-  font-family: Newsreader, Georgia, serif;
-  letter-spacing: -0.01em;
-}
-
-/* Overline labels — the app's small-caps voice.
-   text-decoration: none guards against Tailwind's `overline` utility. */
-.overline {
-  font-family: Inter, system-ui, sans-serif;
-  font-size: 11.5px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  text-decoration: none !important;
-  color: var(--prep-text-3);
-}
-
-/* ---------------- base component classes ---------------- */
 
 .card {
-  background: var(--prep-surface);
-  border: 1px solid var(--prep-line);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-card);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
 }
 
-.btn {
-  @apply inline-flex items-center justify-center gap-2 font-medium select-none;
-  font-family: Inter, system-ui, sans-serif;
-  border-radius: var(--radius-pill);
-  padding: 13px 24px;
+.field {
+  width: 100%;
+  background: #fff;
+  border: 1px solid #cfcbc3;
+  border-radius: 10px;
+  padding: 10px 14px;
   font-size: 15px;
-  /* motion lives in <Pressable>/motion components; this is the no-JS floor */
-  transition: opacity 140ms ease, background-color 140ms ease, border-color 140ms ease;
-  -webkit-tap-highlight-color: transparent;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.field::placeholder {
+  color: var(--ink-3);
+}
+.field:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px var(--brand-soft);
 }
 
-.btn-primary {
-  background: var(--prep-action-bg);
-  color: var(--prep-action-fg);
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
-.btn-primary:hover { opacity: 0.9; }
-
-.btn-ghost {
-  background: transparent;
-  color: var(--prep-text);
-  border: 1px solid var(--prep-line);
-}
-.btn-ghost:hover { background: var(--prep-surface-2); }
-
-.btn-danger {
-  background: transparent;
-  color: var(--prep-danger);
-  border: 1px solid currentColor;
+.no-scrollbar {
+  scrollbar-width: none;
 }
 
-.btn:disabled { opacity: 0.4; pointer-events: none; }
-
-.chip {
-  @apply inline-flex items-center gap-1.5 select-none;
-  font-size: 14px;
-  border-radius: var(--radius-pill);
-  padding: 7px 15px;
-  background: transparent;
-  border: 1px solid var(--prep-line);
-  color: var(--prep-text-2);
-  transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease;
-  -webkit-tap-highlight-color: transparent;
-}
-.chip-active {
-  border-color: var(--prep-text);
-  color: var(--prep-text);
-  background: var(--prep-surface);
-}
-
-.input {
-  @apply w-full outline-none;
-  font-size: 15px;
-  background: var(--prep-surface);
-  border: 1px solid var(--prep-line);
-  border-radius: var(--radius-tile);
-  padding: 13px 15px;
-  color: var(--prep-text);
-  transition: border-color 140ms ease, box-shadow 140ms ease;
-}
-.input::placeholder { color: var(--prep-text-3); }
-.input:focus {
-  border-color: var(--prep-text-2);
-  box-shadow: 0 0 0 3px var(--prep-surface-2);
-}
-
-.theater .input { background: var(--prep-surface-2); }
-
-/* thin scrollbars for rails */
-.rail::-webkit-scrollbar { height: 0; width: 0; }
-.rail { scrollbar-width: none; }
-
-/* ---- Keyboard focus: visible, never the default blue ---- */
 :focus-visible {
-  outline: 2.5px solid var(--prep-text-2);
+  outline: 2px solid var(--brand);
   outline-offset: 2px;
-  border-radius: 6px;
-}
-[role="dialog"]:focus,
-[role="dialog"]:focus-visible { outline: none; }
-
-/* ---- Shimmer (skeletons) ---- */
-.shimmer {
-  position: relative;
-  overflow: hidden;
-  background: var(--prep-surface-2);
-}
-.shimmer::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgb(from var(--prep-text) r g b / 0.06) 50%,
-    transparent 100%
-  );
-  animation: shimmer 1.4s ease-in-out infinite;
-}
-@keyframes shimmer {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(100%); }
 }
 
-/* ---- Odometer digit entrance (AnimatedNumber) ----
-   Mount-only, replayed by remounting on change, so there is no exit to
-   leave a stale digit behind. */
-.odo-in {
+.live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 99px;
+  background: #fff;
   display: inline-block;
-  animation: odo-in 280ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-@keyframes odo-in {
-  from { opacity: 0; transform: translateY(-0.34em); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .shimmer::after,
-  .odo-in { animation: none; }
-  body { transition: none; }
 }
