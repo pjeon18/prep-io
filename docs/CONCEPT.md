@@ -342,6 +342,10 @@ transitions, responsiveness, inertia, minimal balance. V6 keeps V5's product
   answer and it shows on stage.
 - **Search** is a keyboard panel (⌘K or /).
 - Removed: `Player`, `SessionCard`, `kit` (replaced by `Stage`, `Cards`, `ui`).
+- **Film:** same 32s structure as D20, restyled in V6: forest logo, the V6
+  home, a click on Join the room that dives into Rebecca Stein's room, a
+  question typed, upvoted to the top, pinned while answered, and the company
+  grid with one Follow.
 
 ## 6. Open questions
 

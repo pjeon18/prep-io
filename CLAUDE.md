@@ -65,12 +65,13 @@ in `styles/tokens.css`; nothing under 15px.
 
 ## Launch film
 
-`launch/film.tsx` (V5 era, not yet restyled for V6) is a 32s, 1920×1080 composition in which every frame is a pure
+`launch/film.tsx` (V6) is a 32s, 1920×1080 composition in which every frame is a pure
 function of `t`. Preview it at `/launch/` (`?t=12` to jump). Render with the dev
 server running: `node launch/render.mjs http://localhost:<port> 60`, which writes
-`launch/prep-io-launch.mp4`. It uses `launch/shots/home.png` (a 2× capture of
-the real home page). Recapture that after home changes, and keep the dive
-framing in `HomeShot` matched to the live scene's player.
+`launch/prep-io-launch.mp4`. It uses `launch/shots/home-v6.png` (a 2× capture of
+the real home page, featured room = Rebecca Stein's Goldman session). The
+room scene is that same session so the dive lands on the same person.
+Recapture after home changes and keep the two in sync.
 
 ## Commands
 
