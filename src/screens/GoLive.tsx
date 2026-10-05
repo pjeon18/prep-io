@@ -94,7 +94,7 @@ function Setup() {
             placeholder="How our new-grad interviews work"
             maxLength={80}
             rows={2}
-            className="mt-3 w-full resize-none border-b-2 border-line bg-transparent pb-3 text-[clamp(28px,3vw,40px)] font-[650] leading-tight tracking-[-0.025em] text-ink outline-none transition-colors placeholder:text-ink/20 focus:border-brand"
+            className="mt-3 w-full resize-none border-b-2 border-line bg-transparent pb-3 focus-visible:outline-none text-[clamp(28px,3vw,40px)] font-[650] leading-tight tracking-[-0.025em] text-ink outline-none transition-colors placeholder:text-ink/20 focus:border-brand"
           />
           <p className="mt-2 text-right text-[15px] tabular-nums text-ink-3">{title.length} of 80</p>
 
